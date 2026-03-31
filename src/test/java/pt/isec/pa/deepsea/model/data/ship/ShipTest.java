@@ -1,0 +1,85 @@
+package pt.isec.pa.deepsea.model.data.ship;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import pt.isec.pa.deepsea.model.data.GameConfig;
+import pt.isec.pa.deepsea.model.data.artifact.Artifact;
+import pt.isec.pa.deepsea.model.data.mineral.Mineral;
+import pt.isec.pa.deepsea.model.data.ship.Ship;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * Unit tests for the {@link Ship} class.
+ */
+class ShipTest {
+
+    private Ship ship;
+
+    @BeforeEach
+    void setUp() {
+        ship = new Ship();
+    }
+
+    @Test
+    void testInitialState() {
+        assertEquals(GameConfig.SHIP_MAX_FUEL, ship.getCurrentFuel());
+        assertEquals(GameConfig.MAX_DRONES, ship.getDrones().size());
+        assertEquals(0, ship.getPosX());
+        assertEquals(0, ship.getPosY());
+        assertFalse(ship.isOutOfFuel());
+        assertFalse(ship.allDronesLost());
+    }
+
+    @Test
+    void testConsumeFuel() {
+        ship.consumeFuel(100);
+        assertEquals(GameConfig.SHIP_MAX_FUEL - 100, ship.getCurrentFuel());
+    }
+
+    @Test
+    void testConsumeFuelDoesNotGoBelowZero() {
+        ship.consumeFuel(GameConfig.SHIP_MAX_FUEL + 500);
+        assertEquals(0, ship.getCurrentFuel());
+        assertTrue(ship.isOutOfFuel());
+    }
+
+    @Test
+    void testConsumeFuelIgnoresNonPositive() {
+        int initial = ship.getCurrentFuel();
+        ship.consumeFuel(0);
+        ship.consumeFuel(-50);
+        assertEquals(initial, ship.getCurrentFuel());
+    }
+
+    @Test
+    void testSetPosition() {
+        ship.setPosition(10, 5);
+        assertEquals(10, ship.getPosX());
+        assertEquals(5, ship.getPosY());
+    }
+
+    @Test
+    void testAddAndGetArtifacts() {
+        Artifact a = new Artifact(1, 0, 0);
+        ship.addArtifact(a);
+        assertEquals(1, ship.getCollectedArtifacts().size());
+        assertEquals(a, ship.getCollectedArtifacts().get(0));
+    }
+
+    @Test
+    void testAddAndGetMinerals() {
+        Mineral m = new Mineral(1, 0, 0);
+        ship.addMineral(m);
+        assertEquals(1, ship.getCollectedMinerals().size());
+        assertEquals(m, ship.getCollectedMinerals().get(0));
+    }
+
+    @Test
+    void testGetDrone() {
+        assertNotNull(ship.getDrone(0));
+        assertNotNull(ship.getDrone(2));
+        assertNull(ship.getDrone(-1));
+        assertNull(ship.getDrone(GameConfig.MAX_DRONES));
+    }
+}
