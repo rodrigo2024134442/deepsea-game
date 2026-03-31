@@ -1,7 +1,8 @@
-package pt.isec.pa.deepsea.model.surface;
+package pt.isec.pa.deepsea.model.data.surface;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pt.isec.pa.deepsea.model.data.GameConfig;
 import pt.isec.pa.deepsea.model.data.surface.SeaSurface;
 
 import java.util.Random;
@@ -22,17 +23,17 @@ class SeaSurfaceTest {
 
     @Test
     void testDefaultDimensions() {
-        assertEquals(SeaSurface.DEFAULT_ROWS, surface.getRows());
-        assertEquals(SeaSurface.DEFAULT_COLS, surface.getCols());
+        assertEquals(GameConfig.DEFAULT_SEASURFACE_ROWS, surface.getRows());
+        assertEquals(GameConfig.DEFAULT_SEASURFACE_COLS, surface.getCols());
     }
 
 
     @Test
     void testIsValidPosition() {
         assertTrue(surface.isValidPosition(0, 0));
-        assertTrue(surface.isValidPosition(SeaSurface.DEFAULT_COLS - 1, SeaSurface.DEFAULT_ROWS - 1));
+        assertTrue(surface.isValidPosition(GameConfig.DEFAULT_SEASURFACE_COLS - 1, GameConfig.DEFAULT_SEASURFACE_ROWS - 1));
         assertFalse(surface.isValidPosition(-1, 0));
-        assertFalse(surface.isValidPosition(SeaSurface.DEFAULT_COLS, 0));
+        assertFalse(surface.isValidPosition(GameConfig.DEFAULT_SEASURFACE_COLS, 0));
     }
 
     @Test

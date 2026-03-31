@@ -1,5 +1,7 @@
 package pt.isec.pa.deepsea.model.data.ship;
 
+import pt.isec.pa.deepsea.model.Game;
+import pt.isec.pa.deepsea.model.data.GameConfig;
 import pt.isec.pa.deepsea.model.data.drone.Drone;
 import pt.isec.pa.deepsea.model.data.mineral.Mineral;
 import pt.isec.pa.deepsea.model.data.artifact.Artifact;
@@ -16,13 +18,6 @@ import java.util.List;
  * @version v1.0.0 (Stage 1)
  */
 public class Ship {
-
-    /** Max fuel capacity. */
-    public static final int MAX_FUEL = 1000;
-
-    /** Max number of drones. */
-    public static final int MAX_DRONES = 3;
-
     private int currentFuel;
     private int posX;
     private int posY;
@@ -32,14 +27,14 @@ public class Ship {
 
     /** Creates a ship at (0,0) with full fuel and 3 drones. */
     public Ship() {
-        this.currentFuel = MAX_FUEL;
+        this.currentFuel = GameConfig.SHIP_MAX_FUEL;
         this.posX = 0;
         this.posY = 0;
         this.drones = new ArrayList<>();
         this.collectedArtifacts = new ArrayList<>();
         this.collectedMinerals = new ArrayList<>();
 
-        for (int i = 0; i < MAX_DRONES; i++) {
+        for (int i = 0; i < GameConfig.MAX_DRONES; i++) {
             drones.add(new Drone());
         }
     }
@@ -90,7 +85,7 @@ public class Ship {
 
     /** Gets max fuel. */
     public int getMaxFuel() {
-        return MAX_FUEL;
+        return GameConfig.SHIP_MAX_FUEL;
     }
 
     /** Gets X position. */
@@ -120,7 +115,7 @@ public class Ship {
 
     @Override
     public String toString() {
-        return "Ship{fuel=" + currentFuel + "/" + MAX_FUEL +
+        return "Ship{fuel=" + currentFuel + "/" + GameConfig.SHIP_MAX_FUEL +
                 ", pos=(" + posX + "," + posY + ")" +
                 ", drones=" + drones.size() + "}";
     }

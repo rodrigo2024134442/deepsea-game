@@ -1,5 +1,6 @@
 package pt.isec.pa.deepsea.model.data.surface;
 
+import pt.isec.pa.deepsea.model.data.GameConfig;
 import pt.isec.pa.deepsea.model.data.artifact.Artifact;
 
 import java.util.ArrayList;
@@ -15,30 +16,15 @@ import java.util.Random;
  * @version v1.0.0 (Stage 1)
  */
 public class SeaSurface {
-
-    /** Default SeaSurface size . */
-    public static final int DEFAULT_COLS = 10;
-    public static final int DEFAULT_ROWS = 10;
-
-    /** max artifact */
-    public static final int MAX_ARTIFACTS = (int) (DEFAULT_COLS * DEFAULT_ROWS * 0.3); // 30% artifacts
-    public static final int MAX_CELL_ARTIFACTS = 4; // using excluding range so [0,3[
-    /** Default trench size. */ 
-    public static final int DEFAULT_TRENCH_ROWS = 12;
-    public static final int DEFAULT_TRENCH_COLS = 6;
-    
-    /** Default SeaFloor size. */
-    public static final int DEFAULT_SEAFLOOR_ROWS = 10;
-    public static final int DEFAULT_SEAFLOOR_COLS = 10;
-
     private final int rows;
     private final int cols;
     private final SurfaceCell[][] grid;
     private int hasArtifact = 0;
     private int artifactAtual = 0;
-    /** Creates surface with default size (30x15). */
+
+    /** Creates surface with default size. */
     public SeaSurface() {
-        this(DEFAULT_ROWS, DEFAULT_COLS);
+        this(GameConfig.DEFAULT_SEASURFACE_ROWS, GameConfig.DEFAULT_SEASURFACE_COLS);
     }
 
     /** Creates surface and initializes all cells. */
@@ -52,19 +38,15 @@ public class SeaSurface {
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
 
-                if (artifactAtual < MAX_ARTIFACTS) {
-                    hasArtifact = random.nextInt(MAX_CELL_ARTIFACTS); // 0,1,2,3
+                if (artifactAtual < GameConfig.MAX_ARTIFACTS) {
+                    hasArtifact = random.nextInt(GameConfig.MAX_CELL_ARTIFACTS); // 0,1,2,3
 
                     if (hasArtifact > 0) {
                         artifactAtual += hasArtifact;
                     }
                 }
 
-                grid[r][c] = new SurfaceCell(
-                        DEFAULT_TRENCH_ROWS,
-                        DEFAULT_TRENCH_COLS,
-                        hasArtifact
-                );
+                grid[r][c] = new SurfaceCell(GameConfig.DEFAULT_SEATRENCH_ROWS, GameConfig.DEFAULT_SEATRENCH_COLS,  hasArtifact);
             }
         }
     }

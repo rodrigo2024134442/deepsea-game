@@ -2,6 +2,7 @@ package pt.isec.pa.deepsea.model.data.ship;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pt.isec.pa.deepsea.model.data.GameConfig;
 import pt.isec.pa.deepsea.model.data.artifact.Artifact;
 import pt.isec.pa.deepsea.model.data.mineral.Mineral;
 import pt.isec.pa.deepsea.model.data.ship.Ship;
@@ -22,8 +23,8 @@ class ShipTest {
 
     @Test
     void testInitialState() {
-        assertEquals(Ship.MAX_FUEL, ship.getCurrentFuel());
-        assertEquals(Ship.MAX_DRONES, ship.getDrones().size());
+        assertEquals(GameConfig.SHIP_MAX_FUEL, ship.getCurrentFuel());
+        assertEquals(GameConfig.MAX_DRONES, ship.getDrones().size());
         assertEquals(0, ship.getPosX());
         assertEquals(0, ship.getPosY());
         assertFalse(ship.isOutOfFuel());
@@ -33,12 +34,12 @@ class ShipTest {
     @Test
     void testConsumeFuel() {
         ship.consumeFuel(100);
-        assertEquals(Ship.MAX_FUEL - 100, ship.getCurrentFuel());
+        assertEquals(GameConfig.SHIP_MAX_FUEL - 100, ship.getCurrentFuel());
     }
 
     @Test
     void testConsumeFuelDoesNotGoBelowZero() {
-        ship.consumeFuel(Ship.MAX_FUEL + 500);
+        ship.consumeFuel(GameConfig.SHIP_MAX_FUEL + 500);
         assertEquals(0, ship.getCurrentFuel());
         assertTrue(ship.isOutOfFuel());
     }
@@ -79,6 +80,6 @@ class ShipTest {
         assertNotNull(ship.getDrone(0));
         assertNotNull(ship.getDrone(2));
         assertNull(ship.getDrone(-1));
-        assertNull(ship.getDrone(Ship.MAX_DRONES));
+        assertNull(ship.getDrone(GameConfig.MAX_DRONES));
     }
 }
