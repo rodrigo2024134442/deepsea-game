@@ -1,19 +1,19 @@
 package pt.isec.pa.deepsea.model.data.cell;
 
-import pt.isec.pa.deepsea.model.data.Entities;
+import pt.isec.pa.deepsea.model.data.entity.NonlivingEntity;
 
 public class UnderwaterCell {
-    private Entities ocupant;
+    private NonlivingEntity ocupant;
 
     public UnderwaterCell() {}
 
-    public Entities getEntity() {
+    public NonlivingEntity getEntity() {
         if (ocupant == null)
             return null;
         return ocupant.clone();
     }
 
-    public void setEntity (Entities ocupant) {this.ocupant = ocupant;}
+    public void setEntity (NonlivingEntity ocupant) {this.ocupant = ocupant;}
 
     public UnderwaterCell clone() {
         UnderwaterCell nova = new UnderwaterCell();

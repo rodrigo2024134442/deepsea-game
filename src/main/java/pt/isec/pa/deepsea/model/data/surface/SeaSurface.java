@@ -1,9 +1,7 @@
 package pt.isec.pa.deepsea.model.data.surface;
 
 import pt.isec.pa.deepsea.model.data.GameConfig;
-import pt.isec.pa.deepsea.model.data.artifact.Artifact;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
