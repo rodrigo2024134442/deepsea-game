@@ -3,9 +3,8 @@ package pt.isec.pa.deepsea.model.data.ship;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pt.isec.pa.deepsea.model.data.GameConfig;
-import pt.isec.pa.deepsea.model.data.artifact.Artifact;
-import pt.isec.pa.deepsea.model.data.mineral.Mineral;
-import pt.isec.pa.deepsea.model.data.ship.Ship;
+import pt.isec.pa.deepsea.model.data.entity.artifact.Artifact;
+import pt.isec.pa.deepsea.model.data.entity.mineral.Mineral;
 
 import static org.junit.jupiter.api.Assertions.*;
 

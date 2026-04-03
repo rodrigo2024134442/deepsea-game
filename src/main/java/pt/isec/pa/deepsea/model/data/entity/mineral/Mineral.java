@@ -1,4 +1,4 @@
-package pt.isec.pa.deepsea.model.data.mineral;
+package pt.isec.pa.deepsea.model.data.entity.mineral;
 
 /**
  * Represents a mineral resource found on the sea floor.

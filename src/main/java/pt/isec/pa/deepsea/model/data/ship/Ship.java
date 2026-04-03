@@ -1,10 +1,9 @@
 package pt.isec.pa.deepsea.model.data.ship;
 
-import pt.isec.pa.deepsea.model.Game;
 import pt.isec.pa.deepsea.model.data.GameConfig;
 import pt.isec.pa.deepsea.model.data.drone.Drone;
-import pt.isec.pa.deepsea.model.data.mineral.Mineral;
-import pt.isec.pa.deepsea.model.data.artifact.Artifact;
+import pt.isec.pa.deepsea.model.data.entity.mineral.Mineral;
+import pt.isec.pa.deepsea.model.data.entity.artifact.Artifact;
 
 import java.util.ArrayList;
 import java.util.List;

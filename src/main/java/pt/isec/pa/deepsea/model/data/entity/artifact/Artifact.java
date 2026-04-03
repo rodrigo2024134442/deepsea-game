@@ -1,4 +1,4 @@
-package pt.isec.pa.deepsea.model.data.artifact;
+package pt.isec.pa.deepsea.model.data.entity.artifact;
 
 /**
  * Represents an ancient artifact to be recovered in the Deep Sea Mining game.
