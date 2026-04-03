@@ -3,8 +3,8 @@ package pt.isec.pa.deepsea.model.data.entity;
 public abstract class LivingEntity extends Entity {
     private int health;
 
-    public LivingEntity(int id, String name, int health) {
-        super(id, name);
+    public LivingEntity(String name, int health) {
+        super(name);
         this.health = health;
     }
 

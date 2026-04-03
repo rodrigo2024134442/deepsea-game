@@ -1,19 +1,27 @@
 package pt.isec.pa.deepsea.model.data.cell;
 
-import pt.isec.pa.deepsea.model.data.entity.NonlivingEntity;
+import pt.isec.pa.deepsea.model.data.entity.Entity;
 
 public class UnderwaterCell {
-    private NonlivingEntity ocupant;
+    private Entity ocupant;
+    public boolean revealed;
 
-    public UnderwaterCell() {}
+    public UnderwaterCell(){};
 
-    public NonlivingEntity getEntity() {
+    public UnderwaterCell(Entity something) {
+        revealed = false;
+        if(something!=null){
+            ocupant = something;
+        }
+    }
+
+    public Entity getEntity() {
         if (ocupant == null)
             return null;
         return ocupant.clone();
     }
 
-    public void setEntity (NonlivingEntity ocupant) {this.ocupant = ocupant;}
+    public void setEntity (Entity ocupant) {this.ocupant = ocupant;}
 
     public UnderwaterCell clone() {
         UnderwaterCell nova = new UnderwaterCell();
@@ -24,4 +32,9 @@ public class UnderwaterCell {
         return nova;
     }
 
+    public void setRevealed(boolean veredict) {
+        revealed = veredict;
+    }
+
+    public boolean isRevealed(){return revealed;}
 }

@@ -2,8 +2,8 @@ package pt.isec.pa.deepsea.model.data.entity;
 
 public abstract class NonlivingEntity extends Entity {
 
-    public NonlivingEntity(int id, String name) {
-        super(id, name);
+    public NonlivingEntity(String name) {
+        super(name);
     }
 
     @Override
