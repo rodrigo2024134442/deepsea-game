@@ -1,5 +1,9 @@
 package pt.isec.pa.deepsea.model.data.entity.artifact;
 
+import pt.isec.pa.deepsea.model.data.entity.NonlivingEntity;
+import pt.isec.pa.deepsea.model.data.entity.mineral.Mineral;
+
+
 /**
  * Represents an ancient artifact to be recovered in the Deep Sea Mining game.
  * Each artifact has a unique ID and a position on the sea floor grid.
@@ -7,58 +11,25 @@ package pt.isec.pa.deepsea.model.data.entity.artifact;
  * @author Beja
  * @version v1.0.0 (Stage 1)
  */
-public class Artifact {
-
-    private final int id;
-    private int x;
-    private int y;
-    private boolean collected;
+public class Artifact extends NonlivingEntity {
 
     /** Creates an artifact with id and position. */
-    public Artifact(int id, int x, int y) {
-        this.id = id;
-        this.x = x;
-        this.y = y;
-        this.collected = false;
+    public Artifact(String name) {
+        super(name);
     }
-
-    /** Gets artifact id. */
-    public int getId() {
-        return id;
-    }
-
-    /** Gets X position. */
-    public int getX() {
-        return x;
-    }
-
-    /** Sets X position. */
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    /** Gets Y position. */
-    public int getY() {
-        return y;
-    }
-
-    /** Sets Y position. */
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    /** Checks if collected. */
-    public boolean isCollected() {
-        return collected;
-    }
-
-    /** Sets collected state. */
-    public void setCollected(boolean collected) {
-        this.collected = collected;
+    public Artifact(Artifact other) {
+        super(other.getName());
     }
 
     @Override
+    public Artifact clone() {
+        return new Artifact(this);
+    }
+
+
+    /*
+    @Override
     public String toString() {
         return "Artifact{id=" + id + ", pos=(" + x + "," + y + "), collected=" + collected + "}";
-    }
+    }*/
 }

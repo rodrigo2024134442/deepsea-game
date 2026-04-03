@@ -1,5 +1,6 @@
 package pt.isec.pa.deepsea.model.data.entity.mineral;
 
+import pt.isec.pa.deepsea.model.data.entity.NonlivingEntity;
 /**
  * Represents a mineral resource found on the sea floor.
  * Minerals can be collected and traded for drone upgrades at the workshop.
@@ -7,58 +8,26 @@ package pt.isec.pa.deepsea.model.data.entity.mineral;
  * @author Beja
  * @version v1.0.0 (Stage 1)
  */
-public class Mineral {
-
-    private final int id;
-    private int x;
-    private int y;
-    private boolean collected;
+public class Mineral extends NonlivingEntity {
 
     /** Creates a mineral with id and position. */
-    public Mineral(int id, int x, int y) {
-        this.id = id;
-        this.x = x;
-        this.y = y;
-        this.collected = false;
+    public Mineral(String name) {
+        super(name);
+
     }
 
-    /** Gets mineral id. */
-    public int getId() {
-        return id;
-    }
-
-    /** Gets X position. */
-    public int getX() {
-        return x;
-    }
-
-    /** Sets X position. */
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    /** Gets Y position. */
-    public int getY() {
-        return y;
-    }
-
-    /** Sets Y position. */
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    /** Checks if collected. */
-    public boolean isCollected() {
-        return collected;
-    }
-
-    /** Sets collected state. */
-    public void setCollected(boolean collected) {
-        this.collected = collected;
+    public Mineral(Mineral other) {
+        super(other.getName());
     }
 
     @Override
-    public String toString() {
-        return "Mineral{id=" + id + ", pos=(" + x + "," + y + "), collected=" + collected + "}";
+    public Mineral clone() {
+        return new Mineral(this);
     }
+
+
+   /* @Override
+    public String toString() {
+        return "Mineral{id=" + id + " collected = " + collected}";
+    }*/
 }

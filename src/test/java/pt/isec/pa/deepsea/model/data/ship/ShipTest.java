@@ -60,7 +60,7 @@ class ShipTest {
 
     @Test
     void testAddAndGetArtifacts() {
-        Artifact a = new Artifact(1, 0, 0);
+        Artifact a = new Artifact("teste");
         ship.addArtifact(a);
         assertEquals(1, ship.getCollectedArtifacts().size());
         assertEquals(a, ship.getCollectedArtifacts().get(0));
@@ -68,7 +68,7 @@ class ShipTest {
 
     @Test
     void testAddAndGetMinerals() {
-        Mineral m = new Mineral(1, 0, 0);
+        Mineral m = new Mineral("TESTE");
         ship.addMineral(m);
         assertEquals(1, ship.getCollectedMinerals().size());
         assertEquals(m, ship.getCollectedMinerals().get(0));
