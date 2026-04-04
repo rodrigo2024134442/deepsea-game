@@ -1,7 +1,6 @@
 package pt.isec.pa.deepsea.model.data.entity.artifact;
 
 import pt.isec.pa.deepsea.model.data.entity.NonlivingEntity;
-import pt.isec.pa.deepsea.model.data.entity.mineral.Mineral;
 
 
 /**
