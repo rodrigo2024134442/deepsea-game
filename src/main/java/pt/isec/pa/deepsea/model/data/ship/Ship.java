@@ -5,8 +5,7 @@ import pt.isec.pa.deepsea.model.data.drone.Drone;
 import pt.isec.pa.deepsea.model.data.entity.mineral.Mineral;
 import pt.isec.pa.deepsea.model.data.entity.artifact.Artifact;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Represents the ship in the Deep Sea Mining game.
@@ -20,7 +19,7 @@ public class Ship {
     private int currentFuel;
     private int posX;
     private int posY;
-    private final List<Drone> drones;
+    private final Set<Drone> drones;
     private final List<Artifact> collectedArtifacts;
     private final List<Mineral> collectedMinerals;
 
@@ -29,7 +28,7 @@ public class Ship {
         this.currentFuel = GameConfig.SHIP_MAX_FUEL;
         this.posX = 0;
         this.posY = 0;
-        this.drones = new ArrayList<>();
+        this.drones = new HashSet<>();
         this.collectedArtifacts = new ArrayList<>();
         this.collectedMinerals = new ArrayList<>();
 
@@ -66,17 +65,6 @@ public class Ship {
         return currentFuel <= 0;
     }
 
-    /** Checks if all drones are destroyed. */
-    public boolean allDronesLost() {
-        return drones.stream().allMatch(Drone::isDestroyed);
-    }
-
-    /** Gets a drone by index (null if invalid). */
-    public Drone getDrone(int index) {
-        if (index < 0 || index >= drones.size()) return null;
-        return drones.get(index);
-    }
-
     /** Gets current fuel. */
     public int getCurrentFuel() {
         return currentFuel;
@@ -98,8 +86,21 @@ public class Ship {
     }
 
     /** Gets all drones. */
-    public List<Drone> getDrones() {
+    public Set<Drone> getDrones() {
         return drones;
+    }
+
+    /** Checks if all drones are destroyed. */
+    public boolean allDronesLost() {
+        return drones.stream().allMatch(Drone::isDestroyed);
+    }
+
+    /** Gets a drone by index (null if invalid). */
+    public Drone getDroneById(int id) {
+        return drones.stream()
+                .filter(d -> d.getId() == id)
+                .findFirst()
+                .orElse(null);
     }
 
     /** Gets collected artifacts. */
@@ -110,6 +111,22 @@ public class Ship {
     /** Gets collected minerals. */
     public List<Mineral> getCollectedMinerals() {
         return collectedMinerals;
+    }
+
+    /** Returns functional drones sorted by fuel (highest first). */
+    public List<Drone> getDronesByFuel() {
+        return drones.stream()
+                .filter(d -> !d.isDestroyed())
+                .sorted(Comparator.comparingInt(Drone::getCurrentFuel).reversed())
+                .toList();
+    }
+
+    /** Returns functional drones sorted by hull integrity (highest first). */
+    public List<Drone> getDronesByIntegrity() {
+        return drones.stream()
+                .filter(d -> !d.isDestroyed())
+                .sorted(Comparator.comparingInt(Drone::getHullIntegrity).reversed())
+                .toList();
     }
 
     @Override

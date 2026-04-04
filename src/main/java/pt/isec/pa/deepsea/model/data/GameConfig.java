@@ -29,6 +29,7 @@ public interface GameConfig {
     int ID_START = 1001;
 
     // Puzzle
+    int PUZZLE_SIZE = 4;
     int PUZZLE_MAX_MOVES = 100;
 
     // Consumos

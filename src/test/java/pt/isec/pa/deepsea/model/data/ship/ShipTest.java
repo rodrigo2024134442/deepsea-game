@@ -76,9 +76,8 @@ class ShipTest {
 
     @Test
     void testGetDrone() {
-        assertNotNull(ship.getDrone(0));
-        assertNotNull(ship.getDrone(2));
-        assertNull(ship.getDrone(-1));
-        assertNull(ship.getDrone(GameConfig.MAX_DRONES));
+        ship.getDrones().forEach(d -> assertNotNull(ship.getDroneById(d.getId())));
+        assertNull(ship.getDroneById(-1));
+        assertNull(ship.getDroneById(999));
     }
 }

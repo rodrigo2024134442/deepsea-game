@@ -1,5 +1,6 @@
 package pt.isec.pa.deepsea.model;
 
+import pt.isec.pa.deepsea.model.data.GameConfig;
 import pt.isec.pa.deepsea.model.data.ship.Ship;
 import pt.isec.pa.deepsea.model.data.surface.SeaSurface;
 
@@ -23,7 +24,7 @@ import pt.isec.pa.deepsea.model.data.surface.SeaSurface;
  * @version v1.0.0 (Stage 1)
  */
 
-public class Game {
+public class Game implements GameConfig {
     private SeaSurface seaSurface;
     private Ship ship;
 
@@ -31,8 +32,8 @@ public class Game {
     private void initialize (){
         /* Initialize sea surface and ship */
         seaSurface = new SeaSurface();
-        //seaSurface.generate(DEFAULT_ARTIFACT_COUNT);
         ship = new Ship();
+        ship.setPosition(DEFAULT_SEASURFACE_COLS / 2, DEFAULT_SEASURFACE_ROWS / 2);
     }
 
     /** Starts the game. */
