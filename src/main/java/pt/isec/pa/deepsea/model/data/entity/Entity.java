@@ -8,7 +8,7 @@ import static pt.isec.pa.deepsea.model.data.GameConfig.ID_START;
  * Each entity has a unique identifier and a name.
  * The identifier is assigned automatically in sequence starting from the configured initial value in GameConfig file.
  *
- * @author João
+ * @author João Carvalho - 2024126292
  * @version v1.0.0 (Stage 1)
  */
 public abstract class Entity {

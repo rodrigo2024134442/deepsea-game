@@ -5,7 +5,7 @@ package pt.isec.pa.deepsea.model.data.entity;
  * This class extends Entity and represents the non-living branch of the entity hierarchy.
  * Non-living entities do not have health and are used for static or collectible game elements.
  *
- * @author João
+ * @author João Carvalho - 2024126292
  * @version v1.0.0 (Stage 1)
  */
 public abstract class NonlivingEntity extends Entity {

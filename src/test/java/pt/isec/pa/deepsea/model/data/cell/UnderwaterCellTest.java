@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * These tests validate the basic behavior of empty cells,
  * revealed state changes, and entity storage.
  *
- * @author João
+ * @author João Carvalho - 2024126292
  * @version v1.0.0 (Stage 1)
  */
 

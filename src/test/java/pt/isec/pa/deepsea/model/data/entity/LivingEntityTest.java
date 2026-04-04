@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Unit tests for the basic behavior inherited from LivingEntity,
  * using the Monster class as a concrete subclass.
  *
- * @author João
+ * @author João Carvalho - 2024126292
  * @version v1.0.0 (Stage 1)
  */
 class LivingEntityTest {

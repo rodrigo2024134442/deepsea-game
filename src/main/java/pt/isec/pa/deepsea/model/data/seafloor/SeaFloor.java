@@ -15,7 +15,7 @@ import static pt.isec.pa.deepsea.model.data.GameConfig.DEFENSE_MODE;
  * minerals, artifacts, or monsters.
  * The sea floor supports both normal mode generation and defense mode generation.
  *
- * @author João
+ * @author João Carvalho - 2024126292
  * @version v1.0.0 (Stage 1)
  */
 public class SeaFloor {

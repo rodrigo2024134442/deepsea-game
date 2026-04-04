@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Some tests are intended for normal mode and others for defense mode.
  * To validate each group, DEFENSE_MODE must be set accordingly in GameConfig.
  *
- * @author João
+ * @author João Carvalho - 2024126292
  * @version v1.0.0 (Stage 1)
  */
 class SeaFloorTest {

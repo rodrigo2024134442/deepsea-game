@@ -6,7 +6,7 @@ import pt.isec.pa.deepsea.model.data.entity.Entity;
  * Represents a single cell of the sea floor grid.
  * Each underwater cell may contain one entity and stores whether it is revealed or not.
  *
- * @author João
+ * @author João Carvalho - 2024126292
  * @version v1.0.0 (Stage 1)
  */
 public class UnderwaterCell {

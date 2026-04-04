@@ -7,7 +7,7 @@ import pt.isec.pa.deepsea.model.data.entity.LivingEntity;
  * A monster is a living entity, meaning it has health and can be alive or dead.
  * Each monster can also produce a predefined sound.
  *
- * @author João
+ * @author João Carvalho - 2024126292
  * @version v1.0.0 (Stage 1)
  */
 public class Monster extends LivingEntity {

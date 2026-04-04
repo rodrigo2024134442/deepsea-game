@@ -5,7 +5,7 @@ package pt.isec.pa.deepsea.model.data.entity;
  * This class extends Entity and represents the living branch of the entity hierarchy.
  * Living entities have health and may be alive or dead depending on their current health value.
  *
- * @author João
+ * @author João Carvalho - 2024126292
  * @version v1.0.0 (Stage 1)
  */
 public abstract class LivingEntity extends Entity {
