@@ -1,8 +1,12 @@
-# Package: [Insert Package Name Here]
+# Package: pt.isec.pa.deepsea
 
-**Student Instructions:**
-Please delete this text and replace it with a brief description of this package.
+This package is the root package of the **Deep Sea Mining** application. It serves as the top-level entry point for the entire project, containing the main application class that launches the game.
 
-In your description, make sure to explain:
-* The main objective and responsibility of this package.
-* The type of classes, interfaces or functionalities that belong inside it.
+Its main responsibilities are:
+* Providing the application entry point through the `DeepSeaApp` class, which contains the `main` method responsible for starting the game.
+* Acting as the root namespace that organises all sub-packages, including the model, UI, and resources.
+
+The classes that belong in this package are:
+* `DeepSeaApp` — the main class that initialises and launches the application
+
+All game logic, data structures and interface components are delegated to the appropriate sub-packages (`model`, `model.data`, `ui`, etc.).
