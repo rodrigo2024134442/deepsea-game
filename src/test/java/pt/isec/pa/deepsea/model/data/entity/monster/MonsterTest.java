@@ -1,6 +1,7 @@
 package pt.isec.pa.deepsea.model.data.entity.monster;
 
 import org.junit.jupiter.api.Test;
+import pt.isec.pa.deepsea.model.data.entity.Monster;
 
 import static org.junit.jupiter.api.Assertions.*;
 

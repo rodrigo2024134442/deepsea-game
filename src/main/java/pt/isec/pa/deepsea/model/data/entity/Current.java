@@ -1,6 +1,4 @@
-package pt.isec.pa.deepsea.model.data.entity.current;
-
-import pt.isec.pa.deepsea.model.data.entity.NonlivingEntity;
+package pt.isec.pa.deepsea.model.data.entity;
 
 /**
  * Represents a maritime current obstacle found in the trench during

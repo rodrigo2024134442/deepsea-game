@@ -3,24 +3,25 @@ package pt.isec.pa.deepsea.model.data.surface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pt.isec.pa.deepsea.model.data.GameConfig;
+import pt.isec.pa.deepsea.model.data.ship.Ship;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class SeaSurfaceTest {
 
     private SeaSurface surface;
-
+    private Ship ship;
     @BeforeEach
     void setUp() {
-        surface = new SeaSurface();
+        ship = new Ship();
+        surface = new SeaSurface(GameConfig.DEFAULT_SEASURFACE_ROWS,GameConfig.DEFAULT_SEASURFACE_COLS,ship);
     }
 
     @Test
     void testDimensions() {
         assertEquals(GameConfig.DEFAULT_SEASURFACE_ROWS, surface.getRows());
         assertEquals(GameConfig.DEFAULT_SEASURFACE_COLS, surface.getCols());
-
-        SeaSurface custom = new SeaSurface(5, 10);
+        SeaSurface custom = new SeaSurface(5, 10,ship);
         assertEquals(5, custom.getRows());
         assertEquals(10, custom.getCols());
     }

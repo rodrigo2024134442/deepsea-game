@@ -1,6 +1,4 @@
-package pt.isec.pa.deepsea.model.data.entity.artifact;
-
-import pt.isec.pa.deepsea.model.data.entity.NonlivingEntity;
+package pt.isec.pa.deepsea.model.data.entity;
 
 
 /**

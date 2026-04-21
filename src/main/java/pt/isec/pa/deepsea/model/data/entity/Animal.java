@@ -1,6 +1,4 @@
-package pt.isec.pa.deepsea.model.data.entity.animal;
-
-import pt.isec.pa.deepsea.model.data.entity.LivingEntity;
+package pt.isec.pa.deepsea.model.data.entity;
 
 /**
  * Represents a marine animal obstacle found in the trench during

@@ -26,7 +26,6 @@ public interface GameConfig {
     int MAX_MONSTERS = 3;
     int MAX_ARTIFACTS = (int) (DEFAULT_SEASURFACE_ROWS * DEFAULT_SEASURFACE_COLS * 0.3);
     int MAX_CELL_ARTIFACTS = 4;
-    int ID_START = 1001;
 
     // Puzzle
     int PUZZLE_SIZE = 4;

@@ -1,8 +1,6 @@
 package pt.isec.pa.deepsea.model.data.entity;
 import org.junit.jupiter.api.*;
-import pt.isec.pa.deepsea.model.data.entity.artifact.Artifact;
-import pt.isec.pa.deepsea.model.data.entity.mineral.Mineral;
-import pt.isec.pa.deepsea.model.data.entity.monster.Monster;
+
 import java.lang.reflect.Field;
 import static org.junit.jupiter.api.Assertions.*;
 

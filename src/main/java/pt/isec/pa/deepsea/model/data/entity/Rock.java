@@ -1,6 +1,4 @@
-package pt.isec.pa.deepsea.model.data.entity.rock;
-
-import pt.isec.pa.deepsea.model.data.entity.NonlivingEntity;
+package pt.isec.pa.deepsea.model.data.entity;
 
 /**
  * Represents a rock formation on the lateral margins of a trench.

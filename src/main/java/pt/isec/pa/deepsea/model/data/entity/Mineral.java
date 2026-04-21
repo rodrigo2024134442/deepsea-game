@@ -1,6 +1,5 @@
-package pt.isec.pa.deepsea.model.data.entity.mineral;
+package pt.isec.pa.deepsea.model.data.entity;
 
-import pt.isec.pa.deepsea.model.data.entity.NonlivingEntity;
 /**
  * Represents a mineral resource found on the sea floor.
  * Minerals can be collected and traded for drone upgrades at the workshop.

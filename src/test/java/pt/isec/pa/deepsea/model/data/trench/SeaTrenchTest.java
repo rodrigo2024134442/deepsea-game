@@ -1,9 +1,8 @@
 package pt.isec.pa.deepsea.model.data.trench;
 
 import org.junit.jupiter.api.Test;
-import pt.isec.pa.deepsea.model.data.GameConfig;
 import pt.isec.pa.deepsea.model.data.cell.UnderwaterCell;
-import pt.isec.pa.deepsea.model.data.entity.rock.Rock;
+import pt.isec.pa.deepsea.model.data.entity.Rock;
 
 import java.util.Random;
 

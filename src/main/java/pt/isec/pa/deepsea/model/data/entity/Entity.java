@@ -1,7 +1,5 @@
 package pt.isec.pa.deepsea.model.data.entity;
 
-import static pt.isec.pa.deepsea.model.data.GameConfig.ID_START;
-
 /**
  * Abstract base class for all game entities.
  * This class has two main derived classes: LivingEntity and NonlivingEntity that extend this class.
@@ -12,7 +10,7 @@ import static pt.isec.pa.deepsea.model.data.GameConfig.ID_START;
  * @version v1.0.0 (Stage 1)
  */
 public abstract class Entity {
-    private static int nextId = ID_START;
+    private static int nextId = 1001;
     private final int id;
     private final String name;
 

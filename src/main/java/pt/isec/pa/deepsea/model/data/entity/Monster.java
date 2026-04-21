@@ -1,6 +1,4 @@
-package pt.isec.pa.deepsea.model.data.entity.monster;
-
-import pt.isec.pa.deepsea.model.data.entity.LivingEntity;
+package pt.isec.pa.deepsea.model.data.entity;
 
 /**
  * Represents a monster entity found in the game.

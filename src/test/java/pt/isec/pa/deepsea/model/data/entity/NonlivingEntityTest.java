@@ -1,7 +1,6 @@
 package pt.isec.pa.deepsea.model.data.entity;
 
 import org.junit.jupiter.api.Test;
-import pt.isec.pa.deepsea.model.data.entity.artifact.Artifact;
 
 import static org.junit.jupiter.api.Assertions.*;
 

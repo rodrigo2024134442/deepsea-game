@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import pt.isec.pa.deepsea.model.data.GameConfig;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static pt.isec.pa.deepsea.model.data.GameConfig.*;
+import static pt.isec.pa.deepsea.model.data.GameConfig.DEFAULT_SEAFLOOR_COLS;
 
 class SurfaceCellTest {
 
@@ -13,8 +15,8 @@ class SurfaceCellTest {
     @BeforeEach
     void setUp() {
         cell = new SurfaceCell(
-                GameConfig.DEFAULT_SEATRENCH_ROWS,
-                GameConfig.DEFAULT_SEATRENCH_COLS
+                DEFAULT_SEATRENCH_ROWS,
+                DEFAULT_SEATRENCH_COLS,0,DEFAULT_SEAFLOOR_ROWS,DEFAULT_SEAFLOOR_COLS
         );
     }
 
