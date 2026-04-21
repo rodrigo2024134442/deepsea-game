@@ -112,7 +112,7 @@ public class SeaTrench {
     public void resetObstacles() {
         for (int r = 0; r < rows; r++)
             for (int c = 0; c < cols; c++)
-                if (grid[r][c].getEntity() instanceof LivingEntity ||
+                if (grid[r][c].getEntity() instanceof Entity ||
                         grid[r][c].getEntity() instanceof Current)
                     grid[r][c].setEntity(null);
         obstaclesGenerated = false;

@@ -1,6 +1,7 @@
 package pt.isec.pa.deepsea.model;
 
 import pt.isec.pa.deepsea.model.data.GameConfig;
+import pt.isec.pa.deepsea.model.data.Position;
 import pt.isec.pa.deepsea.model.data.drone.Drone;
 import pt.isec.pa.deepsea.model.data.entity.Artifact;
 import pt.isec.pa.deepsea.model.data.entity.Mineral;
@@ -120,4 +121,41 @@ public class Game implements GameConfig {
         return ship.getCollectedMinerals();
     }
 
+    public boolean moveShip(String command) {
+        if (ship == null || seaSurface == null)
+            return false;
+
+        if (ship.isOutOfFuel())
+            return false;
+
+        Position current = ship.getPosition();
+        int newRow = current.getRow();
+        int newCol = current.getCol();
+
+        switch (command) {
+            case "w" -> newRow--; // up
+            case "s" -> newRow++; // down
+            case "a" -> newCol--; // left
+            case "d" -> newCol++; // right
+            default -> {
+                return false;
+            }
+        }
+        if (!seaSurface.isValidPosition(newRow, newCol))
+            return false;
+
+        ship.setPosition(newRow, newCol);
+        ship.consumeFuel(1);
+        seaSurface.markVisited(ship.getPosition());
+
+        return true;
+    }
+
+    public boolean moveDrone(String command) {
+        ship.getDronesByFuel();
+
+        Drone drone = new Drone();
+        //drone.move(String command);
+        return true;
+    }
 }

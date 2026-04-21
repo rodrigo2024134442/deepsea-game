@@ -10,7 +10,7 @@ package pt.isec.pa.deepsea.model.data.entity;
  * @author Leonardo Matos Ferreira - 2024113113
  * @version v1.0.0 (Stage 1)
  */
-public class Rock extends NonlivingEntity {
+public class Rock extends Entity {
 
     /**
      * Creates a rock with the default name.

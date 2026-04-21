@@ -7,7 +7,7 @@ package pt.isec.pa.deepsea.model.data.entity;
  * @author Beja
  * @version v1.0.0 (Stage 1)
  */
-public class Mineral extends NonlivingEntity {
+public class Mineral extends Entity {
 
     /** Creates a mineral with id and position. */
     public Mineral(String name) {

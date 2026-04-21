@@ -11,7 +11,7 @@ package pt.isec.pa.deepsea.model.data.entity;
  * @author Leonardo Matos Ferreira - 2024113113
  * @version v1.0.0 (Stage 1)
  */
-public class Current extends NonlivingEntity {
+public class Current extends Entity {
 
     /**
      * Creates a current with the given name.

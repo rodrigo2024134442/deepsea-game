@@ -11,16 +11,15 @@ package pt.isec.pa.deepsea.model.data.entity;
  * @author Leonardo Matos Ferreira - 2024113113
  * @version v1.0.0 (Stage 1)
  */
-public class Animal extends LivingEntity {
+public class Animal extends Entity {
 
     /**
      * Creates an animal with a given name and health value.
      *
      * @param name   name of the animal
-     * @param health initial health of the animal
      */
     public Animal(String name, int health) {
-        super(name, health);
+        super(name);
     }
 
     /**
@@ -29,7 +28,7 @@ public class Animal extends LivingEntity {
      * @param other animal to copy
      */
     public Animal(Animal other) {
-        super(other.getName(), other.getHealth());
+        super(other.getName());
     }
 
     /**

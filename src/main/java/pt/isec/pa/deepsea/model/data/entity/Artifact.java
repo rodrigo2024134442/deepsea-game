@@ -8,7 +8,7 @@ package pt.isec.pa.deepsea.model.data.entity;
  * @author Beja
  * @version v1.0.0 (Stage 1)
  */
-public class Artifact extends NonlivingEntity {
+public class Artifact extends Entity {
 
     /** Creates an artifact with id and position. */
     public Artifact(String name) {

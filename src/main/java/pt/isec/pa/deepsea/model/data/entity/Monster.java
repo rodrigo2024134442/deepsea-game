@@ -8,7 +8,7 @@ package pt.isec.pa.deepsea.model.data.entity;
  * @author João Carvalho - 2024126292
  * @version v1.0.0 (Stage 1)
  */
-public class Monster extends LivingEntity {
+public class Monster extends Entity {
     private final String speak= "Roar!!! Coff...Coff...";
 
     /**
@@ -18,7 +18,7 @@ public class Monster extends LivingEntity {
      * @param health initial health of the monster
      */
     public Monster(String name, int health) {
-        super(name, health);
+        super(name);
     }
 
     /**
@@ -27,7 +27,7 @@ public class Monster extends LivingEntity {
      * @param other monster to copy
      */
     public Monster(Monster other) {
-        super(other.getName(), other.getHealth());
+        super(other.getName());
     }
 
     /**
