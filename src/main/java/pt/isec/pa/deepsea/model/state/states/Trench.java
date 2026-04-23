@@ -29,4 +29,18 @@ public class Trench extends GameStateAdapter {
         return true;
     }
 
+    @Override
+    public boolean ascend (int droneId) {
+        changeState(GameState.SURFACE.createState(context,game));
+        return true;
+    }
+
+    @Override
+    public boolean descend(int droneId){
+        changeState(GameState.BOTTOM.createState(context,game));
+        return true;
+    }
+
+
+
 }

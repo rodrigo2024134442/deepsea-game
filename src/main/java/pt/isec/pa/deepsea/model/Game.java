@@ -158,4 +158,8 @@ public class Game implements GameConfig {
         //drone.move(String command);
         return true;
     }
+
+    public Position getShipPosition() {
+        return ship.getPosition();
+    }
 }

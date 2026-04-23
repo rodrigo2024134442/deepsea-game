@@ -218,4 +218,5 @@ public class Drone implements GameConfig {
                 ", state=" + state +
                 ", pos=" + position + "]";
     }
+
 }

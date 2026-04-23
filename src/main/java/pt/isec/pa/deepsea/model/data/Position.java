@@ -30,6 +30,10 @@ public class Position {
         this.col += dCol;
     }
 
+    public Position clone(){
+        return new Position (this.row,this.col);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
