@@ -37,4 +37,6 @@ public interface GameConfig {
 
     // --- Modo Defesa ---
     boolean DEFENSE_MODE = false;
+
+    String LOG_FILE_NAME = "deepsea_log.txt";
 }
