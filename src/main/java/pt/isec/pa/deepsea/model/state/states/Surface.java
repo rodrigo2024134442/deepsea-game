@@ -21,6 +21,17 @@ public class Surface extends GameStateAdapter {
         return game.moveShip(command);
     }
 
+    @Override
+    public boolean enterShop() {
+        changeState(GameState.SHOP.createState(context,game));
+        return true;
+    }
 
+    @Override
+    public boolean descend(int droneId){
+        //game.getGrid(game.getShipPosition());
+
+        return false;
+    }
 
 }

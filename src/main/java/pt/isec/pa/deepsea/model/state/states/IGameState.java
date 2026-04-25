@@ -6,14 +6,14 @@ public interface IGameState {
     GameState getState();
 
     boolean move(String command);
-    boolean ascend();
-    boolean descend();
+    boolean ascend(int droneId);
+    boolean descend(int droneId);
     boolean foundObstacle();
 
     boolean enterShop();
     boolean leaveShop();
-    boolean repair();
-    boolean refuel();
+    boolean repair(int droneId);
+    boolean refuel(int droneId);
 
     boolean mining();
     boolean retrieveArtifact();

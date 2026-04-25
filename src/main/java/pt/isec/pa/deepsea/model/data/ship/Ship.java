@@ -75,7 +75,7 @@ public class Ship {
     public int getMaxFuel() { return GameConfig.SHIP_MAX_FUEL; }
 
     /** @return current position (immutable) */
-    public Position getPosition() { return position; }
+    public Position getPosition() { return position.clone(); }
 
     /**
      * Returns an unmodifiable view of the drone set.

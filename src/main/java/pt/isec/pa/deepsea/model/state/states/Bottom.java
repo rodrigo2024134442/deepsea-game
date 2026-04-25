@@ -15,4 +15,31 @@ public class Bottom extends GameStateAdapter {
     public GameState getState(){
         return GameState.BOTTOM;
     }
+
+    @Override
+    public boolean ascend(int droneId){
+        changeState(GameState.TRENCH.createState(context,game));
+        return true;
+    }
+
+    @Override
+    public boolean retrieveArtifact(){
+
+        /*
+        if(game.retrieveArtifact()){
+            changeState(GameState.MINIGAME.createState(context,game));
+            return true;
+        }
+        */
+        return false;
+    }
+
+    @Override
+    public boolean foundObstacle(){
+
+        return true;
+    }
+
+
+
 }

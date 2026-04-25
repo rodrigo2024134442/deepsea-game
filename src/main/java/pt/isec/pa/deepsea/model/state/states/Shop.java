@@ -14,4 +14,23 @@ public class Shop extends GameStateAdapter {
     public GameState getState(){
         return GameState.SHOP;
     }
+
+    @Override
+    public boolean leaveShop() {
+        changeState(GameState.SURFACE.createState(context,game));
+        return true;
+    }
+
+    @Override
+    public boolean repair(int droneId){
+
+        return true;
+    }
+
+    @Override
+    public boolean refuel(int droneId){
+
+        return true;
+    }
+
 }
