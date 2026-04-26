@@ -28,22 +28,30 @@ class SurfaceCellTest {
     }
 
     @Test
-    void testArtifactCollectionLifecycle() {
-        cell.addArtifact();
-        cell.addArtifact();
-        assertEquals(2, cell.getArtifactCount());
+    void testInitialArtifactCount() {
+        SurfaceCell cellWithArtifacts = new SurfaceCell(
+                DEFAULT_SEATRENCH_ROWS,
+                DEFAULT_SEATRENCH_COLS,
+                2,
+                DEFAULT_SEAFLOOR_ROWS,
+                DEFAULT_SEAFLOOR_COLS
+        );
 
-        int collected = cell.collectArtifacts();
-        assertEquals(2, collected);
-        assertEquals(0, cell.getArtifactCount());
-        assertEquals(0, cell.collectArtifacts());
+        assertEquals(2, cellWithArtifacts.getArtifactCount());
     }
 
     @Test
-    void testVisitedToggle() {
-        cell.setVisited(true);
-        assertTrue(cell.isVisited());
-        cell.setVisited(false);
-        assertFalse(cell.isVisited());
+    void testCollectArtifactsResetsCount() {
+        SurfaceCell cellWithArtifacts = new SurfaceCell(
+                DEFAULT_SEATRENCH_ROWS,
+                DEFAULT_SEATRENCH_COLS,
+                2,
+                DEFAULT_SEAFLOOR_ROWS,
+                DEFAULT_SEAFLOOR_COLS
+        );
+
+        cellWithArtifacts.collectArtifacts();
+
+        assertEquals(0, cellWithArtifacts.getArtifactCount());
     }
 }

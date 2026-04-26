@@ -1,27 +1,33 @@
 package pt.isec.pa.deepsea.model.state;
 
 import pt.isec.pa.deepsea.model.Game;
+import pt.isec.pa.deepsea.model.data.GameConfig;
 import pt.isec.pa.deepsea.model.state.states.IGameState;
 
+import java.io.*;
+
 /**
- * Represents the context of the game finite state machine.
+ * Represents the context of the game Finite State Machine.
  *
- * <p>This class stores the current game state and redirects all actions
- * to the active state. It also owns the main {@link Game} model instance
- * used by the states to execute game logic.</p>
+ * <p>This class stores the current state of the FSM and redirects all game
+ * actions to that active state. It also owns the main {@link Game} model
+ * instance used by the states to execute game logic.</p>
  *
- * <p>The context starts the game in the {@link GameState#SURFACE} state.</p>
+ * <p>The class also supports binary persistence, allowing the current game
+ * context to be saved and later restored.</p>
  *
  * @author João Carvalho - 2024126292
  * @version v1.0.0 (Stage 2)
  */
-public class GameContext {
+public class GameContext implements Serializable, GameConfig {
+    private static final long serialVersionUID = 1L;
+
     private IGameState state;
     private Game game;
 
     /**
      * Creates a new game context, initializes the game model,
-     * and sets the initial FSM state to SURFACE.
+     * and starts the FSM in the surface state.
      */
     public GameContext() {
         this.game = new Game();
@@ -41,8 +47,8 @@ public class GameContext {
     /**
      * Redirects a movement command to the current state.
      *
-     * @param command movement command, usually "w", "a", "s" or "d"
-     * @return true if the movement was executed, false otherwise
+     * @param command movement command
+     * @return true if the action was executed, false otherwise
      */
     public boolean move(String command) {
         return state.move(command);
@@ -79,7 +85,7 @@ public class GameContext {
     /**
      * Redirects the enter shop action to the current state.
      *
-     * @return true if the state changed to shop, false otherwise
+     * @return true if the FSM entered the shop state, false otherwise
      */
     public boolean enterShop() {
         return state.enterShop();
@@ -88,14 +94,14 @@ public class GameContext {
     /**
      * Redirects the leave shop action to the current state.
      *
-     * @return true if the state changed to surface, false otherwise
+     * @return true if the FSM left the shop state, false otherwise
      */
     public boolean leaveShop() {
         return state.leaveShop();
     }
 
     /**
-     * Redirects a drone repair request to the current state.
+     * Redirects a drone repair action to the current state.
      *
      * @param droneId identifier of the drone to repair
      * @return true if the drone was repaired, false otherwise
@@ -105,7 +111,7 @@ public class GameContext {
     }
 
     /**
-     * Redirects a drone refuel request to the current state.
+     * Redirects a drone refuel action to the current state.
      *
      * @param droneId identifier of the drone to refuel
      * @return true if the drone was refueled, false otherwise
@@ -133,10 +139,10 @@ public class GameContext {
     }
 
     /**
-     * Redirects a minigame piece movement to the current state.
+     * Redirects a puzzle piece movement to the current state.
      *
-     * @param row row of the piece to move
-     * @param col column of the piece to move
+     * @param row row of the selected piece
+     * @param col column of the selected piece
      * @return true if the piece was moved, false otherwise
      */
     public boolean movePiece(int row, int col) {
@@ -146,7 +152,7 @@ public class GameContext {
     /**
      * Redirects a minigame win action to the current state.
      *
-     * @return true if the action was handled, false otherwise
+     * @return true if the win action was handled, false otherwise
      */
     public boolean winMini() {
         return state.winMini();
@@ -155,7 +161,7 @@ public class GameContext {
     /**
      * Redirects a minigame loss action to the current state.
      *
-     * @return true if the action was handled, false otherwise
+     * @return true if the loss action was handled, false otherwise
      */
     public boolean loseMini() {
         return state.loseMini();
@@ -164,10 +170,7 @@ public class GameContext {
     /**
      * Changes the current FSM state.
      *
-     * <p>This method has package-private visibility so that only
-     * the state package can trigger state changes.</p>
-     *
-     * @param newState new state object
+     * @param newState new concrete state
      */
     void changeState(IGameState newState) {
         state = newState;
@@ -201,7 +204,8 @@ public class GameContext {
     }
 
     /**
-     * Gets the available command information for the current state.
+     * Gets textual information about the available commands
+     * for the current state.
      *
      * @return command information as text
      */
@@ -216,5 +220,32 @@ public class GameContext {
      */
     public String getMiniGameAsString() {
         return game.getMiniGameAsString();
+    }
+
+    /**
+     * Saves the current game context to a binary file.
+     *
+     * @return true if the game was saved successfully, false otherwise
+     */
+    public boolean saveGame() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(BIN_FILE_NAME))) {
+            oos.writeObject(this);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Loads a game context from a binary file.
+     *
+     * @return loaded game context, or null if loading failed
+     */
+    public static GameContext loadGame() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(BIN_FILE_NAME))) {
+            return (GameContext) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            return null;
+        }
     }
 }

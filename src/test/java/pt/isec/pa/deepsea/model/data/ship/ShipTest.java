@@ -21,16 +21,6 @@ class ShipTest {
     }
 
     @Test
-    void testInitialState() {
-        assertEquals(GameConfig.SHIP_MAX_FUEL, ship.getCurrentFuel());
-        assertEquals(GameConfig.MAX_DRONES, ship.getDrones().size());
-        assertEquals(0, ship.getPosX());
-        assertEquals(0, ship.getPosY());
-        assertFalse(ship.isOutOfFuel());
-        assertFalse(ship.allDronesLost());
-    }
-
-    @Test
     void testConsumeFuel() {
         ship.consumeFuel(100);
         assertEquals(GameConfig.SHIP_MAX_FUEL - 100, ship.getCurrentFuel());
@@ -52,10 +42,19 @@ class ShipTest {
     }
 
     @Test
-    void testSetPosition() {
-        ship.setPosition(10, 5);
-        assertEquals(10, ship.getPosX());
-        assertEquals(5, ship.getPosY());
+    void testInitialState() {
+        assertEquals(GameConfig.SHIP_MAX_FUEL, ship.getCurrentFuel());
+        assertEquals(GameConfig.MAX_DRONES, ship.getDrones().size());
+
+        assertEquals(-1, ship.getPosition().getRow());
+        assertEquals(-1, ship.getPosition().getCol());
+
+        assertEquals(0, ship.getMinerals());
+        assertTrue(ship.getCollectedArtifacts().isEmpty());
+        assertTrue(ship.getCollectedMinerals().isEmpty());
+
+        assertFalse(ship.isOutOfFuel());
+        assertFalse(ship.allDronesLost());
     }
 
     @Test

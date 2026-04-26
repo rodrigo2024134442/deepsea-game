@@ -20,7 +20,7 @@ import pt.isec.pa.deepsea.model.state.GameStateAdapter;
  * @version v1.0.0 (Stage 2)
  */
 public class PuzzleGame extends GameStateAdapter {
-
+    private static final long serialVersionUID = 1L;
     /**
      * Creates a new minigame state.
      *

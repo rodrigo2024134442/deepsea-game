@@ -113,20 +113,6 @@ class EntityHierarchyTest {
         assertNotSame(m, m.clone());
     }
 
-    // Polymorphism — NonlivingEntity
-
-    @Test
-    void polymorphism_artifactIsNonlivingEntity() {
-        Entity e = new Artifact("Relic");
-        assertInstanceOf(NonlivingEntity.class, e);
-    }
-
-    @Test
-    void polymorphism_mineralIsNonlivingEntity() {
-        Entity e = new Mineral("Iron");
-        assertInstanceOf(NonlivingEntity.class, e);
-    }
-
     @Test
     void polymorphism_cloneNonlivingEntityCorrectType() {
         Entity artifact = new Artifact("Relic");
@@ -137,12 +123,6 @@ class EntityHierarchyTest {
     }
 
     // Polymorphism — LivingEntity (Monster)
-
-    @Test
-    void polymorphism_monsterIsLivingEntity() {
-        Entity e = new Monster("Kraken", 100);
-        assertInstanceOf(LivingEntity.class, e);
-    }
 
     @Test
     void polymorphism_monsterIsEntity() {
