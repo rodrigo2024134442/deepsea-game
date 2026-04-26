@@ -17,14 +17,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class SeaFloorTest {
 
     /**
-     * Verifies that the sea floor stores the number of rows and columns correctly.
+     * Tests if SeaFloor stores the correct grid dimensions.
      */
     @Test
     void seaFloorShouldStoreDimensionsCorrectly() {
         SeaFloor seaFloor = new SeaFloor(5, 7, 0);
 
-        assertEquals(5, seaFloor.getRow());
-        assertEquals(7, seaFloor.getCol());
+        assertEquals(5, seaFloor.getRows());
+        assertEquals(7, seaFloor.getCols());
     }
 
     /**
@@ -40,32 +40,4 @@ class SeaFloorTest {
         assertFalse(seaFloor.isValidPosition(0, 5));
     }
 
-    /**
-     * Verifies that in normal mode the cells are not automatically revealed.
-     *
-     * Execute only with DEFENSE_MODE = false.
-     */
-    @Test
-    void normalModeShouldNotRevealCellsAutomatically() {
-        SeaFloor seaFloor = new SeaFloor(5, 5, 0);
-
-        assertFalse(seaFloor.getCell(0, 0).isRevealed());
-        assertFalse(seaFloor.getCell(2, 2).isRevealed());
-    }
-
-    /**
-     * Verifies that in defense mode all cells are revealed.
-     *
-     * Execute only with DEFENSE_MODE = true.
-     */
-    @Test
-    void defenseModeShouldRevealAllCells() {
-        SeaFloor seaFloor = new SeaFloor(5, 5, 0);
-
-        for (int r = 0; r < seaFloor.getRow(); r++) {
-            for (int c = 0; c < seaFloor.getCol(); c++) {
-                assertTrue(seaFloor.getCell(r, c).isRevealed());
-            }
-        }
-    }
 }

@@ -2,7 +2,7 @@ package pt.isec.pa.deepsea.model.data.cell;
 
 import org.junit.jupiter.api.Test;
 import pt.isec.pa.deepsea.model.data.entity.Entity;
-import pt.isec.pa.deepsea.model.data.entity.monster.Monster;
+import pt.isec.pa.deepsea.model.data.entity.Monster;
 
 import static org.junit.jupiter.api.Assertions.*;
 

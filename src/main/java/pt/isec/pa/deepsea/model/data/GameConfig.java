@@ -18,24 +18,30 @@ public interface GameConfig {
 
     // Drone
     int MAX_DRONES = 3;
-    int DRONE_MAX_FUEL = 200;
+    int DRONE_MAX_FUEL = 100;
     int DRONE_MAX_INTEGRITY = 100;
 
     // Obstacles
     int MAX_OBSTACLES = 5;
     int MAX_MONSTERS = 3;
-    int MAX_ARTIFACTS = (int) (DEFAULT_SEASURFACE_ROWS * DEFAULT_SEASURFACE_COLS * 0.3);
+    int MAX_ARTIFACTS = (int) (DEFAULT_SEASURFACE_ROWS * DEFAULT_SEASURFACE_COLS * 3);
     int MAX_CELL_ARTIFACTS = 4;
-    int ID_START = 1001;
 
     // Puzzle
     int PUZZLE_SIZE = 4;
-    int PUZZLE_MAX_MOVES = 100;
+    int PUZZLE_MAX_MOVES = 2;
+    int PUZZLE_SHUFFLE_MOVES = 1;
 
     // Consumos
     int FUEL_COST_SHIP_MOVE = 5;
     int FUEL_COST_DRONE_MOVE = 2;
 
+    // Resourses
+    int MAX_MINERAL_VALUE = 20;
+
     // --- Modo Defesa ---
     boolean DEFENSE_MODE = false;
+
+    String LOG_FILE_NAME = "deepsea_log.txt";
+    String BIN_FILE_NAME = "deepsea_file.dat";
 }

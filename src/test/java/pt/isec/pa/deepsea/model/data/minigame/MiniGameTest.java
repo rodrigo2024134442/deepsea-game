@@ -15,11 +15,17 @@ class MiniGameTest {
         miniGame = new MiniGame();
     }
 
+    /**
+     * Tests the initial state of a new MiniGame.
+     *
+     * <p>The board is shuffled in the constructor, so it should not be assumed
+     * to start solved.</p>
+     */
     @Test
     void testInitialState() {
         assertEquals(0, miniGame.getMoveCount());
         assertFalse(miniGame.isOutOfMoves());
-        assertTrue(miniGame.isSolved()); // board começa ordenado, logo está resolvido
+        assertNotNull(miniGame.getBoard());
     }
 
     @Test

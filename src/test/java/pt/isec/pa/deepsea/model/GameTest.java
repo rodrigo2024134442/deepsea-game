@@ -16,15 +16,22 @@ class GameTest {
         game.start();
     }
 
+    /**
+     * Tests if the game initializes the ship data correctly.
+     */
     @Test
     void testGameInitializesCorrectly() {
-        assertNotNull(game.getSurfaceGrid());
-        assertNotNull(game.getShip());
+        assertEquals(GameConfig.SHIP_MAX_FUEL, game.getShipFuel());
+        assertEquals(GameConfig.SHIP_MAX_FUEL, game.getShipMaxFuel());
+        assertFalse(game.isShipOutOfFuel());
     }
 
+    /**
+     * Tests if the ship starts approximately at the center of the surface grid.
+     */
     @Test
     void testShipStartsAtCenterOfSurface() {
-        assertEquals(GameConfig.DEFAULT_SEASURFACE_COLS / 2, game.getShip().getPosX());
-        assertEquals(GameConfig.DEFAULT_SEASURFACE_ROWS / 2, game.getShip().getPosY());
+        assertEquals(GameConfig.DEFAULT_SEASURFACE_COLS / 2, game.getShipX());
+        assertEquals(GameConfig.DEFAULT_SEASURFACE_ROWS / 2, game.getShipY());
     }
 }

@@ -1,6 +1,6 @@
 package pt.isec.pa.deepsea.model.data.entity;
 
-import static pt.isec.pa.deepsea.model.data.GameConfig.ID_START;
+import java.io.Serializable;
 
 /**
  * Abstract base class for all game entities.
@@ -11,8 +11,9 @@ import static pt.isec.pa.deepsea.model.data.GameConfig.ID_START;
  * @author João Carvalho - 2024126292
  * @version v1.0.0 (Stage 1)
  */
-public abstract class Entity {
-    private static int nextId = ID_START;
+public abstract class Entity implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private static int nextId = 1001;
     private final int id;
     private final String name;
 

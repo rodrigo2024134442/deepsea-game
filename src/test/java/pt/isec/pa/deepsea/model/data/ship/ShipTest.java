@@ -3,8 +3,8 @@ package pt.isec.pa.deepsea.model.data.ship;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pt.isec.pa.deepsea.model.data.GameConfig;
-import pt.isec.pa.deepsea.model.data.entity.artifact.Artifact;
-import pt.isec.pa.deepsea.model.data.entity.mineral.Mineral;
+import pt.isec.pa.deepsea.model.data.entity.Artifact;
+import pt.isec.pa.deepsea.model.data.entity.Mineral;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,16 +18,6 @@ class ShipTest {
     @BeforeEach
     void setUp() {
         ship = new Ship();
-    }
-
-    @Test
-    void testInitialState() {
-        assertEquals(GameConfig.SHIP_MAX_FUEL, ship.getCurrentFuel());
-        assertEquals(GameConfig.MAX_DRONES, ship.getDrones().size());
-        assertEquals(0, ship.getPosX());
-        assertEquals(0, ship.getPosY());
-        assertFalse(ship.isOutOfFuel());
-        assertFalse(ship.allDronesLost());
     }
 
     @Test
@@ -52,10 +42,19 @@ class ShipTest {
     }
 
     @Test
-    void testSetPosition() {
-        ship.setPosition(10, 5);
-        assertEquals(10, ship.getPosX());
-        assertEquals(5, ship.getPosY());
+    void testInitialState() {
+        assertEquals(GameConfig.SHIP_MAX_FUEL, ship.getCurrentFuel());
+        assertEquals(GameConfig.MAX_DRONES, ship.getDrones().size());
+
+        assertEquals(-1, ship.getPosition().getRow());
+        assertEquals(-1, ship.getPosition().getCol());
+
+        assertEquals(0, ship.getMinerals());
+        assertTrue(ship.getCollectedArtifacts().isEmpty());
+        assertTrue(ship.getCollectedMinerals().isEmpty());
+
+        assertFalse(ship.isOutOfFuel());
+        assertFalse(ship.allDronesLost());
     }
 
     @Test

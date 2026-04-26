@@ -1,11 +1,15 @@
 package pt.isec.pa.deepsea.model.data.drone;
 
 import pt.isec.pa.deepsea.model.data.GameConfig;
-import pt.isec.pa.deepsea.model.data.entity.artifact.Artifact;
-import pt.isec.pa.deepsea.model.data.entity.mineral.Mineral;
+import pt.isec.pa.deepsea.model.data.Position;
+import pt.isec.pa.deepsea.model.data.entity.Artifact;
+import pt.isec.pa.deepsea.model.data.entity.Mineral;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Represents a submarine exploration drone in the Deep Sea Mining game.
@@ -17,18 +21,31 @@ import java.util.List;
  * <p>Drones are uniquely identified by an auto-incremented integer ID,
  * which allows them to be correctly managed in a {@link java.util.Set}.</p>
  *
+ * <p>Two {@link Comparator} constants are provided for sorting drones:
+ * {@link #BY_FUEL} and {@link #BY_INTEGRITY}.</p>
+ *
  * @author Leonardo Matos Ferreira - 2024113113
- * @version v1.0.0 (Stage 1)
+ * @version v1.1.0
  */
-public class Drone implements GameConfig {
+public class Drone implements GameConfig, Serializable {
+    private static final long serialVersionUID = 1L;
     private final int id;
     private static int nextId = 1;
+
+    // COMPARATORS
+    /** Sorts drones by current fuel, highest first. */
+    public static final Comparator<Drone> BY_FUEL =
+            Comparator.comparingInt(Drone::getCurrentFuel).reversed();
+
+    /** Sorts drones by hull integrity, highest first. */
+    public static final Comparator<Drone> BY_INTEGRITY =
+            Comparator.comparingInt(Drone::getHullIntegrity).reversed();
 
     // FUEL MANAGEMENT
     private int currentFuel;
     private final int maxFuel = DRONE_MAX_FUEL;
 
-    // HULL INTEGRITY (casco)
+    // HULL INTEGRITY
     private int hullIntegrity;
     private final int maxHullIntegrity = DRONE_MAX_INTEGRITY;
 
@@ -36,16 +53,16 @@ public class Drone implements GameConfig {
     private static final int[] PRIMES = {1, 2, 3, 5, 7, 11, 13, 17, 19, 23};
     private int primeIndex;
 
-    // GRID POSITION
-    private int posX;
-    private int posY;
+    // POSITION
+    private Position position;
 
-    // WHERE IS THE DRONE
+    // STATE
     private DroneState state;
 
-    // RESOURCES COLLECTION
+    // RESOURCES
     private List<Artifact> collectedArtifacts;
     private List<Mineral> collectedMinerals;
+    private int minerals;
 
     /**
      * Creates a new drone with full fuel, full hull integrity,
@@ -53,55 +70,41 @@ public class Drone implements GameConfig {
      */
     public Drone() {
         this.id = nextId++;
-
         this.currentFuel = maxFuel;
         this.hullIntegrity = maxHullIntegrity;
         this.primeIndex = 0;
-
         this.state = DroneState.ON_SHIP;
-        this.posX = -1;
-        this.posY = -1;
-
+        this.position = null; // no position while on ship
         this.collectedArtifacts = new ArrayList<>();
         this.collectedMinerals = new ArrayList<>();
+        this.minerals = 0;// Verificar se é necessário uma lista ou se podemos usar como quantidade para usar na reparação de drone
     }
 
-    /**
-     * Consumes the given amount of fuel. Ignores values <= 0.
-     * Fuel cannot go below zero.
-     *
-     * @param amount amount of fuel to consume
-     */
+    /** Consumes fuel. Ignores values <= 0. Fuel cannot go below zero. */
     public void consumeFuel(int amount) {
         if (amount <= 0) return;
-        currentFuel -= amount;
-        if (currentFuel < 0) currentFuel = 0;
+        currentFuel = Math.max(0, currentFuel - amount);
     }
 
-    /**
-     * Refuels the drone by the given amount, up to the maximum capacity.
-     * Ignores values <= 0.
-     *
-     * @param amount amount of fuel to add
-     */
+    /** Refuels up to max capacity. Ignores values <= 0. */
     public void refuel(int amount) {
         if (amount <= 0) return;
         currentFuel = Math.min(currentFuel + amount, maxFuel);
     }
 
-    /**
-     * Checks whether the drone has run out of fuel.
-     *
-     * @return true if current fuel is zero
-     */
+    /** Returns true if fuel is zero. */
     public boolean isOutOfFuel() {
         return currentFuel == 0;
     }
 
+    /** Returns true if fuel is zero. */
+    public boolean hasEnoughFuelForMovement() {
+        return currentFuel >= FUEL_COST_DRONE_MOVE;
+    }
+
     /**
-     * Applies damage to the hull following the prime number sequence.
-     * Each consecutive call uses the next prime (1, 2, 3, 5, 7, ...).
-     * Hull integrity cannot go below zero.
+     * Applies damage following the prime sequence (1, 2, 3, 5, 7, ...).
+     * Hull cannot go below zero.
      */
     public void takeDamage() {
         int damage = PRIMES[Math.min(primeIndex, PRIMES.length - 1)];
@@ -109,142 +112,126 @@ public class Drone implements GameConfig {
         hullIntegrity = Math.max(0, hullIntegrity - damage);
     }
 
-    /**
-     * Resets the prime damage sequence to the beginning.
-     * Should be called at the start of each new expedition to the sea floor.
-     */
+    public void destroy() {
+        hullIntegrity = 0;
+    }
+
+    /** Resets the prime damage sequence. Call at the start of each expedition. */
     public void resetPrimeSequence() {
         primeIndex = 0;
     }
 
-    /**
-     * Fully restores the hull integrity to its maximum value.
-     * Used when the drone is repaired at the ship's workshop.
-     */
+    /** Fully restores hull integrity. */
     public void repair() {
         hullIntegrity = maxHullIntegrity;
     }
 
-    /**
-     * Checks whether the drone has been destroyed.
-     *
-     * @return true if hull integrity has reached zero
-     */
+    /** Returns true if hull integrity reached zero. */
     public boolean isDestroyed() {
         return hullIntegrity == 0;
     }
 
-    /**
-     * Sets the drone's position on the current grid.
-     *
-     * @param x column position
-     * @param y row position
-     */
-    public void setPosition(int x, int y) {
-        this.posX = x;
-        this.posY = y;
+    /** Sets the drone's position. */
+    public void setPosition(Position position) {
+        this.position = position;
     }
 
-    /**
-     * Places the drone at the top center of the trench and sets state to DESCENDING.
-     * Used at the start of a descent expedition.
-     *
-     * @param pitCols number of columns in the trench grid
-     */
-    public void placeForDescent(int pitCols) {
-        setPosition(pitCols / 2, 0);
-        setState(DroneState.DESCENDING);
+    /** Sets the drone's position by row and col. */
+    public void setPosition(int row, int col) {
+        this.position = new Position(row, col);
     }
 
-    /**
-     * Places the drone at the bottom center of the trench and sets state to ASCENDING.
-     * Used at the start of an ascent.
-     *
-     * @param pitCols number of columns in the trench grid
-     * @param pitRows number of rows in the trench grid
-     */
+    /** Reset position too null(discuss together) */
+    public void clearPosition() {
+        this.position = null;
+    }
+
+    /** Gets the drone's current position (null if on ship). */
+    public Position getPosition() {
+        return position;
+    }
+
+    /** Places drone at top center of trench and sets state to DESCENDING. */
+    public void placeOnTrench(int topRow,int pitCols) {
+        setPosition(topRow, pitCols / 2);
+        if(topRow==1)
+            setState(DroneState.DESCENDING);
+        else
+            setState(DroneState.ASCENDING);
+    }
+
+    /** Places drone at bottom center of trench and sets state to ASCENDING. */
     public void placeForAscent(int pitCols, int pitRows) {
-        setPosition(pitCols / 2, pitRows - 1);
+        setPosition(pitRows - 1, pitCols / 2);
         setState(DroneState.ASCENDING);
     }
 
-    /**
-     * Places the drone approximately at the center of the sea floor grid
-     * and sets state to ON_SEABED.
-     *
-     * @param seabedCols number of columns in the sea floor grid
-     * @param seabedRows number of rows in the sea floor grid
-     */
+    /** Places drone at center of sea floor and sets state to ON_SEABED. */
     public void placeOnSeabed(int seabedCols, int seabedRows) {
-        setPosition(seabedCols / 2, seabedRows / 2);
+        setPosition(seabedRows / 2, seabedCols / 2);
         setState(DroneState.ON_SEABED);
     }
 
-    /**
-     * Adds a collected artifact to the drone's cargo.
-     * Ignores null values.
-     *
-     * @param artifact artifact to add
-     */
+    /** Places drone on ship */
+    public void placeOnShip() {
+        setState(DroneState.ON_SHIP);
+    }
+
+
+    /** Adds a collected artifact. Ignores null. */
     public void addArtifact(Artifact artifact) {
         if (artifact != null) collectedArtifacts.add(artifact);
     }
 
-    /**
-     * Adds a collected mineral to the drone's cargo.
-     * Ignores null values.
-     *
-     * @param mineral mineral to add
-     */
+    /** Adds a collected mineral. Ignores null. */
     public void addMineral(Mineral mineral) {
-        if (mineral != null) collectedMinerals.add(mineral);
+        if (mineral != null) {
+            collectedMinerals.add(mineral);
+            Random rand = new Random();
+            this.minerals += rand.nextInt(MAX_MINERAL_VALUE)+1;
+        }
     }
 
     /**
-     * Unloads all resources from the drone and returns the collected artifacts.
-     * Both artifact and mineral lists are cleared after unloading.
-     * Used when returning to the ship or when the drone is lost.
-     *
-     * @return list of artifacts that were carried
+     * Unloads all resources and returns the collected artifacts.
+     * Both lists are cleared after unloading.
      */
-    public List<Artifact> unloadResources() {
-        List<Artifact> artifacts = new ArrayList<>(collectedArtifacts);
+    public void unloadArtifacts() {
         collectedArtifacts.clear();
+    }
+
+    public void unloadMinerals() {
         collectedMinerals.clear();
-        return artifacts;
     }
 
-    /**
-     * Sets the current state of the drone.
-     *
-     * @param state new drone state
-     */
-    public void setState(DroneState state) {
-        this.state = state;
-    }
 
-    /** @return unique identifier of this drone */
+    /** Sets the current state. */
+    public void setState(DroneState state) { this.state = state; }
+
+    /** @return unique identifier */
     public int getId() { return id; }
 
-    /** @return current fuel level */
+    /** @return current fuel */
     public int getCurrentFuel() { return currentFuel; }
 
-    /** @return maximum fuel capacity */
+    public boolean isFuelFull() {
+        return currentFuel >= maxFuel;
+    }
+
+    /** @return max fuel */
     public int getMaxFuel() { return maxFuel; }
 
     /** @return current hull integrity */
     public int getHullIntegrity() { return hullIntegrity; }
 
-    /** @return maximum hull integrity */
+    /** @return max hull integrity */
     public int getMaxHullIntegrity() { return maxHullIntegrity; }
 
-    /** @return current column position (-1 if on ship) */
-    public int getPosX() { return posX; }
+    public boolean needsRepair() {
+        return hullIntegrity < maxHullIntegrity;
+    }
 
-    /** @return current row position (-1 if on ship) */
-    public int getPosY() { return posY; }
-
-    /** @return current drone state */
+    /** @return current state */
     public DroneState getState() { return state; }
 
     /** @return unmodifiable list of collected artifacts */
@@ -256,8 +243,8 @@ public class Drone implements GameConfig {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Drone)) return false;
-        return id == ((Drone) o).id;
+        if (!(o instanceof Drone d)) return false;
+        return id == d.id;
     }
 
     @Override
@@ -267,9 +254,18 @@ public class Drone implements GameConfig {
 
     @Override
     public String toString() {
-        return "Drone[fuel=" + currentFuel + "/" + maxFuel +
+        return "Drone[id=" + id +
+                ", fuel=" + currentFuel + "/" + maxFuel +
                 ", integrity=" + hullIntegrity + "/" + maxHullIntegrity +
                 ", state=" + state +
-                ", pos=(" + posX + "," + posY + ")]";
+                ", pos=" + position + "]";
+    }
+
+    public int getMinerals() {
+        return minerals;
+    }
+
+    public void setMinerals(int mineral){
+        minerals = mineral;
     }
 }
