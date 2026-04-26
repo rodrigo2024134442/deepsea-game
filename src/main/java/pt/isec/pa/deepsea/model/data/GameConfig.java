@@ -6,19 +6,19 @@ public interface GameConfig {
     int DEFAULT_SEASURFACE_COLS = 10;
 
     // SeaTrench Grid
-    int DEFAULT_SEATRENCH_ROWS = 5;
-    int DEFAULT_SEATRENCH_COLS = 10;
+    int DEFAULT_SEATRENCH_ROWS = 12;
+    int DEFAULT_SEATRENCH_COLS = 6;
 
     // SeaFloor Grid
     int DEFAULT_SEAFLOOR_ROWS = 10;
     int DEFAULT_SEAFLOOR_COLS = 10;
 
     // Ship
-    int SHIP_MAX_FUEL = 10;
+    int SHIP_MAX_FUEL = 1000;
 
     // Drone
     int MAX_DRONES = 3;
-    int DRONE_MAX_FUEL = 15;
+    int DRONE_MAX_FUEL = 100;
     int DRONE_MAX_INTEGRITY = 100;
 
     // Obstacles
