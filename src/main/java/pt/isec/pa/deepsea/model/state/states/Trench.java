@@ -55,26 +55,34 @@ public class Trench extends GameStateAdapter {
      */
     @Override
     public boolean move(String command) {
+        System.out.println("Passou aqui1");
         if (!game.moveDroneInTrench(command))
             return false;
-
+        System.out.println("Passou aqui2");
         if (game.isActiveDroneDestroyed()) {
             game.returnDroneToShip();
             changeState(GameState.SURFACE.createState(context, game));
             return true;
         }
-
+        System.out.println("Passou aqui3");
         if (game.hasDroneReachedTop()) {
             game.enterSurface();
             changeState(GameState.SURFACE.createState(context, game));
+            return true;
         }
-
+        System.out.println("Passou aqui4");
         if (game.hasDroneReachedBottom() && !game.getIsLastStateBotom()) {
             game.enterSeaFloor();
             changeState(GameState.BOTTOM.createState(context, game));
             return true;
         }
-
+        System.out.println("Passou aqui5");
+        if (game.activeDroneHasNoFuelInTrench()) {
+            game.handleDroneWithoutFuelInTrench();
+            changeState(GameState.SURFACE.createState(context, game));
+            return true;
+        }
+        System.out.println("Passou aqui6");
         return true;
     }
 }

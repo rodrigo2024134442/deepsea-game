@@ -738,6 +738,30 @@ public class Game implements GameConfig, Serializable {
         activeDrone.unloadArtifacts();
         activeDrone.setMinerals(0);
     }
+
+    public boolean activeDroneHasNoFuelInTrench() {
+        return activeDrone != null
+                && !activeDrone.hasEnoughFuelForMovement();
+    }
+
+    public void handleDroneWithoutFuelInTrench() {
+        if (activeDrone == null || activeSurfaceCell == null)
+            return;
+
+        activeSurfaceCell.getSeaFloor().placeArtifacts(activeDrone.getCollectedArtifacts());
+        activeSurfaceCell.getSeaFloor().placeMinerals(activeDrone.getCollectedMinerals());
+
+        activeDrone.unloadArtifacts();
+        activeDrone.unloadMinerals();
+        activeDrone.setMinerals(0);
+
+        activeDrone.clearPosition();
+        activeDrone.placeOnShip();
+
+        activeDrone = null;
+        activeSurfaceCell = null;
+        lastStateBotom = false;
+    }
 }
 
 

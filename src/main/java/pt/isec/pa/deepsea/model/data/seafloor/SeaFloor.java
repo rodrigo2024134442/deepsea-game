@@ -5,6 +5,7 @@ import pt.isec.pa.deepsea.model.data.cell.UnderwaterCell;
 import pt.isec.pa.deepsea.model.data.entity.*;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Random;
 import static pt.isec.pa.deepsea.model.data.GameConfig.DEFENSE_MODE;
 
@@ -179,4 +180,41 @@ public class SeaFloor implements Serializable {
         grid[pos.getRow()][pos.getCol()].setEntity(null);
         return entity;
     }
+
+    public void placeArtifacts(List<Artifact> listArtifacts) {
+        Random rand = new Random();
+
+        for (Artifact a : listArtifacts) {
+            boolean placed = false;
+
+            while (!placed) {
+                int r = rand.nextInt(rows);
+                int c = rand.nextInt(cols);
+
+                if (isCellEmpty(r, c)) {
+                    grid[r][c].setEntity(a);
+                    placed = true;
+                }
+            }
+        }
+    }
+
+    public void placeMinerals(List<Mineral> listMinerals) {
+        Random rand = new Random();
+
+        for (Mineral m : listMinerals) {
+            boolean placed = false;
+
+            while (!placed) {
+                int r = rand.nextInt(rows);
+                int c = rand.nextInt(cols);
+
+                if (isCellEmpty(r, c)) {
+                    grid[r][c].setEntity(m);
+                    placed = true;
+                }
+            }
+        }
+    }
+
 }

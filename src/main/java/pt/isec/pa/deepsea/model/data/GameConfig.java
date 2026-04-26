@@ -6,7 +6,7 @@ public interface GameConfig {
     int DEFAULT_SEASURFACE_COLS = 10;
 
     // SeaTrench Grid
-    int DEFAULT_SEATRENCH_ROWS = 10;
+    int DEFAULT_SEATRENCH_ROWS = 5;
     int DEFAULT_SEATRENCH_COLS = 10;
 
     // SeaFloor Grid
@@ -14,23 +14,23 @@ public interface GameConfig {
     int DEFAULT_SEAFLOOR_COLS = 10;
 
     // Ship
-    int SHIP_MAX_FUEL = 1000;
+    int SHIP_MAX_FUEL = 10;
 
     // Drone
     int MAX_DRONES = 3;
-    int DRONE_MAX_FUEL = 200;
+    int DRONE_MAX_FUEL = 15;
     int DRONE_MAX_INTEGRITY = 100;
 
     // Obstacles
     int MAX_OBSTACLES = 5;
     int MAX_MONSTERS = 3;
-    int MAX_ARTIFACTS = (int) (DEFAULT_SEASURFACE_ROWS * DEFAULT_SEASURFACE_COLS * 1.5);
+    int MAX_ARTIFACTS = (int) (DEFAULT_SEASURFACE_ROWS * DEFAULT_SEASURFACE_COLS * 3);
     int MAX_CELL_ARTIFACTS = 4;
 
     // Puzzle
     int PUZZLE_SIZE = 4;
-    int PUZZLE_MAX_MOVES = 1;
-    int PUZZLE_SHUFFLE_MOVES = 10;
+    int PUZZLE_MAX_MOVES = 2;
+    int PUZZLE_SHUFFLE_MOVES = 1;
 
     // Consumos
     int FUEL_COST_SHIP_MOVE = 5;

@@ -32,11 +32,8 @@ public class Position implements Serializable {
         this.col += dCol;
     }
 
-    public boolean validatePosition(int gridRow, int gridCol){
-        if(row < 0 || col < 0 || row >= gridRow || col >= gridCol)
-            return true;
-
-        return false;
+    public boolean validatePosition(int gridRows, int gridCols) {
+        return row >= 0 && row < gridRows && col >= 0 && col < gridCols;
     }
 
     public Position clone(){
