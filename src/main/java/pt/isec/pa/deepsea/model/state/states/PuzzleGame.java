@@ -6,6 +6,7 @@ import pt.isec.pa.deepsea.model.state.GameState;
 import pt.isec.pa.deepsea.model.state.GameStateAdapter;
 
 public class PuzzleGame extends GameStateAdapter {
+    private static final long serialVersionUID = 1L;
 
     public PuzzleGame(GameContext context, Game game) {
         super(context,game);

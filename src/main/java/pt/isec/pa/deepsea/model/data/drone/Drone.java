@@ -5,6 +5,7 @@ import pt.isec.pa.deepsea.model.data.Position;
 import pt.isec.pa.deepsea.model.data.entity.Artifact;
 import pt.isec.pa.deepsea.model.data.entity.Mineral;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -26,7 +27,8 @@ import java.util.Random;
  * @author Leonardo Matos Ferreira - 2024113113
  * @version v1.1.0
  */
-public class Drone implements GameConfig {
+public class Drone implements GameConfig, Serializable {
+    private static final long serialVersionUID = 1L;
     private final int id;
     private static int nextId = 1;
 

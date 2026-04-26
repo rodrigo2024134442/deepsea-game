@@ -132,6 +132,23 @@ public class TestUI {
                         System.out.println("Não podes ascender agora.");
                 }
 
+                case "save" -> {
+                    if (context.saveGame())
+                        System.out.println("Jogo guardado.");
+                    else
+                        System.out.println("Erro ao guardar jogo.");
+                }
+
+                case "load" -> {
+                    GameContext loaded = GameContext.loadGame();
+                    if (loaded != null) {
+                        context = loaded;
+                        System.out.println("Jogo carregado.");
+                    } else {
+                        System.out.println("Erro ao carregar jogo.");
+                    }
+                }
+
                 case "0" -> running = false;
 
                 default -> System.out.println("Opção inválida.");

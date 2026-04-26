@@ -3,6 +3,7 @@ package pt.isec.pa.deepsea.model.data.surface;
 import pt.isec.pa.deepsea.model.data.seafloor.SeaFloor;
 import pt.isec.pa.deepsea.model.data.trench.SeaTrench;
 
+import java.io.Serializable;
 import java.util.Random;
 
 /**
@@ -17,8 +18,8 @@ import java.util.Random;
  * @author Beja
  * @version v1.3.0 (Direct SeaFloor init via artifact map)
  */
-public class SurfaceCell {
-
+public class SurfaceCell implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final SeaTrench trench;
     private final SeaFloor seafloor;
     private boolean visited;

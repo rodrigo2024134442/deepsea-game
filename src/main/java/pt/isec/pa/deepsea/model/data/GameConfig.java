@@ -43,4 +43,5 @@ public interface GameConfig {
     boolean DEFENSE_MODE = false;
 
     String LOG_FILE_NAME = "deepsea_log.txt";
+    String BIN_FILE_NAME = "deepsea_file.dat";
 }

@@ -1,5 +1,7 @@
 package pt.isec.pa.deepsea.model.data.entity;
 
+import java.io.Serializable;
+
 /**
  * Abstract base class for all game entities.
  * This class has two main derived classes: LivingEntity and NonlivingEntity that extend this class.
@@ -9,7 +11,8 @@ package pt.isec.pa.deepsea.model.data.entity;
  * @author João Carvalho - 2024126292
  * @version v1.0.0 (Stage 1)
  */
-public abstract class Entity {
+public abstract class Entity implements Serializable {
+    private static final long serialVersionUID = 1L;
     private static int nextId = 1001;
     private final int id;
     private final String name;

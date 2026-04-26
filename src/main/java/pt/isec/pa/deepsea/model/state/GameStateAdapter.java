@@ -3,7 +3,10 @@ package pt.isec.pa.deepsea.model.state;
 import pt.isec.pa.deepsea.model.Game;
 import pt.isec.pa.deepsea.model.state.states.IGameState;
 
-public abstract class GameStateAdapter implements IGameState {
+import java.io.Serializable;
+
+public abstract class GameStateAdapter implements IGameState, Serializable {
+    private static final long serialVersionUID = 1L;
     protected GameContext context;
     protected Game game;
 

@@ -9,6 +9,7 @@ package pt.isec.pa.deepsea.model.data.entity;
  * @version v1.0.0 (Stage 1)
  */
 public class Monster extends Entity {
+    private static final long serialVersionUID = 1L;
     private final String speak= "Roar!!! Coff...Coff...";
 
     /**

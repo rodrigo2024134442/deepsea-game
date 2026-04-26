@@ -11,6 +11,7 @@ package pt.isec.pa.deepsea.model.data.entity;
  * @version v1.0.0 (Stage 1)
  */
 public class Rock extends Entity {
+    private static final long serialVersionUID = 1L;
 
     /**
      * Creates a rock with the default name.

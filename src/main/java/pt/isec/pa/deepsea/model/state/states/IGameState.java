@@ -2,7 +2,9 @@ package pt.isec.pa.deepsea.model.state.states;
 
 import pt.isec.pa.deepsea.model.state.GameState;
 
-public interface IGameState {
+import java.io.Serializable;
+
+public interface IGameState extends Serializable {
     GameState getState();
 
     boolean move(String command);

@@ -1,5 +1,6 @@
 package pt.isec.pa.deepsea.model.data;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -8,7 +9,8 @@ import java.util.Objects;
  *
  * @version v1.0.0
  */
-public class Position {
+public class Position implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int row;
     private int col;
 

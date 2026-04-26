@@ -4,6 +4,7 @@ import pt.isec.pa.deepsea.model.data.Position;
 import pt.isec.pa.deepsea.model.data.cell.UnderwaterCell;
 import pt.isec.pa.deepsea.model.data.entity.*;
 
+import java.io.Serializable;
 import java.util.Random;
 import static pt.isec.pa.deepsea.model.data.GameConfig.DEFENSE_MODE;
 
@@ -14,7 +15,8 @@ import static pt.isec.pa.deepsea.model.data.GameConfig.DEFENSE_MODE;
  * @author João Carvalho - 2024126292
  * @version v1.1.0 (Position refactor)
  */
-public class SeaFloor {
+public class SeaFloor implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final UnderwaterCell[][] grid;
     private final int rows;
     private final int cols;

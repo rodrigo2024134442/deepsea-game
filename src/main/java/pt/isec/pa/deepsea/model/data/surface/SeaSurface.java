@@ -3,6 +3,7 @@ package pt.isec.pa.deepsea.model.data.surface;
 import pt.isec.pa.deepsea.model.data.Position;
 import pt.isec.pa.deepsea.model.data.ship.Ship;
 
+import java.io.Serializable;
 import java.util.Random;
 
 import static pt.isec.pa.deepsea.model.data.GameConfig.*;
@@ -16,7 +17,8 @@ import static pt.isec.pa.deepsea.model.data.GameConfig.*;
  * @author Beja
  * @version v1.3.0 (Artifact map approach)
  */
-public class SeaSurface {
+public class SeaSurface implements Serializable {
+    private static final long serialVersionUID = 1L;
     private Ship ship;
     private final int rows;
     private final int cols;

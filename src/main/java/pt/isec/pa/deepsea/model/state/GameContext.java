@@ -1,9 +1,13 @@
 package pt.isec.pa.deepsea.model.state;
 
 import pt.isec.pa.deepsea.model.Game;
+import pt.isec.pa.deepsea.model.data.GameConfig;
 import pt.isec.pa.deepsea.model.state.states.IGameState;
 
-public class GameContext {
+import java.io.*;
+
+public class GameContext implements Serializable, GameConfig {
+    private static final long serialVersionUID = 1L;
     private IGameState state;
     private Game game;
 
@@ -66,5 +70,22 @@ public class GameContext {
 
     public String getMiniGameAsString() {
         return game.getMiniGameAsString();
+    }
+
+    public boolean saveGame() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(BIN_FILE_NAME))) {
+            oos.writeObject(this);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public static GameContext loadGame() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(BIN_FILE_NAME))) {
+            return (GameContext) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            return null;
+        }
     }
 }

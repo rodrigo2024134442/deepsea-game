@@ -6,6 +6,7 @@ import pt.isec.pa.deepsea.model.data.drone.Drone;
 import pt.isec.pa.deepsea.model.data.entity.Artifact;
 import pt.isec.pa.deepsea.model.data.entity.Mineral;
 
+import java.io.Serializable;
 import java.util.*;
 
 import static pt.isec.pa.deepsea.model.data.GameConfig.FUEL_COST_SHIP_MOVE;
@@ -21,8 +22,8 @@ import static pt.isec.pa.deepsea.model.data.GameConfig.FUEL_COST_SHIP_MOVE;
  * @author Beja N2024134442
  * @version v1.1.0
  */
-public class Ship {
-
+public class Ship implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int currentFuel;
     private Position position;
     private final Set<Drone> drones;

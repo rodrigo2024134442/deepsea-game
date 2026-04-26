@@ -4,6 +4,7 @@ import pt.isec.pa.deepsea.model.data.*;
 import pt.isec.pa.deepsea.model.data.cell.UnderwaterCell;
 import pt.isec.pa.deepsea.model.data.entity.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -15,7 +16,8 @@ import java.util.Random;
  * @author Leonardo Matos Ferreira - 2024113113
  * @version v1.1.0 (Position refactor)
  */
-public class SeaTrench {
+public class SeaTrench implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int rows;
     private int cols;
     private UnderwaterCell[][] grid;

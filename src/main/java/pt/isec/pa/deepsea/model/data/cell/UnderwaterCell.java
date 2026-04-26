@@ -2,6 +2,8 @@ package pt.isec.pa.deepsea.model.data.cell;
 
 import pt.isec.pa.deepsea.model.data.entity.Entity;
 
+import java.io.Serializable;
+
 /**
  * Represents a single cell of the sea floor grid.
  * Each underwater cell may contain one entity and stores whether it is revealed or not.
@@ -9,7 +11,8 @@ import pt.isec.pa.deepsea.model.data.entity.Entity;
  * @author João Carvalho - 2024126292
  * @version v1.0.0 (Stage 1)
  */
-public class UnderwaterCell {
+public class UnderwaterCell implements Serializable {
+    private static final long serialVersionUID = 1L;
     private Entity ocupant;
     public boolean revealed;
 

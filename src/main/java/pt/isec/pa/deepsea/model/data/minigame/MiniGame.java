@@ -2,6 +2,7 @@ package pt.isec.pa.deepsea.model.data.minigame;
 
 import pt.isec.pa.deepsea.model.data.GameConfig;
 
+import java.io.Serializable;
 import java.util.Random;
 
 /**
@@ -12,7 +13,8 @@ import java.util.Random;
  * @author Leonardo Matos Ferreira - 2024113113
  * @version v1.0.0 (Stage 1)
  */
-public class MiniGame implements GameConfig {
+public class MiniGame implements GameConfig, Serializable {
+    private static final long serialVersionUID = 1L;
     private final int[][] board;
     private int emptyRow;
     private int emptyCol;

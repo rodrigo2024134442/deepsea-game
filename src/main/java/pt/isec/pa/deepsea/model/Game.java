@@ -15,6 +15,7 @@ import pt.isec.pa.deepsea.model.data.trench.SeaTrench;
 import pt.isec.pa.deepsea.model.state.GameState;
 
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
@@ -38,7 +39,8 @@ import java.util.Set;
  * @version v1.0.0 (Stage 1)
  */
 
-public class Game implements GameConfig {
+public class Game implements GameConfig, Serializable {
+    private static final long serialVersionUID = 1L;
     private SeaSurface seaSurface;
     private Ship ship;
 
@@ -669,6 +671,8 @@ public class Game implements GameConfig {
                     sb.append("1 - Move (w/a/s/d)\n")
                         .append("2 - Enter shop\n")
                         .append("6 - Descend with drone\n")
+                        .append("save - Guardar jogo\n")
+                        .append("load - Carregar jogo\n")
                         .append("0 - Exit\n");
             case SHOP ->
                     sb.append("3 - Leave shop")
