@@ -22,15 +22,13 @@ public class Shop extends GameStateAdapter {
     }
 
     @Override
-    public boolean repair(int droneId){
-
-        return true;
+    public boolean repair(int droneId) {
+        return game.repair(droneId);
     }
 
     @Override
-    public boolean refuel(int droneId){
-
-        return true;
+    public boolean refuel(int droneId) {
+        return game.refuel(droneId);
     }
 
 }

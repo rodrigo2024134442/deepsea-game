@@ -3,6 +3,8 @@ package pt.isec.pa.deepsea.model.data.surface;
 import pt.isec.pa.deepsea.model.data.seafloor.SeaFloor;
 import pt.isec.pa.deepsea.model.data.trench.SeaTrench;
 
+import java.util.Random;
+
 /**
  * Represents a single cell of the surface ocean grid.
  * Each cell has a {@link SeaTrench} for the descent/ascent phase
@@ -26,6 +28,7 @@ public class SurfaceCell {
     public SurfaceCell(int trenchRows, int trenchCols, int artifactCount, int seafloorRows, int seafloorCols) {
         this.trench = new SeaTrench(trenchRows, trenchCols);
         this.trench.generate();
+        this.trench.generateObstacles(new Random());
         this.visited = false;
         this.artifactCount = artifactCount;
         this.seafloor = new SeaFloor(seafloorRows, seafloorCols, artifactCount);

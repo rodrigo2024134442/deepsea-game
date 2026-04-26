@@ -148,4 +148,33 @@ public class SeaFloor {
     public boolean isCellEmpty(Position pos) {
         return isCellEmpty(pos.getRow(), pos.getCol());
     }
+
+    public boolean revealCell(Position pos) {
+        if (!isValidPosition(pos)) return false;
+        grid[pos.getRow()][pos.getCol()].setRevealed(true);
+        return true;
+    }
+
+    public boolean hasArtifact(Position pos) {
+        if (!isValidPosition(pos)) return false;
+        return grid[pos.getRow()][pos.getCol()].getEntity() instanceof Artifact;
+    }
+
+    public boolean hasMineral(Position pos) {
+        if (!isValidPosition(pos)) return false;
+        return grid[pos.getRow()][pos.getCol()].getEntity() instanceof Mineral;
+    }
+
+    public boolean hasMonster(Position pos) {
+        if (!isValidPosition(pos)) return false;
+        return grid[pos.getRow()][pos.getCol()].getEntity() instanceof Monster;
+    }
+
+    public Entity removeEntity(Position pos) {
+        if (!isValidPosition(pos)) return null;
+
+        Entity entity = grid[pos.getRow()][pos.getCol()].getEntity();
+        grid[pos.getRow()][pos.getCol()].setEntity(null);
+        return entity;
+    }
 }

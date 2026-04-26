@@ -28,10 +28,12 @@ public class Surface extends GameStateAdapter {
     }
 
     @Override
-    public boolean descend(int droneId){
-        //game.getGrid(game.getShipPosition());
+    public boolean descend(int droneId) {
+        if (!game.descend(droneId))
+            return false;
 
-        return false;
+        changeState(GameState.TRENCH.createState(context,game));
+        return true;
     }
 
 }

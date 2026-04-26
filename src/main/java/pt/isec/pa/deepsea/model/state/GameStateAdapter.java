@@ -20,7 +20,7 @@ public abstract class GameStateAdapter implements IGameState {
     public boolean move(String command) {return false;}
 
     @Override
-    public boolean ascend(int droneId) {
+    public boolean ascend() {
         return false;
     }
 
@@ -59,6 +59,9 @@ public abstract class GameStateAdapter implements IGameState {
     public boolean retrieveArtifact() {
         return false;
     }
+
+    @Override
+    public boolean movePiece(int row,int col){return false;}
 
     @Override
     public boolean winMini() {

@@ -12,7 +12,7 @@ public enum GameState {
             case SURFACE ->  new Surface(context,game);
             case TRENCH ->  new Trench(context,game);
             case BOTTOM ->  new Bottom(context,game);
-            case MINIGAME ->  new MiniGame(context,game);
+            case MINIGAME ->  new PuzzleGame(context,game);
             case SHOP -> new Shop(context,game);
         };
     }

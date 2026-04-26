@@ -6,7 +6,7 @@ public interface IGameState {
     GameState getState();
 
     boolean move(String command);
-    boolean ascend(int droneId);
+    boolean ascend();
     boolean descend(int droneId);
     boolean foundObstacle();
 
@@ -18,6 +18,7 @@ public interface IGameState {
     boolean mining();
     boolean retrieveArtifact();
 
+    boolean movePiece(int row, int col);
     boolean winMini();
     boolean loseMini();
 

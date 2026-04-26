@@ -17,29 +17,38 @@ public class Bottom extends GameStateAdapter {
     }
 
     @Override
-    public boolean ascend(int droneId){
+    public boolean move(String command) {
+        if (!game.moveDroneInBottom(command))
+            return false;
+
+        if (game.isActiveDroneDestroyed()) {
+            game.returnDroneToShip();
+            changeState(GameState.SURFACE.createState(context,game));
+            return true;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean ascend(){
+        game.ascend();
         changeState(GameState.TRENCH.createState(context,game));
         return true;
     }
 
     @Override
-    public boolean retrieveArtifact(){
+    public boolean retrieveArtifact() {
 
-        /*
-        if(game.retrieveArtifact()){
-            changeState(GameState.MINIGAME.createState(context,game));
-            return true;
-        }
-        */
-        return false;
-    }
+        if (!game.retrieveArtifact())
+            return false;
 
-    @Override
-    public boolean foundObstacle(){
-
+        changeState(GameState.MINIGAME.createState(context,game));
         return true;
     }
 
-
-
+    @Override
+    public boolean mining() {
+        return game.mining();
+    }
 }
