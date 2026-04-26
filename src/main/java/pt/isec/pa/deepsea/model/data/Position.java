@@ -33,7 +33,7 @@ public class Position implements Serializable {
     }
 
     public boolean validatePosition(int gridRow, int gridCol){
-        if(row<0 || col<0 || gridRow>=row || gridCol>=col)
+        if(row < 0 || col < 0 || row >= gridRow || col >= gridCol)
             return true;
 
         return false;
