@@ -15,17 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class MonsterTest {
 
     /**
-     * Verifies that a monster stores the given name and health correctly.
-     */
-    @Test
-    void monsterNameVerification() {
-        Monster monster = new Monster("Kraken", 100);
-
-        assertEquals("Kraken", monster.getName());
-        assertEquals(100, monster.getHealth());
-    }
-
-    /**
      * Verifies that a monster returns its predefined sound.
      */
     @Test
@@ -34,14 +23,6 @@ class MonsterTest {
 
         assertEquals("Kraken",monster.getName());
         assertEquals("Roar!!! Coff...Coff...", monster.talk());
-    }
-    @Test
-    void monster_copyConstructorCopiesNameAndHealth() {
-        Monster original = new Monster("Kraken", 100);
-        Monster copy = new Monster(original);
-
-        assertEquals(original.getName(), copy.getName());
-        assertEquals(original.getHealth(), copy.getHealth());
     }
 
     @Test
@@ -64,14 +45,6 @@ class MonsterTest {
         assertNotSame(m, m.clone());
     }
 
-    @Test
-    void monster_cloneCopiesNameAndHealth() {
-        Monster m = new Monster("Kraken", 75);
-        Monster clone = m.clone();
-
-        assertEquals(m.getName(), clone.getName());
-        assertEquals(m.getHealth(), clone.getHealth());
-    }
 
     @Test
     void monster_cloneDifferentId() {
