@@ -44,6 +44,10 @@ public class GameContext implements Serializable, GameConfig {
         return state.getState();
     }
 
+    /** Opens game instance for facade access. */
+    public Game getGame() { return game; }
+
+
     /**
      * Redirects a movement command to the current state.
      *

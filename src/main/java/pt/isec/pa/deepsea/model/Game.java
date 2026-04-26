@@ -130,6 +130,9 @@ public class Game implements GameConfig, Serializable {
     public boolean getIsLastStateBotom() {
         return lastStateBotom;
     }
+    /** Gets the ship's mineral currency, used for repairs and upgrades in the shop. */
+    public int getShipMinerals() { return ship.getMinerals(); }
+
 
     public boolean moveShip(String command) {
         if (ship == null || seaSurface == null || ship.isOutOfFuel() || !ship.hasEnoughFuelForMovement() )
