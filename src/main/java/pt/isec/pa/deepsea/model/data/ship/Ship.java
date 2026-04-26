@@ -8,6 +8,8 @@ import pt.isec.pa.deepsea.model.data.entity.Mineral;
 
 import java.util.*;
 
+import static pt.isec.pa.deepsea.model.data.GameConfig.FUEL_COST_SHIP_MOVE;
+
 /**
  * Represents the ship in the Deep Sea Mining game.
  * The ship is the main base of operations, managing fuel, position,
@@ -20,11 +22,13 @@ import java.util.*;
  * @version v1.1.0
  */
 public class Ship {
+
     private int currentFuel;
     private Position position;
     private final Set<Drone> drones;
-    private final List<Artifact> collectedArtifacts;
-    private final List<Mineral> collectedMinerals;
+    private List<Artifact> collectedArtifacts;
+    private List<Mineral> collectedMinerals;
+    private int minerals;
 
     /** Creates a ship at (0,0) with full fuel and the configured number of drones. */
     public Ship() {
@@ -33,6 +37,7 @@ public class Ship {
         this.drones = new HashSet<>();
         this.collectedArtifacts = new ArrayList<>();
         this.collectedMinerals = new ArrayList<>();
+        this.minerals = 0;
 
         for (int i = 0; i < GameConfig.MAX_DRONES; i++) {
             drones.add(new Drone());
@@ -65,8 +70,15 @@ public class Ship {
         this.position = position;
     }
 
+    /** Sets ship Fuel. */
+    public void setCurrentFuel(int currentFuel) {
+        this.currentFuel = currentFuel;
+    }
+
     /** Returns true if fuel is empty. */
-    public boolean isOutOfFuel() { return currentFuel <= 0; }
+    public boolean isOutOfFuel() { return currentFuel <= 0;}
+
+    public boolean hasEnoughFuelForMovement() { return currentFuel >= FUEL_COST_SHIP_MOVE;}
 
     /** @return current fuel */
     public int getCurrentFuel() { return currentFuel; }
@@ -124,10 +136,19 @@ public class Ship {
                 .toList();
     }
 
+    public int getMinerals() {
+        return minerals;
+    }
+
+    public void setMinerals(int minerals) {
+        this.minerals = minerals;
+    }
+
     @Override
     public String toString() {
         return "Ship{fuel=" + currentFuel + "/" + GameConfig.SHIP_MAX_FUEL +
                 ", pos=" + position +
                 ", drones=" + drones.size() + "}";
     }
+
 }

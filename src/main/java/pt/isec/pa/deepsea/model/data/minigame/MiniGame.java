@@ -2,6 +2,8 @@ package pt.isec.pa.deepsea.model.data.minigame;
 
 import pt.isec.pa.deepsea.model.data.GameConfig;
 
+import java.util.Random;
+
 /**
  * Represents the sliding puzzle minigame (15-puzzle) used to collect artifacts.
  * Manages the state of the 4x4 grid with 15 numbered pieces and one empty space,
@@ -23,6 +25,7 @@ public class MiniGame implements GameConfig {
         this.board = new int[PUZZLE_SIZE][PUZZLE_SIZE];
         this.moveCount = 0;
         initialize();
+        shuffle();
     }
 
     /**
@@ -107,6 +110,7 @@ public class MiniGame implements GameConfig {
     public void reset() {
         moveCount = 0;
         initialize();
+        shuffle();
     }
 
     /**
@@ -119,6 +123,61 @@ public class MiniGame implements GameConfig {
         for (int r = 0; r < PUZZLE_SIZE; r++)
             copy[r] = board[r].clone();
         return copy;
+    }
+
+    /**
+
+     Shuffles the board by performing random valid moves.
+     This guarantees the puzzle is always solvable.
+     The number of shuffle moves is defined by {@link GameConfig#PUZZLE_SHUFFLE_MOVES}.*/
+    public void shuffle() {
+        Random rand = new Random();
+        String[] directions = {"w", "a", "s", "d"};
+
+        for (int i = 0; i < PUZZLE_SHUFFLE_MOVES; i++) {
+            String dir = directions[rand.nextInt(4)];
+
+            int newRow = emptyRow;
+            int newCol = emptyCol;
+
+            switch (dir) {
+                case "w" -> newRow--;
+                case "s" -> newRow++;
+                case "a" -> newCol--;
+                case "d" -> newCol++;
+            }
+
+            if (newRow >= 0 && newRow < PUZZLE_SIZE && newCol >= 0 && newCol < PUZZLE_SIZE) {
+                board[emptyRow][emptyCol] = board[newRow][newCol];
+                board[newRow][newCol] = 0;
+                emptyRow = newRow;
+                emptyCol = newCol;
+            }
+        }
+    }
+
+    /**
+     Moves a piece adjacent to the empty space into it.
+     Only pieces directly adjacent (up, down, left, right) can move.*
+     @param row row of the piece to move
+     @param col column of the piece to move
+     @return true if the move was valid and executed*/
+    public boolean movePiece(int row, int col) {
+        if (isOutOfMoves()) return false;
+        if (row < 0 || row >= PUZZLE_SIZE ||  col < 0 || col >= PUZZLE_SIZE) return false;
+
+        int rowDiff = Math.abs(row - emptyRow);
+        int colDiff = Math.abs(col - emptyCol);
+
+        if (rowDiff + colDiff != 1) return false;
+
+        board[emptyRow][emptyCol] = board[row][col];
+        board[row][col] = 0;
+        emptyRow = row;
+        emptyCol = col;
+        moveCount++;
+
+        return true;
     }
 
     @Override

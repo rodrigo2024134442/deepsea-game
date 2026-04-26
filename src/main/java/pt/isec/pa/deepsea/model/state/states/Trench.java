@@ -16,31 +16,27 @@ public class Trench extends GameStateAdapter {
     }
 
     @Override
-    public boolean move(String command){
-        /*
-        if(!game.moveDrone(String command)){
+    public boolean move(String command) {
+
+        if (!game.moveDroneInTrench(command))
             return false;
+
+        if (game.isActiveDroneDestroyed()) {
+            game.returnDroneToShip();
+            changeState(GameState.SURFACE.createState(context,game));
+            return true;
         }
 
-        if (game.droneisEndOfGrid) {
+        if(game.hasDroneReachedTop()){
+            game.enterSurface();
+            changeState(GameState.SURFACE.createState(context,game));
+        }
+
+        if (game.hasDroneReachedBottom() && !game.getIsLastStateBotom()){
+            game.enterSeaFloor();
             changeState(GameState.BOTTOM.createState(context,game));
+            return true;
         }
-         */
         return true;
     }
-
-    @Override
-    public boolean ascend (int droneId) {
-        changeState(GameState.SURFACE.createState(context,game));
-        return true;
-    }
-
-    @Override
-    public boolean descend(int droneId){
-        changeState(GameState.BOTTOM.createState(context,game));
-        return true;
-    }
-
-
-
 }

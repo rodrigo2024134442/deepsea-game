@@ -30,6 +30,13 @@ public class Position {
         this.col += dCol;
     }
 
+    public boolean validatePosition(int gridRow, int gridCol){
+        if(row<0 || col<0 || gridRow>=row || gridCol>=col)
+            return true;
+
+        return false;
+    }
+
     public Position clone(){
         return new Position (this.row,this.col);
     }
