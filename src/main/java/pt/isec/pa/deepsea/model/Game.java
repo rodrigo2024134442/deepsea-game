@@ -62,8 +62,8 @@ public class Game implements GameConfig, Serializable {
     }
 
     /** Starts the game. */
-    public void start() { 
-        initialize(); 
+    public void start() {
+        initialize();
     }
 
     /** Gets the ship's current X position. */
@@ -527,6 +527,126 @@ public class Game implements GameConfig, Serializable {
     }
 
 
+    // -- Grid queries (JavaFX UI) --
+
+    /** @return number of rows of the surface grid */
+    public int getSurfaceRows() {
+        return seaSurface.getRows();
+    }
+
+    /** @return number of columns of the surface grid */
+    public int getSurfaceCols() {
+        return seaSurface.getCols();
+    }
+
+    /**
+     * @param row cell row
+     * @param col cell column
+     * @return {@code true} if the surface cell has already been visited by the ship
+     */
+    public boolean isSurfaceCellVisited(int row, int col) {
+        return seaSurface.isVisited(new Position(row, col));
+    }
+
+    /** @return number of rows in the active trench, or 0 if none */
+    public int getTrenchRows() {
+        if (activeSurfaceCell == null) return 0;
+        SeaTrench trench = activeSurfaceCell.getTrench();
+        return trench == null ? 0 : trench.getRows();
+    }
+
+    /** @return number of columns in the active trench, or 0 if none */
+    public int getTrenchCols() {
+        if (activeSurfaceCell == null) return 0;
+        SeaTrench trench = activeSurfaceCell.getTrench();
+        return trench == null ? 0 : trench.getCols();
+    }
+
+    /**
+     * Returns the type of entity in a trench cell as a string.
+     * Possible values: {@code "ROCK"}, {@code "ANIMAL"}, {@code "CURRENT"}, {@code "EMPTY"}.
+     *
+     * @param row cell row
+     * @param col cell column
+     * @return entity type string
+     */
+    public String getTrenchCellEntity(int row, int col) {
+        if (activeSurfaceCell == null) return "EMPTY";
+        SeaTrench trench = activeSurfaceCell.getTrench();
+        if (trench == null) return "EMPTY";
+        UnderwaterCell cell = trench.getCell(row, col);
+        if (cell == null) return "EMPTY";
+        Entity entity = cell.getEntity();
+        if (entity instanceof Rock)    return "ROCK";
+        if (entity instanceof Animal)  return "ANIMAL";
+        if (entity instanceof Current) return "CURRENT";
+        return "EMPTY";
+    }
+
+    /** @return number of rows in the active sea floor, or 0 if none */
+    public int getBottomRows() {
+        if (activeSurfaceCell == null) return 0;
+        SeaFloor seaFloor = activeSurfaceCell.getSeaFloor();
+        return seaFloor == null ? 0 : seaFloor.getRows();
+    }
+
+    /** @return number of columns in the active sea floor, or 0 if none */
+    public int getBottomCols() {
+        if (activeSurfaceCell == null) return 0;
+        SeaFloor seaFloor = activeSurfaceCell.getSeaFloor();
+        return seaFloor == null ? 0 : seaFloor.getCols();
+    }
+
+    /**
+     * @param row cell row
+     * @param col cell column
+     * @return {@code true} if the sea floor cell has been revealed by the drone
+     */
+    public boolean isBottomCellRevealed(int row, int col) {
+        if (activeSurfaceCell == null) return false;
+        SeaFloor seaFloor = activeSurfaceCell.getSeaFloor();
+        if (seaFloor == null) return false;
+        var cell = seaFloor.getCell(row, col);
+        return cell != null && cell.isRevealed();
+    }
+
+    /**
+     * Returns the type of entity in a sea floor cell as a string.
+     * Returns {@code "HIDDEN"} if the cell has not been revealed yet.
+     * Possible values: {@code "ARTIFACT"}, {@code "MINERAL"}, {@code "MONSTER"}, {@code "EMPTY"}, {@code "HIDDEN"}.
+     *
+     * @param row cell row
+     * @param col cell column
+     * @return entity type string
+     */
+    public String getBottomCellEntity(int row, int col) {
+        if (activeSurfaceCell == null) return "HIDDEN";
+        SeaFloor seaFloor = activeSurfaceCell.getSeaFloor();
+        if (seaFloor == null) return "HIDDEN";
+        var cell = seaFloor.getCell(row, col);
+        if (cell == null || !cell.isRevealed()) return "HIDDEN";
+        Entity entity = cell.getEntity();
+        if (entity instanceof Artifact) return "ARTIFACT";
+        if (entity instanceof Mineral)  return "MINERAL";
+        return "EMPTY";
+    }
+
+    /**
+     * @return row of the active drone in the current grid, or -1 if none
+     */
+    public int getActiveDroneRow() {
+        if (activeDrone == null || activeDrone.getPosition() == null) return -1;
+        return activeDrone.getPosition().getRow();
+    }
+
+    /**
+     * @return column of the active drone in the current grid, or -1 if none
+     */
+    public int getActiveDroneCol() {
+        if (activeDrone == null || activeDrone.getPosition() == null) return -1;
+        return activeDrone.getPosition().getCol();
+    }
+
     //UI TEXTO (Testing)
 
     public String getCurrentGridAsString(GameState state) {
@@ -672,32 +792,84 @@ public class Game implements GameConfig, Serializable {
         switch (state) {
             case SURFACE ->
                     sb.append("1 - Move (w/a/s/d)\n")
-                        .append("2 - Enter shop\n")
-                        .append("6 - Descend with drone\n")
-                        .append("save - Guardar jogo\n")
-                        .append("load - Carregar jogo\n")
-                        .append("0 - Exit\n");
+                            .append("2 - Enter shop\n")
+                            .append("6 - Descend with drone\n")
+                            .append("save - Guardar jogo\n")
+                            .append("load - Carregar jogo\n")
+                            .append("0 - Exit\n");
             case SHOP ->
                     sb.append("3 - Leave shop")
-                        .append("5 - Refuel drone")
-                        .append("0 - Exit");
+                            .append("5 - Refuel drone")
+                            .append("0 - Exit");
 
             case TRENCH ->
                     sb.append("1 - Move (w/a/s/d)")
-                        .append("0 - Exit");
+                            .append("0 - Exit");
             case BOTTOM->
                     sb.append("1 - Move (w/a/s/d)\n")
-                        .append("7 - Mining\n")
-                        .append("8 - Retrieve artifact\n")
-                        .append("20 - ascend\n")
-                        .append("0 - Exit\n");
+                            .append("7 - Mining\n")
+                            .append("8 - Retrieve artifact\n")
+                            .append("20 - ascend\n")
+                            .append("0 - Exit\n");
             case MINIGAME ->
                     sb.append("11 - Move piece (row, col)\n")
                             .append("9 - Force win minigame\n")
                             .append("10 - Force lose minigame\n")
                             .append("0 - Exit\n");
         }
-            return sb.toString();
+        return sb.toString();
+    }
+
+    /** @return size of the puzzle grid (NxN), or 0 if no minigame is active */
+    public int getMiniGameSize() {
+        return miniGame == null ? 0 : PUZZLE_SIZE;
+    }
+
+    /**
+     * Returns the value of the puzzle piece at (row, col).
+     * 0 represents the empty slot.
+     *
+     * @param row piece row
+     * @param col piece column
+     * @return piece value, or -1 if no minigame is active
+     */
+    public int getMiniGameCell(int row, int col) {
+        if (miniGame == null) return -1;
+        return miniGame.getCell(row, col);
+    }
+
+    /** @return number of moves made so far in the minigame, or 0 if none active */
+    public int getMiniGameMoveCount() {
+        if (miniGame == null) return 0;
+        return miniGame.getMoveCount();
+    }
+
+    /** @return maximum number of moves allowed in the minigame */
+    public int getMiniGameMaxMoves() {
+        return PUZZLE_MAX_MOVES;
+    }
+
+    /** @return row of the empty slot in the puzzle, or -1 if no minigame is active */
+    public int getMiniGameEmptyRow() {
+        if (miniGame == null) return -1;
+        return miniGame.getEmptyRow();
+    }
+
+    /** @return column of the empty slot in the puzzle, or -1 if no minigame is active */
+    public int getMiniGameEmptyCol() {
+        if (miniGame == null) return -1;
+        return miniGame.getEmptyCol();
+    }
+
+    /**
+     * Returns a full copy of the puzzle board.
+     * Each cell contains the piece number, or 0 for the empty slot.
+     *
+     * @return copy of the board, or null if no minigame is active
+     */
+    public int[][] getMiniGameBoard() {
+        if (miniGame == null) return null;
+        return miniGame.getBoard();
     }
 
     public boolean movePiece(int row, int col) {

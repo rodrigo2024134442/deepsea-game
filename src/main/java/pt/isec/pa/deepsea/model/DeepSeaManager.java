@@ -338,6 +338,15 @@ public class DeepSeaManager {
         return drone == null ? 0 : drone.getCollectedArtifacts().size();
     }
 
+    /**
+     * @param droneId drone ID
+     * @return number of minerals collected by the drone
+     */
+    public int getDroneMineralsCount(int droneId) {
+        var drone = context.getGame().getShipDroneById(droneId);
+        return drone == null ? 0 : drone.getCollectedMinerals().size();
+    }
+
     /** @return {@code true} if there is an active drone currently in expedition */
     public boolean hasActiveDrone() {
         return context.getGame().hasActiveDrone();
@@ -365,35 +374,167 @@ public class DeepSeaManager {
         return "";
     }
 
+    // -- Grid queries (JavaFX UI) --
+
+    /** @return number of rows of the surface grid */
+    public int getSurfaceRows() {
+        return context.getGame().getSurfaceRows();
+    }
+
+    /** @return number of columns of the surface grid */
+    public int getSurfaceCols() {
+        return context.getGame().getSurfaceCols();
+    }
+
+    /**
+     * @param row cell row
+     * @param col cell column
+     * @return {@code true} if the surface cell has already been visited by the ship
+     */
+    public boolean isSurfaceCellVisited(int row, int col) {
+        return context.getGame().isSurfaceCellVisited(row, col);
+    }
+
+    /** @return number of rows in the active trench, or 0 if none */
+    public int getTrenchRows() {
+        return context.getGame().getTrenchRows();
+    }
+
+    /** @return number of columns in the active trench, or 0 if none */
+    public int getTrenchCols() {
+        return context.getGame().getTrenchCols();
+    }
+
+    /**
+     * Returns the type of entity in a trench cell, as a string the UI can switch on.
+     * Possible values: {@code "ROCK"}, {@code "ANIMAL"}, {@code "CURRENT"}, {@code "EMPTY"}.
+     *
+     * @param row cell row
+     * @param col cell column
+     * @return entity type string
+     */
+    public String getTrenchCellEntity(int row, int col) {
+        return context.getGame().getTrenchCellEntity(row, col);
+    }
+
+    /** @return number of rows in the active sea floor, or 0 if none */
+    public int getBottomRows() {
+        return context.getGame().getBottomRows();
+    }
+
+    /** @return number of columns in the active sea floor, or 0 if none */
+    public int getBottomCols() {
+        return context.getGame().getBottomCols();
+    }
+
+    /**
+     * @param row cell row
+     * @param col cell column
+     * @return {@code true} if the sea floor cell has been revealed by the drone
+     */
+    public boolean isBottomCellRevealed(int row, int col) {
+        return context.getGame().isBottomCellRevealed(row, col);
+    }
+
+    /**
+     * Returns the type of entity in a revealed sea floor cell.
+     * Possible values: {@code "ARTIFACT"}, {@code "MINERAL"}, {@code "MONSTER"}, {@code "EMPTY"}.
+     * Returns {@code "HIDDEN"} if the cell has not been revealed yet.
+     *
+     * @param row cell row
+     * @param col cell column
+     * @return entity type string
+     */
+    public String getBottomCellEntity(int row, int col) {
+        return context.getGame().getBottomCellEntity(row, col);
+    }
+
+    // -- Active drone position (for drawing on grids) --
+
+    /**
+     * @return row of the active drone in the current grid, or -1 if none
+     */
+    public int getActiveDroneRow() {
+        return context.getGame().getActiveDroneRow();
+    }
+
+    /**
+     * @return column of the active drone in the current grid, or -1 if none
+     */
+    public int getActiveDroneCol() {
+        return context.getGame().getActiveDroneCol();
+    }
+
+    // -- Contextual checks for the UI --
+
+    /** @return {@code true} if the active drone was destroyed on the sea floor */
+    public boolean isActiveDroneDestroyed() {
+        return context.getGame().isActiveDroneDestroyed();
+    }
+
+    /**
+     * @return {@code true} if there is an artifact at the active drone's current position
+     */
+    public boolean droneIsOnArtifact() {
+        return context.getGame().foundArtifact();
+    }
+
+    /**
+     * @return {@code true} if there is a mineral at the active drone's current position
+     */
+    public boolean droneIsOnMineral() {
+        return context.getGame().foundMineral();
+    }
+
     // -- Minigame --
 
     /**
-     * Returns the current grid as a string appropriate for the active state.
-     *
-     * @return grid string representation
+     * @return size of the puzzle grid (NxN), or 0 if no minigame is active
      */
-    public String getCurrentGridAsString() {
-        return context.getCurrentGridAsString();
+    public int getMiniGameSize() {
+        return context.getGame().getMiniGameSize();
     }
 
-    /** @return text summary of all drones */
-    public String getDronesInfoAsString() {
-        return context.getDronesInfoAsString();
+    /**
+     * Returns the value of the puzzle piece at (row, col).
+     * 0 represents the empty slot.
+     *
+     * @param row piece row
+     * @param col piece column
+     * @return piece value, or -1 if no minigame is active
+     */
+    public int getMiniGameCell(int row, int col) {
+        return context.getGame().getMiniGameCell(row, col);
     }
 
-    /** @return text summary of the ship */
-    public String getShipInfoAsString() {
-        return context.getShipInfoAsString();
+    /** @return number of moves made so far in the minigame */
+    public int getMiniGameMoveCount() {
+        return context.getGame().getMiniGameMoveCount();
     }
 
-    /** @return available commands for the current state */
-    public String getCommandInfoAsString() {
-        return context.getCommandInfoAsString();
+    /** @return maximum number of moves allowed in the minigame */
+    public int getMiniGameMaxMoves() {
+        return context.getGame().getMiniGameMaxMoves();
     }
 
-    /** @return current minigame board as a string, or a placeholder if none is active */
-    public String getMiniGameAsString() {
-        return context.getMiniGameAsString();
+    /** @return row of the empty slot in the puzzle, or -1 if no minigame is active */
+    public int getMiniGameEmptyRow() {
+        return context.getGame().getMiniGameEmptyRow();
+    }
+
+    /** @return column of the empty slot in the puzzle, or -1 if no minigame is active */
+    public int getMiniGameEmptyCol() {
+        return context.getGame().getMiniGameEmptyCol();
+    }
+
+    /**
+     * Returns a full copy of the puzzle board.
+     * Each cell contains the piece number, or 0 for the empty slot.
+     *
+     * @return copy of the board, or null if no minigame is active
+     */
+    public int[][] getMiniGameBoard() {
+        return context.getGame().getMiniGameBoard();
     }
 
     // -- Persistence --
