@@ -14,7 +14,6 @@ import pt.isec.pa.deepsea.model.data.surface.SurfaceCell;
 import pt.isec.pa.deepsea.model.data.trench.SeaTrench;
 import pt.isec.pa.deepsea.model.state.GameState;
 
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
@@ -34,11 +33,10 @@ import java.util.Set;
  *   <li>Provide access to core game components</li>
  * </ul>
  *
- * @author Leonardo Matos Ferreira - 2024113113 
+ * @author Leonardo Matos Ferreira - 2024113113
  * @author Beja - 2024134442 added SeaSurface and Ship functionality
- * @version v1.0.0 (Stage 1)
+ * @version v1.1.0 (Stage 3)
  */
-
 public class Game implements GameConfig, Serializable {
     private static final long serialVersionUID = 1L;
     private SeaSurface seaSurface;
@@ -47,15 +45,11 @@ public class Game implements GameConfig, Serializable {
     private Drone activeDrone;
     private SurfaceCell activeSurfaceCell;
     private MiniGame miniGame;
-    private boolean lastStateBotom;
 
-
-    private void initialize (){
-        /* Initialize sea surface and ship */
+    private void initialize() {
         ship = new Ship();
         seaSurface = new SeaSurface(GameConfig.DEFAULT_SEASURFACE_ROWS, GameConfig.DEFAULT_SEASURFACE_COLS, ship);
         ship.setPosition(DEFAULT_SEASURFACE_ROWS / 2, DEFAULT_SEASURFACE_COLS / 2);
-        lastStateBotom = false;
         activeDrone = null;
         activeSurfaceCell = null;
         miniGame = null;
@@ -66,14 +60,24 @@ public class Game implements GameConfig, Serializable {
         initialize();
     }
 
-    /** Gets the ship's current X position. */
+    /** Gets the ship's current X position (column). */
     public int getShipX() {
         return ship.getPosition().getCol();
     }
 
-    /** Gets the ship's current Y position. */
+    /** Gets the ship's current Y position (row). */
     public int getShipY() {
         return ship.getPosition().getRow();
+    }
+
+    /** Gets the ship's current row (for UI drawing). */
+    public int getShipRow() {
+        return ship.getPosition().getRow();
+    }
+
+    /** Gets the ship's current column (for UI drawing). */
+    public int getShipCol() {
+        return ship.getPosition().getCol();
     }
 
     /** Gets the ship's current fuel level. */
@@ -126,36 +130,41 @@ public class Game implements GameConfig, Serializable {
         return ship.getCollectedMinerals();
     }
 
-    /** gets lastState of drone to see if its ascending. */
-    public boolean getIsLastStateBotom() {
-        return lastStateBotom;
+    /** @return number of artifacts collected by the ship */
+    public int getShipArtifactsCount() {
+        return ship.getCollectedArtifacts().size();
     }
-    /** Gets the ship's mineral currency, used for repairs and upgrades in the shop. */
-    public int getShipMinerals() { return ship.getMinerals(); }
 
+    /** @return number of minerals collected by the ship */
+    public int getShipMineralsCount() {
+        return ship.getCollectedMinerals().size();
+    }
+
+    /** Gets the ship's mineral currency, used for repairs and upgrades in the shop. */
+    public int getShipMinerals() {
+        return ship.getMinerals();
+    }
 
     public boolean moveShip(String command) {
-        if (ship == null || seaSurface == null || ship.isOutOfFuel() || !ship.hasEnoughFuelForMovement() )
+        if (ship == null || seaSurface == null || ship.isOutOfFuel() || !ship.hasEnoughFuelForMovement())
             return false;
 
         Position currentPosition = ship.getPosition();
-
         int newRow = currentPosition.getRow();
         int newCol = currentPosition.getCol();
 
         switch (command) {
-            case "w" -> newRow--; // up
-            case "s" -> newRow++; // down
-            case "a" -> newCol--; // left
-            case "d" -> newCol++; // right
+            case "w" -> newRow--;
+            case "s" -> newRow++;
+            case "a" -> newCol--;
+            case "d" -> newCol++;
             default -> {
                 return false;
             }
         }
 
-        if (!seaSurface.isValidPosition(newRow, newCol)){
+        if (!seaSurface.isValidPosition(newRow, newCol))
             return false;
-        }
 
         ship.setPosition(newRow, newCol);
         ship.consumeFuel(FUEL_COST_SHIP_MOVE);
@@ -185,13 +194,12 @@ public class Game implements GameConfig, Serializable {
         activeSurfaceCell = currentCell;
 
         activeDrone.resetPrimeSequence();
-        activeDrone.placeOnTrench(1,trench.getCols());
+        activeDrone.placeOnTrench(1, trench.getCols());
         seaSurface.markVisited(ship.getPosition());
         return true;
     }
 
     public boolean ascend() {
-
         if (activeDrone == null)
             return false;
 
@@ -199,8 +207,7 @@ public class Game implements GameConfig, Serializable {
             return false;
 
         SeaTrench trench = activeSurfaceCell.getTrench();
-        activeDrone.placeOnTrench(trench.getRows()-1,trench.getCols());
-        lastStateBotom = true;
+        activeDrone.placeOnTrench(trench.getRows() - 1, trench.getCols());
         return true;
     }
 
@@ -217,7 +224,6 @@ public class Game implements GameConfig, Serializable {
             return false;
 
         Position next;
-
         switch (command.toLowerCase()) {
             case "w" -> next = current.translate(-1, 0);
             case "s" -> next = current.translate(1, 0);
@@ -228,17 +234,14 @@ public class Game implements GameConfig, Serializable {
             }
         }
 
-        if(!next.validatePosition(trench.getRows(), trench.getCols())){
+        if (!next.validatePosition(trench.getRows(), trench.getCols()))
             return false;
-        }
 
         UnderwaterCell nextCell = trench.getCell(next);
-
         if (nextCell == null)
             return false;
 
         Entity entity = nextCell.getEntity();
-
         if (entity instanceof Rock || entity instanceof Animal || entity instanceof Current) {
             activeDrone.takeDamage();
             activeDrone.consumeFuel(FUEL_COST_DRONE_MOVE);
@@ -247,7 +250,6 @@ public class Game implements GameConfig, Serializable {
 
         activeDrone.setPosition(next);
         activeDrone.consumeFuel(FUEL_COST_DRONE_MOVE);
-
         return true;
     }
 
@@ -282,25 +284,20 @@ public class Game implements GameConfig, Serializable {
     }
 
     public boolean enterSurface() {
-        if (activeDrone == null || activeSurfaceCell == null){
+        if (activeDrone == null || activeSurfaceCell == null)
             return false;
-        }
 
         activeDrone.clearPosition();
-
         activeDrone.placeOnShip();
-        ship.setMinerals(ship.getMinerals()+activeDrone.getMinerals());
-        for (Mineral m : activeDrone.getCollectedMinerals()) {
+        ship.setMinerals(ship.getMinerals() + activeDrone.getMinerals());
+        for (Mineral m : activeDrone.getCollectedMinerals())
             ship.addMineral(m);
-        }
-        for (Artifact a : activeDrone.getCollectedArtifacts()) {
+        for (Artifact a : activeDrone.getCollectedArtifacts())
             ship.addArtifact(a);
-        }
         activeDrone.unloadArtifacts();
         activeDrone.unloadMinerals();
         activeDrone.setMinerals(0);
         activeSurfaceCell = null;
-        lastStateBotom = false;
         return true;
     }
 
@@ -314,7 +311,6 @@ public class Game implements GameConfig, Serializable {
 
         activeDrone.placeOnSeabed(seaFloor.getCols(), seaFloor.getRows());
         seaFloor.revealCell(activeDrone.getPosition());
-        lastStateBotom = true;
         return true;
     }
 
@@ -335,7 +331,6 @@ public class Game implements GameConfig, Serializable {
             return false;
 
         SeaFloor seaFloor = activeSurfaceCell.getSeaFloor();
-
         if (seaFloor == null)
             return false;
 
@@ -344,7 +339,6 @@ public class Game implements GameConfig, Serializable {
             return false;
 
         Position next;
-
         switch (command.toLowerCase()) {
             case "w" -> next = current.translate(-1, 0);
             case "s" -> next = current.translate(1, 0);
@@ -372,8 +366,6 @@ public class Game implements GameConfig, Serializable {
         return true;
     }
 
-
-    //Métodos Auxiliares (nao devem ser precisos)
     public boolean foundArtifact() {
         if (activeDrone == null || activeSurfaceCell == null)
             return false;
@@ -435,14 +427,11 @@ public class Game implements GameConfig, Serializable {
             return false;
 
         Entity entity = seaFloor.removeEntity(pos);
-
         if (!(entity instanceof Artifact artifact))
             return false;
 
         activeDrone.addArtifact(artifact);
-
         miniGame = new MiniGame();
-
         return true;
     }
 
@@ -459,22 +448,18 @@ public class Game implements GameConfig, Serializable {
             return false;
 
         Entity entity = seaFloor.removeEntity(pos);
-
         if (!(entity instanceof Mineral mineral))
             return false;
 
         activeDrone.addMineral(mineral);
-
         return true;
     }
 
-    //Shop
     public boolean repair(int droneId) {
         if (ship == null)
             return false;
 
         Drone drone = ship.getDroneById(droneId);
-
         if (drone == null)
             return false;
 
@@ -482,7 +467,6 @@ public class Game implements GameConfig, Serializable {
             return false;
 
         drone.repair();
-
         return true;
     }
 
@@ -491,7 +475,6 @@ public class Game implements GameConfig, Serializable {
             return false;
 
         Drone drone = ship.getDroneById(droneId);
-
         if (drone == null)
             return false;
 
@@ -499,19 +482,13 @@ public class Game implements GameConfig, Serializable {
             return false;
 
         int refuel = drone.getMaxFuel() - drone.getCurrentFuel();
-
-        if(ship.getCurrentFuel()-refuel >=0){
-            ship.setCurrentFuel(ship.getCurrentFuel()-refuel);
+        if (ship.getCurrentFuel() - refuel >= 0) {
+            ship.setCurrentFuel(ship.getCurrentFuel() - refuel);
             drone.refuel(drone.getMaxFuel());
             return true;
         }
-
-
         return false;
     }
-
-
-    //Regressar ao navio
 
     public boolean returnDroneToShip() {
         if (activeDrone == null)
@@ -522,10 +499,8 @@ public class Game implements GameConfig, Serializable {
 
         activeDrone = null;
         activeSurfaceCell = null;
-        lastStateBotom = false;
         return true;
     }
-
 
     // -- Grid queries (JavaFX UI) --
 
@@ -565,10 +540,6 @@ public class Game implements GameConfig, Serializable {
     /**
      * Returns the type of entity in a trench cell as a string.
      * Possible values: {@code "ROCK"}, {@code "ANIMAL"}, {@code "CURRENT"}, {@code "EMPTY"}.
-     *
-     * @param row cell row
-     * @param col cell column
-     * @return entity type string
      */
     public String getTrenchCellEntity(int row, int col) {
         if (activeSurfaceCell == null) return "EMPTY";
@@ -598,8 +569,6 @@ public class Game implements GameConfig, Serializable {
     }
 
     /**
-     * @param row cell row
-     * @param col cell column
      * @return {@code true} if the sea floor cell has been revealed by the drone
      */
     public boolean isBottomCellRevealed(int row, int col) {
@@ -614,10 +583,6 @@ public class Game implements GameConfig, Serializable {
      * Returns the type of entity in a sea floor cell as a string.
      * Returns {@code "HIDDEN"} if the cell has not been revealed yet.
      * Possible values: {@code "ARTIFACT"}, {@code "MINERAL"}, {@code "MONSTER"}, {@code "EMPTY"}, {@code "HIDDEN"}.
-     *
-     * @param row cell row
-     * @param col cell column
-     * @return entity type string
      */
     public String getBottomCellEntity(int row, int col) {
         if (activeSurfaceCell == null) return "HIDDEN";
@@ -631,29 +596,26 @@ public class Game implements GameConfig, Serializable {
         return "EMPTY";
     }
 
-    /**
-     * @return row of the active drone in the current grid, or -1 if none
-     */
+    /** @return row of the active drone in the current grid, or -1 if none */
     public int getActiveDroneRow() {
         if (activeDrone == null || activeDrone.getPosition() == null) return -1;
         return activeDrone.getPosition().getRow();
     }
 
-    /**
-     * @return column of the active drone in the current grid, or -1 if none
-     */
+    /** @return column of the active drone in the current grid, or -1 if none */
     public int getActiveDroneCol() {
         if (activeDrone == null || activeDrone.getPosition() == null) return -1;
         return activeDrone.getPosition().getCol();
     }
 
-    //UI TEXTO (Testing)
+    // -- UI texto (TestUI) --
 
     public String getCurrentGridAsString(GameState state) {
         return switch (state) {
-            case SURFACE, SHOP -> getSurfaceGridAsString();
-            case TRENCH -> getTrenchGridAsString();
-            case BOTTOM, MINIGAME -> getBottomGridAsString();
+            case SURFACE, SHOP                -> getSurfaceGridAsString();
+            case TRENCH_DESCENT, TRENCH_ASCENT -> getTrenchGridAsString();
+            case BOTTOM                       -> getBottomGridAsString();
+            case MINIGAME                     -> getMiniGameAsString();
         };
     }
 
@@ -665,7 +627,6 @@ public class Game implements GameConfig, Serializable {
         Position dronePos = activeDrone.getPosition();
 
         StringBuilder sb = new StringBuilder();
-
         for (int r = 0; r < trench.getRows(); r++) {
             for (int c = 0; c < trench.getCols(); c++) {
                 if (dronePos != null && dronePos.getRow() == r && dronePos.getCol() == c) {
@@ -673,22 +634,17 @@ public class Game implements GameConfig, Serializable {
                 } else {
                     UnderwaterCell cell = trench.getCell(r, c);
                     Entity ent = cell.getEntity();
-
-                    if (ent == null)
-                        sb.append(" . ");
-                    else if (ent instanceof Animal)
-                        sb.append(" A ");
-                    else if (ent instanceof Current)
-                        sb.append(" C ");
-                    else
-                        sb.append(" X ");
+                    if (ent == null)             sb.append(" . ");
+                    else if (ent instanceof Animal)  sb.append(" A ");
+                    else if (ent instanceof Current) sb.append(" C ");
+                    else                              sb.append(" X ");
                 }
             }
             sb.append("\n");
         }
-
         return sb.toString();
     }
+
     private String getBottomGridAsString() {
         if (activeDrone == null || activeSurfaceCell == null)
             return "No active drone.\n";
@@ -697,54 +653,43 @@ public class Game implements GameConfig, Serializable {
         Position dronePos = activeDrone.getPosition();
 
         StringBuilder sb = new StringBuilder();
-
         for (int r = 0; r < seaFloor.getRows(); r++) {
             for (int c = 0; c < seaFloor.getCols(); c++) {
                 if (dronePos != null && dronePos.getRow() == r && dronePos.getCol() == c) {
                     sb.append(" D ");
                 } else {
                     var cell = seaFloor.getCell(r, c);
-
-                    if (!cell.isRevealed()) {
-                        sb.append(" ? ");
-                    } else if (cell.getEntity() instanceof Artifact) {
-                        sb.append(" A ");
-                    } else if (cell.getEntity() instanceof Mineral){
-                        sb.append(" M ");
-                    } else
-                        sb.append(" . ");
+                    if (!cell.isRevealed())                       sb.append(" ? ");
+                    else if (cell.getEntity() instanceof Artifact) sb.append(" A ");
+                    else if (cell.getEntity() instanceof Mineral)  sb.append(" M ");
+                    else                                            sb.append(" . ");
                 }
             }
             sb.append("\n");
         }
-
         return sb.toString();
     }
+
     private String getSurfaceGridAsString() {
         StringBuilder sb = new StringBuilder();
-
         Position shipPos = ship.getPosition();
-
         for (int r = 0; r < seaSurface.getRows(); r++) {
             for (int c = 0; c < seaSurface.getCols(); c++) {
-                if (shipPos.getRow() == r && shipPos.getCol() == c) {
+                if (shipPos.getRow() == r && shipPos.getCol() == c)
                     sb.append(" S ");
-                } else if (seaSurface.isVisited(new Position(r, c))) {
+                else if (seaSurface.isVisited(new Position(r, c)))
                     sb.append(" . ");
-                } else {
+                else
                     sb.append(" ~ ");
-                }
             }
             sb.append("\n");
         }
-
         return sb.toString();
     }
 
     public String getDronesInfoAsString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Drones:\n");
-
         for (Drone drone : ship.getDrones()) {
             sb.append("ID: ").append(drone.getId())
                     .append(" | Fuel: ").append(drone.getCurrentFuel())
@@ -760,16 +705,13 @@ public class Game implements GameConfig, Serializable {
                     .append("\n")
                     .append("   Minerals Colection: ").append(drone.getCollectedMinerals().size())
                     .append(" -> ").append(drone.getCollectedMinerals())
-
                     .append("\n");
         }
-
         return sb.toString();
     }
 
     public String getShipInfoAsString() {
         StringBuilder sb = new StringBuilder();
-
         sb.append("Ship:\n")
                 .append("   Position: ").append(ship.getPosition()).append(" || ")
                 .append("   Fuel: ").append(ship.getCurrentFuel())
@@ -779,7 +721,6 @@ public class Game implements GameConfig, Serializable {
                 .append(" -> ").append(ship.getCollectedArtifacts()).append(" || ")
                 .append("   Collected Minerals: ").append(ship.getCollectedMinerals().size())
                 .append(" -> ").append(ship.getCollectedMinerals()).append("\n");
-
         return sb.toString();
     }
 
@@ -801,11 +742,10 @@ public class Game implements GameConfig, Serializable {
                     sb.append("3 - Leave shop")
                             .append("5 - Refuel drone")
                             .append("0 - Exit");
-
-            case TRENCH ->
+            case TRENCH_DESCENT, TRENCH_ASCENT ->
                     sb.append("1 - Move (w/a/s/d)")
                             .append("0 - Exit");
-            case BOTTOM->
+            case BOTTOM ->
                     sb.append("1 - Move (w/a/s/d)\n")
                             .append("7 - Mining\n")
                             .append("8 - Retrieve artifact\n")
@@ -820,53 +760,36 @@ public class Game implements GameConfig, Serializable {
         return sb.toString();
     }
 
-    /** @return size of the puzzle grid (NxN), or 0 if no minigame is active */
+    // -- MiniGame queries --
+
     public int getMiniGameSize() {
         return miniGame == null ? 0 : PUZZLE_SIZE;
     }
 
-    /**
-     * Returns the value of the puzzle piece at (row, col).
-     * 0 represents the empty slot.
-     *
-     * @param row piece row
-     * @param col piece column
-     * @return piece value, or -1 if no minigame is active
-     */
     public int getMiniGameCell(int row, int col) {
         if (miniGame == null) return -1;
         return miniGame.getCell(row, col);
     }
 
-    /** @return number of moves made so far in the minigame, or 0 if none active */
     public int getMiniGameMoveCount() {
         if (miniGame == null) return 0;
         return miniGame.getMoveCount();
     }
 
-    /** @return maximum number of moves allowed in the minigame */
     public int getMiniGameMaxMoves() {
         return PUZZLE_MAX_MOVES;
     }
 
-    /** @return row of the empty slot in the puzzle, or -1 if no minigame is active */
     public int getMiniGameEmptyRow() {
         if (miniGame == null) return -1;
         return miniGame.getEmptyRow();
     }
 
-    /** @return column of the empty slot in the puzzle, or -1 if no minigame is active */
     public int getMiniGameEmptyCol() {
         if (miniGame == null) return -1;
         return miniGame.getEmptyCol();
     }
 
-    /**
-     * Returns a full copy of the puzzle board.
-     * Each cell contains the piece number, or 0 for the empty slot.
-     *
-     * @return copy of the board, or null if no minigame is active
-     */
     public int[][] getMiniGameBoard() {
         if (miniGame == null) return null;
         return miniGame.getBoard();
@@ -896,17 +819,11 @@ public class Game implements GameConfig, Serializable {
     public String getMiniGameAsString() {
         if (miniGame == null)
             return "No active minigame.\n";
-
         return miniGame.toString();
     }
 
-    public void lightTrench(){
-
-    }
-
-    public void lightBottom (){
-
-    }
+    public void lightTrench()  { }
+    public void lightBottom()  { }
 
     public void loseResources() {
         activeDrone.unloadMinerals();
@@ -915,8 +832,7 @@ public class Game implements GameConfig, Serializable {
     }
 
     public boolean activeDroneHasNoFuelInTrench() {
-        return activeDrone != null
-                && !activeDrone.hasEnoughFuelForMovement();
+        return activeDrone != null && !activeDrone.hasEnoughFuelForMovement();
     }
 
     public void handleDroneWithoutFuelInTrench() {
@@ -935,10 +851,5 @@ public class Game implements GameConfig, Serializable {
 
         activeDrone = null;
         activeSurfaceCell = null;
-        lastStateBotom = false;
     }
 }
-
-
-
-
