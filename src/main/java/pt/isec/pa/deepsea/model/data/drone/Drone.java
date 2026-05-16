@@ -7,7 +7,6 @@ import pt.isec.pa.deepsea.model.data.entity.Mineral;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -21,25 +20,15 @@ import java.util.Random;
  * <p>Drones are uniquely identified by an auto-incremented integer ID,
  * which allows them to be correctly managed in a {@link java.util.Set}.</p>
  *
- * <p>Two {@link Comparator} constants are provided for sorting drones:
- * {@link #BY_FUEL} and {@link #BY_INTEGRITY}.</p>
+ * <p>For ordering drones by fuel or hull integrity see {@link DroneComparator}.</p>
  *
  * @author Leonardo Matos Ferreira - 2024113113
- * @version v1.1.0
+ * @version v1.2.0
  */
 public class Drone implements GameConfig, Serializable {
     private static final long serialVersionUID = 1L;
     private final int id;
     private static int nextId = 1;
-
-    // COMPARATORS
-    /** Sorts drones by current fuel, highest first. */
-    public static final Comparator<Drone> BY_FUEL =
-            Comparator.comparingInt(Drone::getCurrentFuel).reversed();
-
-    /** Sorts drones by hull integrity, highest first. */
-    public static final Comparator<Drone> BY_INTEGRITY =
-            Comparator.comparingInt(Drone::getHullIntegrity).reversed();
 
     // FUEL MANAGEMENT
     private int currentFuel;
@@ -77,7 +66,7 @@ public class Drone implements GameConfig, Serializable {
         this.position = null; // no position while on ship
         this.collectedArtifacts = new ArrayList<>();
         this.collectedMinerals = new ArrayList<>();
-        this.minerals = 0;// Verificar se é necessário uma lista ou se podemos usar como quantidade para usar na reparação de drone
+        this.minerals = 0;
     }
 
     /** Consumes fuel. Ignores values <= 0. Fuel cannot go below zero. */
@@ -97,7 +86,7 @@ public class Drone implements GameConfig, Serializable {
         return currentFuel == 0;
     }
 
-    /** Returns true if fuel is zero. */
+    /** Returns true if fuel is enough for one movement. */
     public boolean hasEnoughFuelForMovement() {
         return currentFuel >= FUEL_COST_DRONE_MOVE;
     }
@@ -141,7 +130,7 @@ public class Drone implements GameConfig, Serializable {
         this.position = new Position(row, col);
     }
 
-    /** Reset position too null(discuss together) */
+    /** Reset position to null. */
     public void clearPosition() {
         this.position = null;
     }
@@ -152,9 +141,9 @@ public class Drone implements GameConfig, Serializable {
     }
 
     /** Places drone at top center of trench and sets state to DESCENDING. */
-    public void placeOnTrench(int topRow,int pitCols) {
+    public void placeOnTrench(int topRow, int pitCols) {
         setPosition(topRow, pitCols / 2);
-        if(topRow==1)
+        if (topRow == 1)
             setState(DroneState.DESCENDING);
         else
             setState(DroneState.ASCENDING);
@@ -172,11 +161,10 @@ public class Drone implements GameConfig, Serializable {
         setState(DroneState.ON_SEABED);
     }
 
-    /** Places drone on ship */
+    /** Places drone on ship. */
     public void placeOnShip() {
         setState(DroneState.ON_SHIP);
     }
-
 
     /** Adds a collected artifact. Ignores null. */
     public void addArtifact(Artifact artifact) {
@@ -188,22 +176,19 @@ public class Drone implements GameConfig, Serializable {
         if (mineral != null) {
             collectedMinerals.add(mineral);
             Random rand = new Random();
-            this.minerals += rand.nextInt(MAX_MINERAL_VALUE)+1;
+            this.minerals += rand.nextInt(MAX_MINERAL_VALUE) + 1;
         }
     }
 
-    /**
-     * Unloads all resources and returns the collected artifacts.
-     * Both lists are cleared after unloading.
-     */
+    /** Unloads all collected artifacts. */
     public void unloadArtifacts() {
         collectedArtifacts.clear();
     }
 
+    /** Unloads all collected minerals. */
     public void unloadMinerals() {
         collectedMinerals.clear();
     }
-
 
     /** Sets the current state. */
     public void setState(DroneState state) { this.state = state; }
@@ -214,6 +199,7 @@ public class Drone implements GameConfig, Serializable {
     /** @return current fuel */
     public int getCurrentFuel() { return currentFuel; }
 
+    /** @return true if fuel is at max capacity */
     public boolean isFuelFull() {
         return currentFuel >= maxFuel;
     }
@@ -227,6 +213,7 @@ public class Drone implements GameConfig, Serializable {
     /** @return max hull integrity */
     public int getMaxHullIntegrity() { return maxHullIntegrity; }
 
+    /** @return true if hull is below max integrity */
     public boolean needsRepair() {
         return hullIntegrity < maxHullIntegrity;
     }
@@ -239,6 +226,16 @@ public class Drone implements GameConfig, Serializable {
 
     /** @return unmodifiable list of collected minerals */
     public List<Mineral> getCollectedMinerals() { return List.copyOf(collectedMinerals); }
+
+    /** @return current minerals value */
+    public int getMinerals() {
+        return minerals;
+    }
+
+    /** Sets the minerals value. */
+    public void setMinerals(int mineral) {
+        minerals = mineral;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -259,13 +256,5 @@ public class Drone implements GameConfig, Serializable {
                 ", integrity=" + hullIntegrity + "/" + maxHullIntegrity +
                 ", state=" + state +
                 ", pos=" + position + "]";
-    }
-
-    public int getMinerals() {
-        return minerals;
-    }
-
-    public void setMinerals(int mineral){
-        minerals = mineral;
     }
 }

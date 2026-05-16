@@ -34,7 +34,7 @@ public class Bottom extends GameStateAdapter {
     @Override
     public boolean ascend(){
         game.ascend();
-        changeState(GameState.TRENCH.createState(context,game));
+        changeState(GameState.TRENCH_ASCENT.createState(context, game));
         return true;
     }
 

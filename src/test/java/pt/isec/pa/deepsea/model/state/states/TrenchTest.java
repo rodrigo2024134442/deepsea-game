@@ -27,7 +27,7 @@ class TrenchTest {
         game.start();
 
         GameContext context = new GameContext();
-        Trench trench = new Trench(context, game);
+        TrenchDescent trench = new TrenchDescent(context, game);
 
         assertEquals(GameState.TRENCH, trench.getState());
     }
@@ -41,7 +41,7 @@ class TrenchTest {
         game.start();
 
         GameContext context = new GameContext();
-        Trench trench = new Trench(context, game);
+        TrenchDescent trench = new TrenchDescent(context, game);
 
         assertFalse(trench.move("s"));
     }

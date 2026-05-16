@@ -73,7 +73,7 @@ public class Surface extends GameStateAdapter {
         if (!game.descend(droneId))
             return false;
 
-        changeState(GameState.TRENCH.createState(context, game));
+        changeState(GameState.TRENCH_DESCENT.createState(context, game));
         return true;
     }
 }

@@ -6,83 +6,79 @@ import pt.isec.pa.deepsea.model.state.GameState;
 import pt.isec.pa.deepsea.model.state.GameStateAdapter;
 
 /**
- * Represents the trench state of the FSM.
+ * Represents the descending phase of the trench state in the FSM.
  *
- * <p>This state is active while a drone is moving through the sea trench,
- * either descending from the surface to the sea floor or ascending back
- * from the sea floor to the surface.</p>
- *
- * <p>The state checks if the drone was destroyed, reached the top of the
- * trench, or reached the bottom of the trench, and changes the FSM state
- * accordingly.</p>
+ * <p>This state is active while a drone is moving down through the sea trench
+ * from the surface to the sea floor. In this phase the drone is empty, so if
+ * it gets destroyed or runs out of fuel it simply returns to the ship without
+ * dropping any resources.</p>
  *
  * @author João Carvalho - 2024126292
  * @version v1.0.0 (Stage 2)
  */
-public class Trench extends GameStateAdapter {
+public class TrenchDescent extends GameStateAdapter {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Creates a new trench state.
+     * Creates a new trench-descent state.
      *
      * @param context finite state machine context
      * @param game main game model
      */
-    public Trench(GameContext context, Game game) {
+    public TrenchDescent(GameContext context, Game game) {
         super(context, game);
     }
 
     /**
      * Gets the enum value that identifies this state.
      *
-     * @return {@link GameState#TRENCH}
+     * @return {@link GameState#TRENCH_DESCENT}
      */
     @Override
     public GameState getState() {
-        return GameState.TRENCH;
+        return GameState.TRENCH_DESCENT;
     }
 
     /**
-     * Moves the active drone inside the trench.
+     * Moves the active drone down the trench.
      *
-     * <p>If the drone is destroyed, it is returned to the ship and the FSM
-     * changes to the surface state. If the drone reaches the top of the trench,
-     * it enters the surface. If it reaches the bottom while descending, it enters
-     * the sea floor state.</p>
+     * <p>If the drone is destroyed or runs out of fuel, it is returned to the
+     * ship and the FSM goes back to the surface. If it reaches the top, the
+     * drone enters the surface. If it reaches the bottom, the FSM moves to
+     * the sea floor.</p>
      *
      * @param command movement command ("w", "a", "s", "d")
      * @return true if the action was executed, false otherwise
      */
     @Override
     public boolean move(String command) {
-        System.out.println("Passou aqui1");
         if (!game.moveDroneInTrench(command))
             return false;
-        System.out.println("Passou aqui2");
+
         if (game.isActiveDroneDestroyed()) {
             game.returnDroneToShip();
             changeState(GameState.SURFACE.createState(context, game));
             return true;
         }
-        System.out.println("Passou aqui3");
+
         if (game.hasDroneReachedTop()) {
             game.enterSurface();
             changeState(GameState.SURFACE.createState(context, game));
             return true;
         }
-        System.out.println("Passou aqui4");
-        if (game.hasDroneReachedBottom() && !game.getIsLastStateBotom()) {
+
+        if (game.hasDroneReachedBottom()) {
             game.enterSeaFloor();
             changeState(GameState.BOTTOM.createState(context, game));
             return true;
         }
-        System.out.println("Passou aqui5");
+
         if (game.activeDroneHasNoFuelInTrench()) {
-            game.handleDroneWithoutFuelInTrench();
+            game.returnDroneToShip();
             changeState(GameState.SURFACE.createState(context, game));
             return true;
         }
-        System.out.println("Passou aqui6");
+
         return true;
     }
 }

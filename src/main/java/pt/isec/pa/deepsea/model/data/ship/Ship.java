@@ -3,6 +3,7 @@ package pt.isec.pa.deepsea.model.data.ship;
 import pt.isec.pa.deepsea.model.data.GameConfig;
 import pt.isec.pa.deepsea.model.data.Position;
 import pt.isec.pa.deepsea.model.data.drone.Drone;
+import pt.isec.pa.deepsea.model.data.drone.DroneComparator;
 import pt.isec.pa.deepsea.model.data.entity.Artifact;
 import pt.isec.pa.deepsea.model.data.entity.Mineral;
 
@@ -20,7 +21,7 @@ import static pt.isec.pa.deepsea.model.data.GameConfig.FUEL_COST_SHIP_MOVE;
  * copies or unmodifiable views to preserve encapsulation.</p>
  *
  * @author Beja N2024134442
- * @version v1.1.0
+ * @version v1.2.0
  */
 public class Ship implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -31,7 +32,7 @@ public class Ship implements Serializable {
     private List<Mineral> collectedMinerals;
     private int minerals;
 
-    /** Creates a ship at (0,0) with full fuel and the configured number of drones. */
+    /** Creates a ship at (-1,-1) with full fuel and the configured number of drones. */
     public Ship() {
         this.currentFuel = GameConfig.SHIP_MAX_FUEL;
         this.position = new Position(-1, -1);
@@ -71,15 +72,16 @@ public class Ship implements Serializable {
         this.position = position;
     }
 
-    /** Sets ship Fuel. */
+    /** Sets ship fuel. */
     public void setCurrentFuel(int currentFuel) {
         this.currentFuel = currentFuel;
     }
 
     /** Returns true if fuel is empty. */
-    public boolean isOutOfFuel() { return currentFuel <= 0;}
+    public boolean isOutOfFuel() { return currentFuel <= 0; }
 
-    public boolean hasEnoughFuelForMovement() { return currentFuel >= FUEL_COST_SHIP_MOVE;}
+    /** Returns true if fuel is enough for one ship movement. */
+    public boolean hasEnoughFuelForMovement() { return currentFuel >= FUEL_COST_SHIP_MOVE; }
 
     /** @return current fuel */
     public int getCurrentFuel() { return currentFuel; }
@@ -87,7 +89,7 @@ public class Ship implements Serializable {
     /** @return max fuel */
     public int getMaxFuel() { return GameConfig.SHIP_MAX_FUEL; }
 
-    /** @return current position (immutable) */
+    /** @return current position (clone) */
     public Position getPosition() { return position.clone(); }
 
     /**
@@ -121,26 +123,28 @@ public class Ship implements Serializable {
         return Collections.unmodifiableList(collectedMinerals);
     }
 
-    /** @return active drones sorted by fuel (highest first) using {@link Drone#BY_FUEL} */
+    /** @return active drones sorted by fuel (highest first) using {@link DroneComparator} */
     public List<Drone> getDronesByFuel() {
         return drones.stream()
                 .filter(d -> !d.isDestroyed())
-                .sorted(Drone.BY_FUEL)
+                .sorted(new DroneComparator(DroneComparator.Mode.FUEL))
                 .toList();
     }
 
-    /** @return active drones sorted by hull integrity (highest first) using {@link Drone#BY_INTEGRITY} */
+    /** @return active drones sorted by hull integrity (highest first) using {@link DroneComparator} */
     public List<Drone> getDronesByIntegrity() {
         return drones.stream()
                 .filter(d -> !d.isDestroyed())
-                .sorted(Drone.BY_INTEGRITY)
+                .sorted(new DroneComparator(DroneComparator.Mode.INTEGRITY))
                 .toList();
     }
 
+    /** @return current minerals value */
     public int getMinerals() {
         return minerals;
     }
 
+    /** Sets the minerals value. */
     public void setMinerals(int minerals) {
         this.minerals = minerals;
     }
@@ -151,5 +155,4 @@ public class Ship implements Serializable {
                 ", pos=" + position +
                 ", drones=" + drones.size() + "}";
     }
-
 }
