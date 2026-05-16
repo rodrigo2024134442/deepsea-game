@@ -5,6 +5,13 @@ import pt.isec.pa.deepsea.model.state.GameContext;
 import pt.isec.pa.deepsea.model.state.GameState;
 
 import java.util.List;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
  * Facade for accessing the entire "Deep Sea Mining" game logic.
@@ -24,6 +31,14 @@ public class DeepSeaManager {
 
     private GameContext context;
     private final DeepSeaLog log;
+    public static final String PROP_GAME_STATE = "_state_";
+    public static final String PROP_GRID       = "_grid_";
+    public static final String PROP_SHIP       = "_ship_";
+    public static final String PROP_DRONES     = "_drones_";
+    public static final String PROP_MINIGAME   = "_minigame_";
+    public static final String PROP_LOG        = "_log_";
+
+    private PropertyChangeSupport pcs;
 
     /**
      * Creates the manager and initialises all subsystems.
@@ -32,6 +47,7 @@ public class DeepSeaManager {
     public DeepSeaManager() {
         this.context = new GameContext();
         this.log     = DeepSeaLog.getInstance();
+        pcs = new PropertyChangeSupport(this);
         log.log("Game started.");
     }
 
@@ -60,7 +76,10 @@ public class DeepSeaManager {
      */
     public boolean move(String command) {
         boolean ok = context.move(command);
-        if (ok) log.log("Move: " + command + " [state=" + getState() + "]");
+        if (ok) {
+            log.log("Move: " + command + " [state=" + getState() + "]");
+            fireAll();
+        }
         return ok;
     }
 
@@ -73,7 +92,10 @@ public class DeepSeaManager {
      */
     public boolean descend(int droneId) {
         boolean ok = context.descend(droneId);
-        if (ok) log.log("Drone " + droneId + " started descending.");
+        if (ok) {
+            log.log("Drone " + droneId + " started descending.");
+            fireAll();
+        }
         return ok;
     }
 
@@ -85,7 +107,10 @@ public class DeepSeaManager {
      */
     public boolean ascend() {
         boolean ok = context.ascend();
-        if (ok) log.log("Active drone started ascending.");
+        if (ok) {
+            log.log("Active drone started ascending.");
+            fireAll();
+        }
         return ok;
     }
 
@@ -97,7 +122,10 @@ public class DeepSeaManager {
      */
     public boolean enterShop() {
         boolean ok = context.enterShop();
-        if (ok) log.log("Entered shop.");
+        if (ok) {
+            log.log("Entered shop.");
+            fireAll();
+        }
         return ok;
     }
 
@@ -109,7 +137,10 @@ public class DeepSeaManager {
      */
     public boolean leaveShop() {
         boolean ok = context.leaveShop();
-        if (ok) log.log("Left shop.");
+        if (ok) {
+            log.log("Left shop.");
+            fireAll();
+        }
         return ok;
     }
 
@@ -122,7 +153,10 @@ public class DeepSeaManager {
      */
     public boolean repair(int droneId) {
         boolean ok = context.repair(droneId);
-        if (ok) log.log("Drone " + droneId + " repaired.");
+        if (ok) {
+            log.log("Drone " + droneId + " repaired.");
+            fireAll();
+        }
         return ok;
     }
 
@@ -147,7 +181,10 @@ public class DeepSeaManager {
      */
     public boolean mining() {
         boolean ok = context.mining();
-        if (ok) log.log("Mineral collected.");
+        if (ok) {
+            log.log("Mineral collected.");
+            fireAll();
+        }
         return ok;
     }
 
@@ -160,7 +197,10 @@ public class DeepSeaManager {
      */
     public boolean retrieveArtifact() {
         boolean ok = context.retrieveArtifact();
-        if (ok) log.log("Artifact found — minigame started.");
+        if (ok) {
+            log.log("Artifact found — minigame started.");
+            fireAll();
+        }
         return ok;
     }
 
@@ -174,33 +214,10 @@ public class DeepSeaManager {
      */
     public boolean movePiece(int row, int col) {
         boolean ok = context.movePiece(row, col);
-        if (ok) log.log("Puzzle piece moved: (row:" + row + ", col:" + col + ")");
-        return ok;
-    }
-
-    /**
-     * Forces the minigame to the win condition.
-     *
-     * <p><b>Debug only</b> — should not be called in production.</p>
-     *
-     * @return {@code true} if accepted
-     */
-    public boolean winMiniGame() {
-        boolean ok = context.winMini();
-        if (ok) log.log("[DEBUG] Minigame force-won.");
-        return ok;
-    }
-
-    /**
-     * Forces the minigame to the lose condition.
-     *
-     * <p><b>Debug only</b> — should not be called in production.</p>
-     *
-     * @return {@code true} if accepted
-     */
-    public boolean loseMiniGame() {
-        boolean ok = context.loseMini();
-        if (ok) log.log("[DEBUG] Minigame force-lost.");
+        if (ok) {
+            log.log("Puzzle piece moved: (row:" + row + ", col:" + col + ")");
+            fireAll();
+        }
         return ok;
     }
 
@@ -540,30 +557,41 @@ public class DeepSeaManager {
     // -- Persistence --
 
     /**
-     * Saves the current game state to disk.
+     * Saves the current game state to the given file.
+     * Used by the JavaFX UI via a FileChooser.
      *
+     * @param file destination file
      * @return {@code true} if saved successfully
      */
-    public boolean saveGame() {
-        boolean ok = context.saveGame();
-        if (ok) log.log("Game saved.");
-        return ok;
+    public boolean saveGame(File file) {
+        if (file == null) return false;
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
+            oos.writeObject(context);
+            log.log("Game saved to " + file.getName());
+            pcs.firePropertyChange(PROP_LOG, null, null);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
-     * Loads a previously saved game state from disk.
-     * The entire game state is fully restored.
+     * Loads a previously saved game state from the given file.
+     * Used by the JavaFX UI via a FileChooser.
      *
+     * @param file source file
      * @return {@code true} if loaded successfully
      */
-    public boolean loadGame() {
-        GameContext loaded = GameContext.loadGame();
-        if (loaded != null) {
-            context = loaded;
-            log.log("Game loaded.");
+    public boolean loadGame(File file) {
+        if (file == null) return false;
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            context = (GameContext) ois.readObject();
+            log.log("Game loaded from " + file.getName());
+            fireAll();
             return true;
+        } catch (Exception e) {
+            return false;
         }
-        return false;
     }
 
     // -- Log --
@@ -589,5 +617,40 @@ public class DeepSeaManager {
     /** Clears all log messages. */
     public void clearLog() {
         log.clear();
+        fireAll();
+    }
+
+    // Property change support
+
+    /**
+     * Subscribes a listener for a specific topic.
+     *
+     * @param prop topic name (one of the PROP_* constants)
+     * @param listener    listener
+     */
+    public void addPropertyChangeListener(String prop, PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(prop, listener);
+    }
+
+    /**
+     * Subscribes a listener for all topics.
+     *
+     * @param listener listener
+     */
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(listener);
+    }
+
+    /**
+     * Fires all property change topics at once.
+     * Used after any action that may have changed several aspects of the model.
+     */
+    private void fireAll() {
+        pcs.firePropertyChange(PROP_GAME_STATE, null, null);
+        pcs.firePropertyChange(PROP_GRID,       null, null);
+        pcs.firePropertyChange(PROP_SHIP,       null, null);
+        pcs.firePropertyChange(PROP_DRONES,     null, null);
+        pcs.firePropertyChange(PROP_MINIGAME,   null, null);
+        pcs.firePropertyChange(PROP_LOG,        null, null);
     }
 }
