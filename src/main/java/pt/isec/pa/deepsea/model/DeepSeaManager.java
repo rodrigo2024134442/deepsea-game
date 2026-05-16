@@ -221,6 +221,17 @@ public class DeepSeaManager {
         return ok;
     }
 
+    /**
+     * Starts a new game, resetting all state and clearing the log.
+     * Transition to initial SURFACE state.
+     */
+    public void newGame() {
+        context = new GameContext();
+        log.clear();
+        log.log("Game started.");
+        fireAll();
+    }
+
     // -- Ship --
 
     /** @return current row of the ship on the surface grid */
