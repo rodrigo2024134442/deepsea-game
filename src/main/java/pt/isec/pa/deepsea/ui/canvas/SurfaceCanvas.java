@@ -96,7 +96,7 @@ public class SurfaceCanvas extends Canvas {
             }
         }
 
-        gc.setStroke(Color.GOLD);
+        gc.setStroke(Color.DARKGREY);
         gc.setLineWidth(1);
         for (int r = 0; r <= rows; r++) {
             double y = positionInY(r);

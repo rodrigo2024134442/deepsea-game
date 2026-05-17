@@ -26,7 +26,7 @@ public class MainJFX extends Application {
     @Override
     public void start(Stage stage) {
         RootPane root = new RootPane(manager);
-        Scene scene = new Scene(root, 1000, 700);
+        Scene scene = new Scene(root, 1500, 1000);
 
         scene.setOnKeyPressed(e -> {
             switch (e.getCode()) {

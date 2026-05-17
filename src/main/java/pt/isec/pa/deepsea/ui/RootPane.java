@@ -13,6 +13,7 @@ import pt.isec.pa.deepsea.ui.canvas.BottomCanvas;
 import pt.isec.pa.deepsea.ui.canvas.PuzzleCanvas;
 import pt.isec.pa.deepsea.ui.canvas.SurfaceCanvas;
 import pt.isec.pa.deepsea.ui.canvas.TrenchCanvas;
+import pt.isec.pa.deepsea.ui.commandbar.CommandBar;
 import pt.isec.pa.deepsea.ui.log.LogStage;
 import pt.isec.pa.deepsea.ui.side.DronesInfoBox;
 import pt.isec.pa.deepsea.ui.side.ShipInfoBox;
@@ -26,6 +27,7 @@ public class RootPane extends BorderPane {
     private TrenchCanvas trenchCanvas;
     private BottomCanvas bottomCanvas;
     private PuzzleCanvas puzzleCanvas;
+    private CommandBar commandBar;
 
     // Side panels
     private ShipInfoBox shipInfoBox;
@@ -77,6 +79,18 @@ public class RootPane extends BorderPane {
         scrollPane.setStyle("-fx-background-color: transparent;");
 
         setRight(scrollPane);
+
+        // LEFT
+        commandBar = new CommandBar(manager);
+        VBox leftPanel = new VBox(10);
+        leftPanel.setPadding(new Insets(10));
+        leftPanel.getChildren().add(commandBar);
+
+        Pane leftPane = new Pane(leftPanel);
+        leftPane.setMaxWidth(180);
+        leftPane.setMaxHeight(getMaxHeight());
+        leftPane.prefWidth(120);
+        leftPane.setStyle("-fx-background-color: transparent;");
 
         // BOTTOM - Debug logs button
         Button btnLog = new Button("Show Logs");
