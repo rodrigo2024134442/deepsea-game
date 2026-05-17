@@ -158,27 +158,6 @@ public class TrenchCanvas extends Canvas {
         gc.setFont(Font.font(10));
         gc.fillText("D", x + cellWidth / 2 - 5, y + cellHeight / 2 + 3);
 
-        // Desenhar info de hull e fuel
-        drawDroneInfo(gc, droneRow, droneCol);
     }
 
-    private void drawDroneInfo(GraphicsContext gc, int droneRow, int droneCol) {
-        // Buscar drones para info
-        java.util.List<Integer> droneIds = manager.getDroneIds();
-        if (droneIds.isEmpty()) return;
-
-        int activeDroneId = droneIds.get(0);
-        int fuel = manager.getDroneFuel(activeDroneId);
-        int maxFuel = manager.getDroneMaxFuel(activeDroneId);
-        int hull = manager.getDroneHullIntegrity(activeDroneId);
-        int maxHull = manager.getDroneMaxHullIntegrity(activeDroneId);
-
-        // Desenhar no canto superior esquerdo
-        gc.setFill(Color.WHITE);
-        gc.setFont(Font.font(12));
-        double offsetY = 20;
-        gc.fillText(String.format("Fuel: %d/%d", fuel, maxFuel), 10, offsetY);
-        gc.fillText(String.format("Hull: %d/%d", hull, maxHull), 10, offsetY + 20);
-        gc.fillText(String.format("Pos: (%d,%d)", droneRow, droneCol), 10, offsetY + 40);
-    }
 }

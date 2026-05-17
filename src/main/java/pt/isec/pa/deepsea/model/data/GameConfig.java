@@ -24,7 +24,7 @@ public interface GameConfig {
     // Obstacles
     int MAX_OBSTACLES = 5;
     int MAX_MONSTERS = 3;
-    int MAX_ARTIFACTS = (int) (DEFAULT_SEASURFACE_ROWS * DEFAULT_SEASURFACE_COLS * 3);
+    int MAX_ARTIFACTS = (int) (DEFAULT_SEASURFACE_ROWS * DEFAULT_SEASURFACE_COLS);
     int MAX_CELL_ARTIFACTS = 4;
 
     // Puzzle

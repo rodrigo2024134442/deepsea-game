@@ -28,6 +28,12 @@ public class Bottom extends GameStateAdapter {
             return true;
         }
 
+        if (game.activeDroneHasNoFuelInTrench()) {
+            game.handleDroneWithoutFuelInTrench();
+            changeState(GameState.SURFACE.createState(context, game));
+            return true;
+        }
+
         return true;
     }
 

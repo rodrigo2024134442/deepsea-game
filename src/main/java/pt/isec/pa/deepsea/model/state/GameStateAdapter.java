@@ -66,14 +66,4 @@ public abstract class GameStateAdapter implements IGameState, Serializable {
     @Override
     public boolean movePiece(int row,int col){return false;}
 
-    @Override
-    public boolean winMini() {
-        return false;
-    }
-
-    @Override
-    public boolean loseMini() {
-        return false;
-    }
-
 }

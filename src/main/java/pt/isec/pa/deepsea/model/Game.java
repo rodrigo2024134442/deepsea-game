@@ -358,9 +358,6 @@ public class Game implements GameConfig, Serializable {
 
         if (seaFloor.hasMonster(next)) {
             activeDrone.destroy();
-            activeDrone.clearPosition();
-            activeDrone = null;
-            activeSurfaceCell = null;
         }
 
         return true;
@@ -523,6 +520,13 @@ public class Game implements GameConfig, Serializable {
         return seaSurface.isVisited(new Position(row, col));
     }
 
+    /** @return {@code true} if the given surface cell has any artifact in its sea floor */
+    public boolean surfaceCellHasArtifacts(int row, int col) {
+        SurfaceCell cell = seaSurface.getCell(new Position(row, col));
+        if (cell == null) return false;
+        return cell.getArtifactCount() > 0;
+    }
+
     /** @return number of rows in the active trench, or 0 if none */
     public int getTrenchRows() {
         if (activeSurfaceCell == null) return 0;
@@ -593,6 +597,7 @@ public class Game implements GameConfig, Serializable {
         Entity entity = cell.getEntity();
         if (entity instanceof Artifact) return "ARTIFACT";
         if (entity instanceof Mineral)  return "MINERAL";
+        if (entity instanceof Monster)  return "MONSTER";
         return "EMPTY";
     }
 

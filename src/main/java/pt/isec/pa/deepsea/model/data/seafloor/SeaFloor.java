@@ -32,7 +32,9 @@ public class SeaFloor implements Serializable {
         if (DEFENSE_MODE) {
             generateDefenseMode();
         } else {
-            generateMinerals(4);
+            Random randNum = new Random();
+            generateMinerals(randNum.nextInt(3)+1);
+            generateMonsters(randNum.nextInt(5)+1);
         }
 
         if (quantity > 0) {
@@ -86,6 +88,19 @@ public class SeaFloor implements Serializable {
             int c = rand.nextInt(cols);
             if (isCellEmpty(r, c)) {
                 grid[r][c].setEntity(new Artifact("Tesouro"));
+                placed++;
+            }
+        }
+    }
+
+    private void generateMonsters(int amount) {
+        Random rand = new Random();
+        int placed = 0;
+        while (placed < amount) {
+            int r = rand.nextInt(rows);
+            int c = rand.nextInt(cols);
+            if (isCellEmpty(r, c)) {
+                grid[r][c].setEntity(new Monster("Monster", 100));
                 placed++;
             }
         }

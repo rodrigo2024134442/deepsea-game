@@ -264,6 +264,11 @@ public class DeepSeaManager {
         return context.getGame().getCollectedArtifacts().size();
     }
 
+    /** @return {@code true} if the given surface cell has any artifact in its sea floor */
+    public boolean surfaceCellHasArtifacts(int row, int col) {
+        return context.getGame().surfaceCellHasArtifacts(row, col);
+    }
+
     /** @return number of minerals collected by the ship */
     public int getCollectedMineralsCount() {
         return context.getGame().getCollectedMinerals().size();

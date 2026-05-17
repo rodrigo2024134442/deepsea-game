@@ -9,12 +9,14 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import pt.isec.pa.deepsea.model.DeepSeaManager;
 import pt.isec.pa.deepsea.model.state.GameState;
+import pt.isec.pa.deepsea.ui.canvas.BottomCanvas;
 import pt.isec.pa.deepsea.ui.canvas.PuzzleCanvas;
 import pt.isec.pa.deepsea.ui.canvas.SurfaceCanvas;
 import pt.isec.pa.deepsea.ui.canvas.TrenchCanvas;
 import pt.isec.pa.deepsea.ui.log.LogStage;
 import pt.isec.pa.deepsea.ui.side.DronesInfoBox;
 import pt.isec.pa.deepsea.ui.side.ShipInfoBox;
+import pt.isec.pa.deepsea.ui.shop.ShopPop;
 
 public class RootPane extends BorderPane {
     private final DeepSeaManager manager;
@@ -22,12 +24,13 @@ public class RootPane extends BorderPane {
     // Canvases
     private SurfaceCanvas surfaceCanvas;
     private TrenchCanvas trenchCanvas;
+    private BottomCanvas bottomCanvas;
     private PuzzleCanvas puzzleCanvas;
-    // private BottomCanvas bottomCanvas; // TODO
 
     // Side panels
     private ShipInfoBox shipInfoBox;
     private DronesInfoBox dronesInfoBox;
+    private ShopPop shopPop;
 
     private Pane areaPane;
 
@@ -46,14 +49,14 @@ public class RootPane extends BorderPane {
         // CANVASES
         surfaceCanvas = new SurfaceCanvas(manager);
         trenchCanvas = new TrenchCanvas(manager);
+        bottomCanvas = new BottomCanvas(manager);
         puzzleCanvas = new PuzzleCanvas(manager);
-        // bottomCanvas = new BottomCanvas(manager);
 
         StackPane stackPane = new StackPane(
                 surfaceCanvas,
                 trenchCanvas,
-                puzzleCanvas
-                // bottomCanvas
+                puzzleCanvas,
+                bottomCanvas
         );
 
         areaPane = new Pane(stackPane);
@@ -101,7 +104,7 @@ public class RootPane extends BorderPane {
         surfaceCanvas.updateSize(w, h);
         trenchCanvas.updateSize(w, h);
         puzzleCanvas.updateSize(w, h);
-        // bottomCanvas.updateSize(w, h);
+        bottomCanvas.updateSize(w, h);
     }
 
     private void update() {
@@ -121,6 +124,17 @@ public class RootPane extends BorderPane {
                 state == GameState.MINIGAME
         );
 
-        // bottomCanvas.setVisible(state == GameState.BOTTOM);
+        bottomCanvas.setVisible(state == GameState.BOTTOM);
+
+        if (state == GameState.SHOP) {
+            if (getScene() != null && (shopPop == null || !shopPop.isShowing())) {
+                shopPop = new ShopPop(manager, getScene().getWindow());
+                shopPop.show();
+            }
+        } else {
+            if (shopPop != null && shopPop.isShowing()) {
+                shopPop.close();
+            }
+        }
     }
 }

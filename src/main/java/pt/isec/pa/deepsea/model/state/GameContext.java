@@ -154,24 +154,6 @@ public class GameContext implements Serializable, GameConfig {
     }
 
     /**
-     * Redirects a minigame win action to the current state.
-     *
-     * @return true if the win action was handled, false otherwise
-     */
-    public boolean winMini() {
-        return state.winMini();
-    }
-
-    /**
-     * Redirects a minigame loss action to the current state.
-     *
-     * @return true if the loss action was handled, false otherwise
-     */
-    public boolean loseMini() {
-        return state.loseMini();
-    }
-
-    /**
      * Changes the current FSM state.
      *
      * @param newState new concrete state
