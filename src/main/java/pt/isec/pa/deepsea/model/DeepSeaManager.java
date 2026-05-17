@@ -523,6 +523,11 @@ public class DeepSeaManager {
 
     // -- Contextual checks for the UI --
 
+    /** Game Winning verification*/
+    public boolean isGameWon()  { return context.getGame().isGameWon();  }
+    /** Game Lost verification*/
+    public boolean isGameLost() { return context.getGame().isGameLost(); }
+
     /** @return {@code true} if the active drone was destroyed on the sea floor */
     public boolean isActiveDroneDestroyed() {
         return context.getGame().isActiveDroneDestroyed();

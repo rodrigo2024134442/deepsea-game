@@ -155,4 +155,5 @@ public class Ship implements Serializable {
                 ", pos=" + position +
                 ", drones=" + drones.size() + "}";
     }
+
 }

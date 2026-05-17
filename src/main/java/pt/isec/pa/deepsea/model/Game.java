@@ -179,7 +179,7 @@ public class Game implements GameConfig, Serializable {
         if (drone == null)
             return false;
 
-        if (drone.isDestroyed() || drone.isOutOfFuel())
+        if (drone.isDestroyed() || !drone.hasEnoughFuelForMovement())
             return false;
 
         SurfaceCell currentCell = seaSurface.getCell(ship.getPosition());
@@ -420,6 +420,7 @@ public class Game implements GameConfig, Serializable {
         if (!(entity instanceof Artifact artifact)) return false;
 
         activeDrone.addArtifact(artifact);
+        activeSurfaceCell.decrementArtifactCount();
         miniGame = new MiniGame();
         return true;
     }
@@ -834,9 +835,12 @@ public class Game implements GameConfig, Serializable {
         if (activeDrone == null || activeSurfaceCell == null)
             return;
 
+        int returnedArtifactsCount = activeDrone.getCollectedArtifacts().size();
+
         activeSurfaceCell.getSeaFloor().placeArtifacts(activeDrone.getCollectedArtifacts());
         activeSurfaceCell.getSeaFloor().placeMinerals(activeDrone.getCollectedMinerals());
 
+        activeSurfaceCell.incrementArtifactCount(returnedArtifactsCount);
         activeDrone.unloadArtifacts();
         activeDrone.unloadMinerals();
         activeDrone.setMinerals(0);
@@ -846,5 +850,38 @@ public class Game implements GameConfig, Serializable {
 
         activeDrone = null;
         activeSurfaceCell = null;
+    }
+
+
+    /**
+     * @return true if all artifacts have been collected and brought to the ship
+     */
+    public boolean isGameWon() {
+        if (seaSurface == null || ship == null) return false;
+
+        //
+        for (int r = 0; r < seaSurface.getRows(); r++) {
+            for (int c = 0; c < seaSurface.getCols(); c++) {
+                if (seaSurface.getCell(r, c).getArtifactCount() > 0)
+                    return false;
+            }
+        }
+
+        //
+        for (Drone d : ship.getDrones()) {
+            if (!d.isDestroyed() && !d.getCollectedArtifacts().isEmpty())
+                return false;
+        }
+
+        // chegou aqui entao todos os artefactos estão no navio
+        return !ship.getCollectedArtifacts().isEmpty();
+    }
+
+    /**
+     * @return true if the game can no longer be won
+     */
+    public boolean isGameLost() {
+        if (ship == null) return false;
+        return ship.allDronesLost() || isShipOutOfFuel();
     }
 }

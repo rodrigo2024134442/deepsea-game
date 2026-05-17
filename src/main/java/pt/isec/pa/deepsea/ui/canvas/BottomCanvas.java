@@ -23,8 +23,8 @@ public class BottomCanvas extends Canvas {
             BottomCanvas.class.getResourceAsStream("/images/backgrounds/DarkUnderwaterCloud.png"));
 
     private static final Image[] mineralColection = {
-            new Image(BottomCanvas.class.getResourceAsStream("/images/objects/mineral_purple_crystal_cluster.png")),
             new Image(BottomCanvas.class.getResourceAsStream("/images/objects/mineral_gold_ore_cluster.png")),
+            new Image(BottomCanvas.class.getResourceAsStream("/images/objects/mineral_purple_crystal_cluster.png")),
     };
 
     private static final Image[] artifactColection = {
@@ -123,6 +123,7 @@ public class BottomCanvas extends Canvas {
         String entity = manager.getBottomCellEntity(r, c);
         Random rnd = new Random();
         int randomNum = rnd.nextInt(2);
+        randomNum = 1;
         switch (entity) {
             case "MINERAL"  -> gc.drawImage(mineralColection[randomNum],  x, y, sizeCell, sizeCell);
             case "ARTIFACT" -> gc.drawImage(artifactColection[randomNum], x, y, sizeCell, sizeCell);

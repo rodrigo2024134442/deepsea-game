@@ -1,5 +1,6 @@
 package pt.isec.pa.deepsea.ui;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -13,11 +14,12 @@ import pt.isec.pa.deepsea.ui.canvas.BottomCanvas;
 import pt.isec.pa.deepsea.ui.canvas.PuzzleCanvas;
 import pt.isec.pa.deepsea.ui.canvas.SurfaceCanvas;
 import pt.isec.pa.deepsea.ui.canvas.TrenchCanvas;
-import pt.isec.pa.deepsea.ui.commandbar.CommandBar;
 import pt.isec.pa.deepsea.ui.log.LogStage;
+import pt.isec.pa.deepsea.ui.side.CommandsBox;
 import pt.isec.pa.deepsea.ui.side.DronesInfoBox;
 import pt.isec.pa.deepsea.ui.side.ShipInfoBox;
 import pt.isec.pa.deepsea.ui.shop.ShopPop;
+import javafx.scene.control.Alert;
 
 public class RootPane extends BorderPane {
     private final DeepSeaManager manager;
@@ -27,7 +29,7 @@ public class RootPane extends BorderPane {
     private TrenchCanvas trenchCanvas;
     private BottomCanvas bottomCanvas;
     private PuzzleCanvas puzzleCanvas;
-    private CommandBar commandBar;
+    private CommandsBox commandsBox;
 
     // Side panels
     private ShipInfoBox shipInfoBox;
@@ -35,6 +37,7 @@ public class RootPane extends BorderPane {
     private ShopPop shopPop;
 
     private Pane areaPane;
+    private boolean gameOverShown = false;
 
     public RootPane(DeepSeaManager manager) {
         this.manager = manager;
@@ -71,34 +74,23 @@ public class RootPane extends BorderPane {
         VBox rightPanel = new VBox(10);
         rightPanel.setPadding(new Insets(10));
         rightPanel.getChildren().addAll(shipInfoBox, dronesInfoBox);
+        rightPanel.setStyle("-fx-background-color: #16213e;");
 
         ScrollPane scrollPane = new ScrollPane(rightPanel);
         scrollPane.setFitToWidth(true);
         scrollPane.setPrefWidth(220);
         scrollPane.setMaxWidth(220);
-        scrollPane.setStyle("-fx-background-color: transparent;");
+        scrollPane.setStyle("-fx-background: #16213e; "
+                + "-fx-background-color: #16213e; "
+                + "-fx-border-color: #0f3460; "
+                + "-fx-border-width: 1;");
 
         setRight(scrollPane);
 
         // LEFT
-        commandBar = new CommandBar(manager);
-        VBox leftPanel = new VBox(10);
-        leftPanel.setPadding(new Insets(10));
-        leftPanel.getChildren().add(commandBar);
+        commandsBox = new CommandsBox(manager);
+        setLeft(commandsBox);
 
-        Pane leftPane = new Pane(leftPanel);
-        leftPane.setMaxWidth(180);
-        leftPane.setMaxHeight(getMaxHeight());
-        leftPane.prefWidth(120);
-        leftPane.setStyle("-fx-background-color: transparent;");
-
-        // BOTTOM - Debug logs button
-        Button btnLog = new Button("Show Logs");
-        btnLog.setOnAction(e -> {
-            LogStage logStage = new LogStage(manager, getScene().getWindow());
-            logStage.show();
-        });
-        setBottom(btnLog);
     }
 
     private void registerHandlers() {
@@ -150,5 +142,31 @@ public class RootPane extends BorderPane {
                 shopPop.close();
             }
         }
+        checkGameOver();
+    }
+
+    private void checkGameOver() {
+        if (gameOverShown) return;
+
+        if (manager.isGameWon()) {
+            gameOverShown = true;
+            showAlert("Victory!",
+                    "You collected all the artifacts and brought them home.",
+                    Alert.AlertType.INFORMATION);
+        } else if (manager.isGameLost()) {
+            gameOverShown = true;
+            showAlert("Game Over",
+                    "All drones destroyed. The expedition is over.",
+                    Alert.AlertType.WARNING);
+        }
+    }
+
+    private void showAlert(String title, String content, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+        Platform.exit();
     }
 }

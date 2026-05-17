@@ -26,12 +26,12 @@ public class TrenchCanvas extends Canvas {
     private Random rand = new Random();
 
     private static final Image IMG_DRONE = new Image(
-            TrenchCanvas.class.getResourceAsStream("/images/vehicles/underwater_drone_yellow.png"));
+            TrenchCanvas.class.getResourceAsStream("/images/vehicles/mining_drone_heavy_rov.png"));
     private static final Image IMG_TRENCH_BG = new Image(
             TrenchCanvas.class.getResourceAsStream("/images/backgrounds/trench_grid_background.png"));
 
     private static final Image IMG_ROCK = new Image(
-            TrenchCanvas.class.getResourceAsStream("/images/objects/obstacle_dark_trench_rock.png"));
+            TrenchCanvas.class.getResourceAsStream("/images/objects/rocha1.png"));
 
     private static final Image[] animalCollection = {
             new Image(TrenchCanvas.class.getResourceAsStream("/images/creatures/trench_animal1.png")),
@@ -43,7 +43,7 @@ public class TrenchCanvas extends Canvas {
     };
 
     private static final Image IMG_CURRENT = new Image(
-            TrenchCanvas.class.getResourceAsStream("/images/objects/hazard_ocean_current_spiral.png"));
+            TrenchCanvas.class.getResourceAsStream("/images/objects/TrenchCurrent.png"));
 
     public TrenchCanvas(DeepSeaManager manager) {
         super(500, 500);                // initial size, will be resized by RootPane
@@ -51,7 +51,7 @@ public class TrenchCanvas extends Canvas {
         setFocusTraversable(true);
         registerHandlers();
         update();
-        // RequestFocus on mouse click to ensure keyboard input works
+
         setOnMouseClicked(e -> requestFocus());
     }
 
@@ -158,7 +158,7 @@ public class TrenchCanvas extends Canvas {
                         drawEntity(gc, IMG_ROCK, x, y);
                         break;
                     case "ANIMAL":
-                        drawEntity(gc, animalCollection[rand.nextInt(6)], x, y);
+                        drawEntity(gc, animalCollection[0], x, y);
                         break;
                     case "CURRENT":
                         drawEntity(gc, IMG_CURRENT, x, y);

@@ -6,12 +6,12 @@ public interface GameConfig {
     int DEFAULT_SEASURFACE_COLS = 10;
 
     // SeaTrench Grid
-    int DEFAULT_SEATRENCH_ROWS = 12;
-    int DEFAULT_SEATRENCH_COLS = 6;
+    int DEFAULT_SEATRENCH_ROWS = 14;
+    int DEFAULT_SEATRENCH_COLS = 8;
 
     // SeaFloor Grid
-    int DEFAULT_SEAFLOOR_ROWS = 10;
-    int DEFAULT_SEAFLOOR_COLS = 10;
+    int DEFAULT_SEAFLOOR_ROWS = 12;
+    int DEFAULT_SEAFLOOR_COLS = 12;
 
     // Ship
     int SHIP_MAX_FUEL = 1000;
