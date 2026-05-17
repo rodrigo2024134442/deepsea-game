@@ -2,6 +2,7 @@ package pt.isec.pa.deepsea.ui.canvas;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
@@ -18,8 +19,20 @@ import pt.isec.pa.deepsea.model.DeepSeaManager;
  */
 public class TrenchCanvas extends Canvas {
     DeepSeaManager manager;
-    private double cellWidth = 50;
-    private double cellHeight = 50;
+    private int rows, cols;
+    private double sizeCell, offsetX, offsetY;
+
+    private static final Image IMG_TRENCH_BG = new Image(
+            TrenchCanvas.class.getResourceAsStream("/images/backgrounds/trench_grid_background.png"));
+
+    private static final Image IMG_ROCK = new Image(
+            TrenchCanvas.class.getResourceAsStream("/images/objects/obstacle_dark_trench_rock.png"));
+
+    private static final Image IMG_ANIMAL = new Image(
+            TrenchCanvas.class.getResourceAsStream("/images/creatures/monster1.png"));
+
+    private static final Image IMG_CURRENT = new Image(
+            TrenchCanvas.class.getResourceAsStream("/images/objects/hazard_ocean_current_spiral.png"));
 
     public TrenchCanvas(DeepSeaManager manager) {
         super(500, 500);                // initial size, will be resized by RootPane
@@ -65,73 +78,93 @@ public class TrenchCanvas extends Canvas {
 
     private void update() {
         GraphicsContext gc = getGraphicsContext2D();
-        clearScreen(gc);
-
-        int rows = manager.getTrenchRows();
-        int cols = manager.getTrenchCols();
-
-        if (rows == 0 || cols == 0) return;
-
-        calculateCellSize(rows, cols);
-
-        drawGrid(gc, rows, cols);
-        drawEntities(gc, rows, cols);
+        changeBoardGeometry();
+        setBackground(gc);
+        drawBoard(gc);
         drawActiveDrone(gc);
     }
 
-    private void clearScreen(GraphicsContext gc) {
-        gc.setFill(Color.DARKBLUE);
-        gc.fillRect(0, 0, getWidth(), getHeight());
+    private void setBackground(GraphicsContext gc) {
+        if (IMG_TRENCH_BG.getException() == null) {
+            gc.drawImage(IMG_TRENCH_BG, 0, 0, getWidth(), getHeight());
+        } else {
+            gc.setFill(Color.DARKBLUE);
+            gc.fillRect(0, 0, getWidth(), getHeight());
+        }
     }
 
-    private void calculateCellSize(int rows, int cols) {
-        cellWidth = getWidth() / cols;
-        cellHeight = getHeight() / rows;
+    private void changeBoardGeometry() {
+        rows = manager.getTrenchRows();
+        cols = manager.getTrenchCols();
+
+        if (rows == 0 || cols == 0) return;
+
+        sizeCell = Math.min(getWidth() / cols, getHeight() / rows);
+
+        offsetX = (getWidth() - sizeCell * cols) / 2;
+        offsetY = (getHeight() - sizeCell * rows) / 2;
     }
 
-    private void drawGrid(GraphicsContext gc, int rows, int cols) {
+    private double positionInX(int c) {
+        return offsetX + c * sizeCell;
+    }
+
+    private double positionInY(int r) {
+        return offsetY + r * sizeCell;
+    }
+
+    private void drawBoard(GraphicsContext gc) {
+        drawEntities(gc);
+        drawGrid(gc);
+    }
+
+    private void drawGrid(GraphicsContext gc) {
         gc.setStroke(Color.LIGHTBLUE);
         gc.setLineWidth(1);
 
         // Linhas horizontais
         for (int r = 0; r <= rows; r++) {
-            double y = r * cellHeight;
-            gc.strokeLine(0, y, getWidth(), y);
+            double y = positionInY(r);
+            gc.strokeLine(offsetX, y, offsetX + sizeCell * cols, y);
         }
 
         // Linhas verticais
         for (int c = 0; c <= cols; c++) {
-            double x = c * cellWidth;
-            gc.strokeLine(x, 0, x, getHeight());
+            double x = positionInX(c);
+            gc.strokeLine(x, offsetY, x, offsetY + sizeCell * rows);
         }
     }
 
-    private void drawEntities(GraphicsContext gc, int rows, int cols) {
+    private void drawEntities(GraphicsContext gc) {
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 String entity = manager.getTrenchCellEntity(r, c);
-                double x = c * cellWidth;
-                double y = r * cellHeight;
+                double x = positionInX(c);
+                double y = positionInY(r);
 
                 switch (entity) {
                     case "ROCK":
-                        gc.setFill(Color.GRAY);
-                        gc.fillRect(x + 2, y + 2, cellWidth - 4, cellHeight - 4);
+                        drawEntity(gc, IMG_ROCK, x, y);
                         break;
                     case "ANIMAL":
-                        gc.setFill(Color.RED);
-                        gc.fillOval(x + 5, y + 5, cellWidth - 10, cellHeight - 10);
+                        drawEntity(gc, IMG_ANIMAL, x, y);
                         break;
                     case "CURRENT":
-                        gc.setFill(Color.CYAN);
-                        gc.fillPolygon(
-                                new double[]{x + cellWidth/2, x + cellWidth, x},
-                                new double[]{y, y + cellHeight, y + cellHeight},
-                                3
-                        );
+                        drawEntity(gc, IMG_CURRENT, x, y);
                         break;
                 }
             }
+        }
+    }
+
+    private void drawEntity(GraphicsContext gc, Image image, double x, double y) {
+        double margin = 2;
+        if (image.getException() == null) {
+            gc.drawImage(image, x + margin, y + margin, sizeCell - 2 * margin, sizeCell - 2 * margin);
+        } else {
+            // Fallback shapes if images fail to load
+            gc.setFill(Color.GRAY);
+            gc.fillRect(x + margin, y + margin, sizeCell - 2 * margin, sizeCell - 2 * margin);
         }
     }
 
@@ -141,23 +174,22 @@ public class TrenchCanvas extends Canvas {
 
         if (droneRow < 0 || droneCol < 0) return;
 
-        double x = droneCol * cellWidth;
-        double y = droneRow * cellHeight;
-        double margin = 8;
+        double x = positionInX(droneCol);
+        double y = positionInY(droneRow);
+        double margin = sizeCell * 0.15;
 
         // Desenhar drone com border
         gc.setFill(Color.GOLD);
-        gc.fillOval(x + margin, y + margin, cellWidth - 2 * margin, cellHeight - 2 * margin);
+        gc.fillOval(x + margin, y + margin, sizeCell - 2 * margin, sizeCell - 2 * margin);
 
         gc.setStroke(Color.YELLOW);
         gc.setLineWidth(2);
-        gc.strokeOval(x + margin, y + margin, cellWidth - 2 * margin, cellHeight - 2 * margin);
+        gc.strokeOval(x + margin, y + margin, sizeCell - 2 * margin, sizeCell - 2 * margin);
 
-        // Desenhar ID do drone (opcional)
+        // Desenhar ID do drone
         gc.setFill(Color.BLACK);
-        gc.setFont(Font.font(10));
-        gc.fillText("D", x + cellWidth / 2 - 5, y + cellHeight / 2 + 3);
-
+        gc.setFont(Font.font(Math.max(8, sizeCell / 5)));
+        gc.fillText("D", x + sizeCell / 2 - 3, y + sizeCell / 2 + 3);
     }
 
 }
