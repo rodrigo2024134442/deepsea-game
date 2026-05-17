@@ -180,6 +180,13 @@ public class Drone implements GameConfig, Serializable {
         }
     }
 
+    /**
+     * Resets the drone ID counter to 1.
+     * Should be called when starting a new game.
+     */
+    public static void resetId() {
+        nextId = 1;
+    }
     /** Unloads all collected artifacts. */
     public void unloadArtifacts() {
         collectedArtifacts.clear();

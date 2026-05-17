@@ -52,4 +52,12 @@ public abstract class Entity implements Serializable {
     public int getId() {
         return id;
     }
+
+    /**
+     * Resets the entity ID counter to 1001.
+     * Should be called when starting a new game.
+     */
+    public static void resetId() {
+        nextId = 1001;
+    }
 }
