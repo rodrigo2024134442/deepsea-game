@@ -409,23 +409,15 @@ public class Game implements GameConfig, Serializable {
     }
 
     public boolean retrieveArtifact() {
-        if (activeDrone == null || activeSurfaceCell == null)
-            return false;
+        if (activeDrone == null || activeSurfaceCell == null) return false;
 
         SeaFloor seaFloor = activeSurfaceCell.getSeaFloor();
-        if (seaFloor == null)
-            return false;
-
         Position pos = activeDrone.getPosition();
-        if (pos == null)
-            return false;
 
-        if (!seaFloor.hasArtifact(pos))
-            return false;
+        if (!seaFloor.hasArtifact(pos)) return false;
 
         Entity entity = seaFloor.removeEntity(pos);
-        if (!(entity instanceof Artifact artifact))
-            return false;
+        if (!(entity instanceof Artifact artifact)) return false;
 
         activeDrone.addArtifact(artifact);
         miniGame = new MiniGame();
@@ -433,20 +425,18 @@ public class Game implements GameConfig, Serializable {
     }
 
     public boolean mining() {
-        if (activeDrone == null || activeSurfaceCell == null)
-            return false;
+        if (activeDrone == null || activeSurfaceCell == null) return false;
 
         SeaFloor seaFloor = activeSurfaceCell.getSeaFloor();
-        if (seaFloor == null)
-            return false;
+        if (seaFloor == null) return false;
 
         Position pos = activeDrone.getPosition();
-        if (pos == null)
-            return false;
+        if (pos == null) return false;
+
+        if (!seaFloor.hasMineral(pos)) return false;
 
         Entity entity = seaFloor.removeEntity(pos);
-        if (!(entity instanceof Mineral mineral))
-            return false;
+        if (!(entity instanceof Mineral mineral)) return false;
 
         activeDrone.addMineral(mineral);
         return true;

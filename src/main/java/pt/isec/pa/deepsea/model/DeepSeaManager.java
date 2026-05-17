@@ -169,7 +169,10 @@ public class DeepSeaManager {
      */
     public boolean refuel(int droneId) {
         boolean ok = context.refuel(droneId);
-        if (ok) log.log("Drone " + droneId + " refuelled.");
+        if (ok){
+            log.log("Drone " + droneId + " refuelled.");
+            fireAll();
+        }
         return ok;
     }
 
