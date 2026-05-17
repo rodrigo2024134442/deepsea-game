@@ -21,7 +21,5 @@ public interface IGameState extends Serializable {
     boolean retrieveArtifact();
 
     boolean movePiece(int row, int col);
-    boolean winMini();
-    boolean loseMini();
 
 }

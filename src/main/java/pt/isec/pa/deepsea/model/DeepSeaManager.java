@@ -1,10 +1,25 @@
 package pt.isec.pa.deepsea.model;
 
+import pt.isec.pa.deepsea.model.data.drone.Drone;
 import pt.isec.pa.deepsea.model.data.drone.DroneState;
+import pt.isec.pa.deepsea.model.data.entity.Entity;
 import pt.isec.pa.deepsea.model.state.GameContext;
 import pt.isec.pa.deepsea.model.state.GameState;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
  * Facade for accessing the entire "Deep Sea Mining" game logic.
@@ -24,6 +39,15 @@ public class DeepSeaManager {
 
     private GameContext context;
     private final DeepSeaLog log;
+    private static final String SAVES_DIRECTORY = "saves";
+    public static final String PROP_GAME_STATE = "_state_";
+    public static final String PROP_GRID       = "_grid_";
+    public static final String PROP_SHIP       = "_ship_";
+    public static final String PROP_DRONES     = "_drones_";
+    public static final String PROP_MINIGAME   = "_minigame_";
+    public static final String PROP_LOG        = "_log_";
+
+    private PropertyChangeSupport pcs;
 
     /**
      * Creates the manager and initialises all subsystems.
@@ -32,6 +56,8 @@ public class DeepSeaManager {
     public DeepSeaManager() {
         this.context = new GameContext();
         this.log     = DeepSeaLog.getInstance();
+        pcs = new PropertyChangeSupport(this);
+        ensureGameDirectoriesExist();
         log.log("Game started.");
     }
 
@@ -60,7 +86,10 @@ public class DeepSeaManager {
      */
     public boolean move(String command) {
         boolean ok = context.move(command);
-        if (ok) log.log("Move: " + command + " [state=" + getState() + "]");
+        if (ok) {
+            log.log("Move: " + command + " [state=" + getState() + "]");
+            fireAll();
+        }
         return ok;
     }
 
@@ -73,7 +102,10 @@ public class DeepSeaManager {
      */
     public boolean descend(int droneId) {
         boolean ok = context.descend(droneId);
-        if (ok) log.log("Drone " + droneId + " started descending.");
+        if (ok) {
+            log.log("Drone " + droneId + " started descending.");
+            fireAll();
+        }
         return ok;
     }
 
@@ -85,7 +117,10 @@ public class DeepSeaManager {
      */
     public boolean ascend() {
         boolean ok = context.ascend();
-        if (ok) log.log("Active drone started ascending.");
+        if (ok) {
+            log.log("Active drone started ascending.");
+            fireAll();
+        }
         return ok;
     }
 
@@ -97,7 +132,10 @@ public class DeepSeaManager {
      */
     public boolean enterShop() {
         boolean ok = context.enterShop();
-        if (ok) log.log("Entered shop.");
+        if (ok) {
+            log.log("Entered shop.");
+            fireAll();
+        }
         return ok;
     }
 
@@ -109,7 +147,10 @@ public class DeepSeaManager {
      */
     public boolean leaveShop() {
         boolean ok = context.leaveShop();
-        if (ok) log.log("Left shop.");
+        if (ok) {
+            log.log("Left shop.");
+            fireAll();
+        }
         return ok;
     }
 
@@ -122,7 +163,10 @@ public class DeepSeaManager {
      */
     public boolean repair(int droneId) {
         boolean ok = context.repair(droneId);
-        if (ok) log.log("Drone " + droneId + " repaired.");
+        if (ok) {
+            log.log("Drone " + droneId + " repaired.");
+            fireAll();
+        }
         return ok;
     }
 
@@ -135,7 +179,10 @@ public class DeepSeaManager {
      */
     public boolean refuel(int droneId) {
         boolean ok = context.refuel(droneId);
-        if (ok) log.log("Drone " + droneId + " refuelled.");
+        if (ok){
+            log.log("Drone " + droneId + " refuelled.");
+            fireAll();
+        }
         return ok;
     }
 
@@ -147,7 +194,10 @@ public class DeepSeaManager {
      */
     public boolean mining() {
         boolean ok = context.mining();
-        if (ok) log.log("Mineral collected.");
+        if (ok) {
+            log.log("Mineral collected.");
+            fireAll();
+        }
         return ok;
     }
 
@@ -160,7 +210,10 @@ public class DeepSeaManager {
      */
     public boolean retrieveArtifact() {
         boolean ok = context.retrieveArtifact();
-        if (ok) log.log("Artifact found — minigame started.");
+        if (ok) {
+            log.log("Artifact found — minigame started.");
+            fireAll();
+        }
         return ok;
     }
 
@@ -174,34 +227,32 @@ public class DeepSeaManager {
      */
     public boolean movePiece(int row, int col) {
         boolean ok = context.movePiece(row, col);
-        if (ok) log.log("Puzzle piece moved: (row:" + row + ", col:" + col + ")");
+        if (ok) {
+            log.log("Puzzle piece moved: (row:" + row + ", col:" + col + ")");
+            fireAll();
+        }
         return ok;
     }
 
     /**
-     * Forces the minigame to the win condition.
-     *
-     * <p><b>Debug only</b> — should not be called in production.</p>
-     *
-     * @return {@code true} if accepted
+     * Starts a new game, resetting all state and clearing the log.
+     * Transition to initial SURFACE state.
      */
-    public boolean winMiniGame() {
-        boolean ok = context.winMini();
-        if (ok) log.log("[DEBUG] Minigame force-won.");
-        return ok;
+    public void newGame() {
+        resetGameIds();
+        context = new GameContext();
+        log.clear();
+        log.log("Game started.");
+        fireAll();
     }
 
     /**
-     * Forces the minigame to the lose condition.
-     *
-     * <p><b>Debug only</b> — should not be called in production.</p>
-     *
-     * @return {@code true} if accepted
+     * Resets all entity ID counters for a new game.
+     * This ensures each new game starts with consistent IDs.
      */
-    public boolean loseMiniGame() {
-        boolean ok = context.loseMini();
-        if (ok) log.log("[DEBUG] Minigame force-lost.");
-        return ok;
+    private void resetGameIds() {
+        Drone.resetId();
+        Entity.resetId();
     }
 
     // -- Ship --
@@ -234,6 +285,11 @@ public class DeepSeaManager {
     /** @return number of artifacts collected by the ship */
     public int getCollectedArtifactsCount() {
         return context.getGame().getCollectedArtifacts().size();
+    }
+
+    /** @return {@code true} if the given surface cell has any artifact in its sea floor */
+    public boolean surfaceCellHasArtifacts(int row, int col) {
+        return context.getGame().surfaceCellHasArtifacts(row, col);
     }
 
     /** @return number of minerals collected by the ship */
@@ -338,6 +394,15 @@ public class DeepSeaManager {
         return drone == null ? 0 : drone.getCollectedArtifacts().size();
     }
 
+    /**
+     * @param droneId drone ID
+     * @return number of minerals collected by the drone
+     */
+    public int getDroneMineralsCount(int droneId) {
+        var drone = context.getGame().getShipDroneById(droneId);
+        return drone == null ? 0 : drone.getCollectedMinerals().size();
+    }
+
     /** @return {@code true} if there is an active drone currently in expedition */
     public boolean hasActiveDrone() {
         return context.getGame().hasActiveDrone();
@@ -365,64 +430,212 @@ public class DeepSeaManager {
         return "";
     }
 
+    // -- Grid queries (JavaFX UI) --
+
+    /** @return number of rows of the surface grid */
+    public int getSurfaceRows() {
+        return context.getGame().getSurfaceRows();
+    }
+
+    /** @return number of columns of the surface grid */
+    public int getSurfaceCols() {
+        return context.getGame().getSurfaceCols();
+    }
+
+    /**
+     * @param row cell row
+     * @param col cell column
+     * @return {@code true} if the surface cell has already been visited by the ship
+     */
+    public boolean isSurfaceCellVisited(int row, int col) {
+        return context.getGame().isSurfaceCellVisited(row, col);
+    }
+
+    /** @return number of rows in the active trench, or 0 if none */
+    public int getTrenchRows() {
+        return context.getGame().getTrenchRows();
+    }
+
+    /** @return number of columns in the active trench, or 0 if none */
+    public int getTrenchCols() {
+        return context.getGame().getTrenchCols();
+    }
+
+    /**
+     * Returns the type of entity in a trench cell, as a string the UI can switch on.
+     * Possible values: {@code "ROCK"}, {@code "ANIMAL"}, {@code "CURRENT"}, {@code "EMPTY"}.
+     *
+     * @param row cell row
+     * @param col cell column
+     * @return entity type string
+     */
+    public String getTrenchCellEntity(int row, int col) {
+        return context.getGame().getTrenchCellEntity(row, col);
+    }
+
+    /** @return number of rows in the active sea floor, or 0 if none */
+    public int getBottomRows() {
+        return context.getGame().getBottomRows();
+    }
+
+    /** @return number of columns in the active sea floor, or 0 if none */
+    public int getBottomCols() {
+        return context.getGame().getBottomCols();
+    }
+
+    /**
+     * @param row cell row
+     * @param col cell column
+     * @return {@code true} if the sea floor cell has been revealed by the drone
+     */
+    public boolean isBottomCellRevealed(int row, int col) {
+        return context.getGame().isBottomCellRevealed(row, col);
+    }
+
+    /**
+     * Returns the type of entity in a revealed sea floor cell.
+     * Possible values: {@code "ARTIFACT"}, {@code "MINERAL"}, {@code "MONSTER"}, {@code "EMPTY"}.
+     * Returns {@code "HIDDEN"} if the cell has not been revealed yet.
+     *
+     * @param row cell row
+     * @param col cell column
+     * @return entity type string
+     */
+    public String getBottomCellEntity(int row, int col) {
+        return context.getGame().getBottomCellEntity(row, col);
+    }
+
+    // -- Active drone position (for drawing on grids) --
+
+    /**
+     * @return row of the active drone in the current grid, or -1 if none
+     */
+    public int getActiveDroneRow() {
+        return context.getGame().getActiveDroneRow();
+    }
+
+    /**
+     * @return column of the active drone in the current grid, or -1 if none
+     */
+    public int getActiveDroneCol() {
+        return context.getGame().getActiveDroneCol();
+    }
+
+    // -- Contextual checks for the UI --
+
+    /** Game Winning verification*/
+    public boolean isGameWon()  { return context.getGame().isGameWon();  }
+    /** Game Lost verification*/
+    public boolean isGameLost() { return context.getGame().isGameLost(); }
+
+    /** @return {@code true} if the active drone was destroyed on the sea floor */
+    public boolean isActiveDroneDestroyed() {
+        return context.getGame().isActiveDroneDestroyed();
+    }
+
+    /**
+     * @return {@code true} if there is an artifact at the active drone's current position
+     */
+    public boolean droneIsOnArtifact() {
+        return context.getGame().foundArtifact();
+    }
+
+    /**
+     * @return {@code true} if there is a mineral at the active drone's current position
+     */
+    public boolean droneIsOnMineral() {
+        return context.getGame().foundMineral();
+    }
+
     // -- Minigame --
 
     /**
-     * Returns the current grid as a string appropriate for the active state.
-     *
-     * @return grid string representation
+     * @return size of the puzzle grid (NxN), or 0 if no minigame is active
      */
-    public String getCurrentGridAsString() {
-        return context.getCurrentGridAsString();
+    public int getMiniGameSize() {
+        return context.getGame().getMiniGameSize();
     }
 
-    /** @return text summary of all drones */
-    public String getDronesInfoAsString() {
-        return context.getDronesInfoAsString();
+    /**
+     * Returns the value of the puzzle piece at (row, col).
+     * 0 represents the empty slot.
+     *
+     * @param row piece row
+     * @param col piece column
+     * @return piece value, or -1 if no minigame is active
+     */
+    public int getMiniGameCell(int row, int col) {
+        return context.getGame().getMiniGameCell(row, col);
     }
 
-    /** @return text summary of the ship */
-    public String getShipInfoAsString() {
-        return context.getShipInfoAsString();
+    /** @return number of moves made so far in the minigame */
+    public int getMiniGameMoveCount() {
+        return context.getGame().getMiniGameMoveCount();
     }
 
-    /** @return available commands for the current state */
-    public String getCommandInfoAsString() {
-        return context.getCommandInfoAsString();
+    /** @return maximum number of moves allowed in the minigame */
+    public int getMiniGameMaxMoves() {
+        return context.getGame().getMiniGameMaxMoves();
     }
 
-    /** @return current minigame board as a string, or a placeholder if none is active */
-    public String getMiniGameAsString() {
-        return context.getMiniGameAsString();
+    /** @return row of the empty slot in the puzzle, or -1 if no minigame is active */
+    public int getMiniGameEmptyRow() {
+        return context.getGame().getMiniGameEmptyRow();
+    }
+
+    /** @return column of the empty slot in the puzzle, or -1 if no minigame is active */
+    public int getMiniGameEmptyCol() {
+        return context.getGame().getMiniGameEmptyCol();
+    }
+
+    /**
+     * Returns a full copy of the puzzle board.
+     * Each cell contains the piece number, or 0 for the empty slot.
+     *
+     * @return copy of the board, or null if no minigame is active
+     */
+    public int[][] getMiniGameBoard() {
+        return context.getGame().getMiniGameBoard();
     }
 
     // -- Persistence --
 
     /**
-     * Saves the current game state to disk.
+     * Saves the current game state to the given file.
+     * Used by the JavaFX UI via a FileChooser.
      *
+     * @param file destination file
      * @return {@code true} if saved successfully
      */
-    public boolean saveGame() {
-        boolean ok = context.saveGame();
-        if (ok) log.log("Game saved.");
-        return ok;
+    public boolean saveGame(File file) {
+        if (file == null) return false;
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
+            oos.writeObject(context);
+            log.log("Game saved to " + file.getName());
+            pcs.firePropertyChange(PROP_LOG, null, null);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
-     * Loads a previously saved game state from disk.
-     * The entire game state is fully restored.
+     * Loads a previously saved game state from the given file.
+     * Used by the JavaFX UI via a FileChooser.
      *
+     * @param file source file
      * @return {@code true} if loaded successfully
      */
-    public boolean loadGame() {
-        GameContext loaded = GameContext.loadGame();
-        if (loaded != null) {
-            context = loaded;
-            log.log("Game loaded.");
+    public boolean loadGame(File file) {
+        if (file == null) return false;
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            context = (GameContext) ois.readObject();
+            log.log("Game loaded from " + file.getName());
+            fireAll();
             return true;
+        } catch (Exception e) {
+            return false;
         }
-        return false;
     }
 
     // -- Log --
@@ -430,23 +643,123 @@ public class DeepSeaManager {
     /**
      * Returns all log messages recorded in this session.
      *
-     * @return immutable list of log messages
+     * @return unmodifiable list of log messages
      */
     public List<String> getLog() {
         return log.getMessages();
     }
 
     /**
-     * Saves the log to the file defined in {@code GameConfig.LOG_FILE_NAME}.
+     * Saves all log messages to the given file.
      *
-     * @return {@code true} if saved successfully
+     * @param file destination file
+     * @return {@code true} if saved successfully, {@code false} otherwise
      */
-    public boolean saveLog() {
-        return log.saveToFile();
+    public boolean saveLogToFile(File file) {
+        if (file == null) return false;
+        try (FileWriter writer = new FileWriter(file)) {
+            for (String logMsg : log.getMessages()) {
+                writer.write(logMsg + "\n");
+            }
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
+
+    /**
+     * Returns the 5 most recently modified game files (.dat) from the current directory.
+     * Files are sorted by modification time, newest first.
+     *
+     * @return list of File objects (max 5), sorted by modification time descending
+     */
+    public List<File> getRecentGames() {
+        File savesDir = new File(SAVES_DIRECTORY);
+        File[] files = savesDir.listFiles((dir, name) -> name.endsWith(".dat"));
+
+        if (files == null || files.length == 0) {
+            return new ArrayList<>();
+        }
+
+        // Sort by modification time, newest first
+        Arrays.sort(files, (f1, f2) -> Long.compare(f2.lastModified(), f1.lastModified()));
+
+        // Return max 5 files
+        int limit = Math.min(5, files.length);
+        return new ArrayList<>(Arrays.asList(files).subList(0, limit));
+    }
+
+    /**
+     * Ensures the game directories (saves and logs) exist, creating them if necessary.
+     */
+    private void ensureGameDirectoriesExist() {
+        File savesDir = new File(SAVES_DIRECTORY);
+        if (!savesDir.exists()) {
+            savesDir.mkdirs();
+        }
+
+        File logsDir = new File(DeepSeaLog.getLogsDirectory());
+        if (!logsDir.exists()) {
+            logsDir.mkdirs();
+        }
+    }
+
+    /**
+     * Returns the logs directory path.
+     *
+     * @return path to logs directory
+     */
+    public static String getLogsDirectory() {
+        return DeepSeaLog.getLogsDirectory();
+    }
+
+    /**
+     * Returns the saves directory path.
+     *
+     * @return path to saves directory
+     */
+    public static String getSavesDirectory() {
+        return SAVES_DIRECTORY;
+    }
+
 
     /** Clears all log messages. */
     public void clearLog() {
         log.clear();
+        fireAll();
+    }
+
+    // Property change support
+
+    /**
+     * Subscribes a listener for a specific topic.
+     *
+     * @param prop topic name (one of the PROP_* constants)
+     * @param listener    listener
+     */
+    public void addPropertyChangeListener(String prop, PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(prop, listener);
+    }
+
+    /**
+     * Subscribes a listener for all topics.
+     *
+     * @param listener listener
+     */
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(listener);
+    }
+
+    /**
+     * Fires all property change topics at once.
+     * Used after any action that may have changed several aspects of the model.
+     */
+    private void fireAll() {
+        pcs.firePropertyChange(PROP_GAME_STATE, null, null);
+        pcs.firePropertyChange(PROP_GRID,       null, null);
+        pcs.firePropertyChange(PROP_SHIP,       null, null);
+        pcs.firePropertyChange(PROP_DRONES,     null, null);
+        pcs.firePropertyChange(PROP_MINIGAME,   null, null);
+        pcs.firePropertyChange(PROP_LOG,        null, null);
     }
 }

@@ -1,10 +1,6 @@
 package pt.isec.pa.deepsea.model;
 
-import pt.isec.pa.deepsea.model.data.GameConfig;
-
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -26,6 +22,7 @@ public class DeepSeaLog {
     private static DeepSeaLog instance;
     private final List<String> messages;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final String LOGS_DIRECTORY = "logs";
 
     /**
      * Private constructor — prevents external instantiation.
@@ -45,6 +42,15 @@ public class DeepSeaLog {
             instance = new DeepSeaLog();
         }
         return instance;
+    }
+
+    /**
+     * Returns the logs directory path.
+     *
+     * @return path to logs directory
+     */
+    public static String getLogsDirectory() {
+        return LOGS_DIRECTORY;
     }
 
     /**
@@ -71,24 +77,6 @@ public class DeepSeaLog {
      */
     public void clear() {
         messages.clear();
-    }
-
-    /**
-     * Saves all logged messages to a text file, one message per line.
-     * The file name is defined in {@link GameConfig#LOG_FILE_NAME}.
-     *
-     * @return true if saved successfully, false otherwise
-     */
-    public boolean saveToFile() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(GameConfig.LOG_FILE_NAME, true))) {
-            for (String message : messages) {
-                writer.write(message);
-                writer.newLine();
-            }
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
     }
 
     /**

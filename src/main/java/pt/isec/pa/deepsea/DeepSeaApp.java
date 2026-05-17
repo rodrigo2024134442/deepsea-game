@@ -1,12 +1,18 @@
 package pt.isec.pa.deepsea;
 
-import pt.isec.pa.deepsea.model.Game;
-import pt.isec.pa.deepsea.model.state.GameContext;
+import javafx.application.Application;
+import pt.isec.pa.deepsea.ui.MainJFX;
 
+/**
+ * Entry point of the Deep Sea Mining application.
+ * Launches the JavaFX runtime, which in turn instantiates {@link MainJFX}.
+ *
+ * <p>Kept separate from {@link MainJFX} so the JavaFX runtime is only
+ * initialised when this class is the actual entry point — useful for
+ * unit tests that want to instantiate the model without JavaFX.</p>
+ */
 public class DeepSeaApp {
     public static void main(String[] args) {
-        System.out.println("Deep Sea Mining");
-
-        GameContext deepSeaGame = new GameContext();
+        Application.launch(MainJFX.class, args);
     }
 }

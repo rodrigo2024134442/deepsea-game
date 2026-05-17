@@ -61,6 +61,16 @@ public class SurfaceCell implements Serializable {
         return collected;
     }
 
+    /** Decrements artifact count by 1 unity*/
+    public void decrementArtifactCount() {
+        if (artifactCount > 0) artifactCount--;
+    }
+
+    /** Increments artifact count by a set ammount*/
+    public void incrementArtifactCount(int amount) {
+        artifactCount += amount;
+    }
+
     /** Copy constructor. */
     public SurfaceCell(SurfaceCell other) {
         this.trench = new SeaTrench(other.trench);

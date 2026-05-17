@@ -165,13 +165,13 @@ public class MiniGame implements GameConfig, Serializable {
      @param col column of the piece to move
      @return true if the move was valid and executed*/
     public boolean movePiece(int row, int col) {
-        if (isOutOfMoves()) return false;
-        if (row < 0 || row >= PUZZLE_SIZE ||  col < 0 || col >= PUZZLE_SIZE) return false;
+        if (row < 0 || row >= PUZZLE_SIZE || col < 0 || col >= PUZZLE_SIZE) return false;
 
         int rowDiff = Math.abs(row - emptyRow);
         int colDiff = Math.abs(col - emptyCol);
 
         if (rowDiff + colDiff != 1) return false;
+        if (isOutOfMoves()) return false;
 
         board[emptyRow][emptyCol] = board[row][col];
         board[row][col] = 0;

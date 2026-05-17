@@ -6,12 +6,12 @@ public interface GameConfig {
     int DEFAULT_SEASURFACE_COLS = 10;
 
     // SeaTrench Grid
-    int DEFAULT_SEATRENCH_ROWS = 12;
-    int DEFAULT_SEATRENCH_COLS = 6;
+    int DEFAULT_SEATRENCH_ROWS = 14;
+    int DEFAULT_SEATRENCH_COLS = 8;
 
     // SeaFloor Grid
-    int DEFAULT_SEAFLOOR_ROWS = 10;
-    int DEFAULT_SEAFLOOR_COLS = 10;
+    int DEFAULT_SEAFLOOR_ROWS = 12;
+    int DEFAULT_SEAFLOOR_COLS = 12;
 
     // Ship
     int SHIP_MAX_FUEL = 1000;
@@ -24,7 +24,7 @@ public interface GameConfig {
     // Obstacles
     int MAX_OBSTACLES = 5;
     int MAX_MONSTERS = 3;
-    int MAX_ARTIFACTS = (int) (DEFAULT_SEASURFACE_ROWS * DEFAULT_SEASURFACE_COLS * 3);
+    int MAX_ARTIFACTS = (int) (DEFAULT_SEASURFACE_ROWS * DEFAULT_SEASURFACE_COLS);
     int MAX_CELL_ARTIFACTS = 4;
 
     // Puzzle

@@ -94,20 +94,6 @@ public class TestUI {
                         System.out.println("Não foi possível recolher artefacto.");
                 }
 
-                case "9" -> {
-                    if (context.winMini())
-                        System.out.println("Minijogo ganho.");
-                    else
-                        System.out.println("Não podes ganhar o minijogo agora.");
-                }
-
-                case "10" -> {
-                    if (context.loseMini())
-                        System.out.println("Minijogo perdido.");
-                    else
-                        System.out.println("Não podes perder o minijogo agora.");
-                }
-
                 case "11" -> {
                     System.out.println(context.getMiniGameAsString());
 

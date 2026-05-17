@@ -75,33 +75,4 @@ public class PuzzleGame extends GameStateAdapter {
 
         return true;
     }
-
-    /**
-     * Forces a successful minigame result.
-     *
-     * <p>This method is mainly useful for testing and redirects the FSM back
-     * to the sea floor state.</p>
-     *
-     * @return true after changing to the sea floor state
-     */
-    @Override
-    public boolean winMini() {
-        changeState(GameState.BOTTOM.createState(context, game));
-        return true;
-    }
-
-    /**
-     * Forces a failed minigame result.
-     *
-     * <p>The active drone is returned to the ship and the FSM changes to the
-     * surface state.</p>
-     *
-     * @return true after changing to the surface state
-     */
-    @Override
-    public boolean loseMini() {
-        game.returnDroneToShip();
-        changeState(GameState.SURFACE.createState(context, game));
-        return true;
-    }
 }
