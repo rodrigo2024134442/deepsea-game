@@ -19,7 +19,7 @@ import java.io.File;
 public class DeepSeaMenuBar extends MenuBar {
     DeepSeaManager manager;
     Menu mnGame, mnLog;
-    MenuItem mnNew, mnOpen, mnSaveAs, mnExit;
+    MenuItem mnNew, mnOpen, mnLoadRecent, mnSaveAs, mnExit;
     MenuItem mnShowLog, mnSaveLog, mnClearLog;
 
     public DeepSeaMenuBar(DeepSeaManager manager) {
@@ -34,17 +34,18 @@ public class DeepSeaMenuBar extends MenuBar {
         mnLog  = new Menu("_Log");
         getMenus().addAll(mnGame, mnLog);
 
-        mnNew    = new MenuItem("_New");
-        mnOpen   = new MenuItem("_Open...");
-        mnSaveAs = new MenuItem("_Save as...");
-        mnExit   = new MenuItem("E_xit");
-        mnGame.getItems().addAll(mnNew, mnOpen,
+        mnNew         = new MenuItem("_New");
+        mnOpen        = new MenuItem("_Open...");
+        mnLoadRecent  = new MenuItem("Open _recent");
+        mnSaveAs      = new MenuItem("_Save as...");
+        mnExit        = new MenuItem("E_xit");
+        mnGame.getItems().addAll(mnNew, mnOpen, mnLoadRecent,
                 new SeparatorMenuItem(), mnSaveAs,
                 new SeparatorMenuItem(), mnExit);
 
-        mnShowLog  = new MenuItem("_Show Log");
-        mnSaveLog  = new MenuItem("_Save Log...");
-        mnClearLog = new MenuItem("_Clear Log");
+        mnShowLog  = new MenuItem("_Show logs");
+        mnSaveLog  = new MenuItem("_Save logs");
+        mnClearLog = new MenuItem("_Clear logs");
         mnLog.getItems().addAll(mnShowLog, mnSaveLog,
                 new SeparatorMenuItem(), mnClearLog);
     }
@@ -53,22 +54,10 @@ public class DeepSeaMenuBar extends MenuBar {
         mnNew.setOnAction(e -> manager.newGame());
         mnExit.setOnAction(e -> Platform.exit());
 
-        mnSaveAs.setOnAction(e -> {
-            FileChooser fc = new FileChooser();
-            fc.setTitle("File save...");
-            fc.setInitialDirectory(new File("."));
-            fc.getExtensionFilters().addAll(
-                    new FileChooser.ExtensionFilter("DeepSea (*.dat)", "*.dat"),
-                    new FileChooser.ExtensionFilter("All", "*.*")
-            );
-            File hFile = fc.showSaveDialog(this.getScene().getWindow());
-            if (hFile != null) manager.saveGame(hFile);
-        });
-
         mnOpen.setOnAction(e -> {
             FileChooser fc = new FileChooser();
             fc.setTitle("File open...");
-            fc.setInitialDirectory(new File("."));
+            fc.setInitialDirectory(new File(pt.isec.pa.deepsea.model.DeepSeaManager.getSavesDirectory()));
             fc.getExtensionFilters().addAll(
                     new FileChooser.ExtensionFilter("DeepSea (*.dat)", "*.dat"),
                     new FileChooser.ExtensionFilter("All", "*.*")
@@ -77,13 +66,51 @@ public class DeepSeaMenuBar extends MenuBar {
             if (hFile != null) manager.loadGame(hFile);
         });
 
-        mnShowLog.setOnAction(e -> {
-            // TODO: Leonardo irá criar LogStage e passar aqui
-            // new LogStage(manager, getScene().getWindow()).show();
-            System.out.println("Log Stage placeholder - Leonardo implementa");
+        mnLoadRecent.setOnAction(e -> {
+            new RecentGamesDialog(manager, getScene().getWindow()).show();
         });
 
-        mnSaveLog.setOnAction(e -> manager.saveLog());
+        mnSaveAs.setOnAction(e -> {
+            FileChooser fc = new FileChooser();
+            fc.setTitle("File save...");
+            fc.setInitialDirectory(new File(pt.isec.pa.deepsea.model.DeepSeaManager.getSavesDirectory()));
+            fc.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("DeepSea (*.dat)", "*.dat"),
+                    new FileChooser.ExtensionFilter("All", "*.*")
+            );
+            File hFile = fc.showSaveDialog(this.getScene().getWindow());
+            if (hFile != null) manager.saveGame(hFile);
+        });
+
+        mnShowLog.setOnAction(e -> {
+            new pt.isec.pa.deepsea.ui.log.LogStage(manager, getScene().getWindow()).show();
+        });
+
+        mnSaveLog.setOnAction(e -> {
+            FileChooser fc = new FileChooser();
+            fc.setTitle("Save logs as...");
+            fc.setInitialDirectory(new File(pt.isec.pa.deepsea.model.DeepSeaManager.getLogsDirectory()));
+            fc.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Text files (*.txt)", "*.txt"),
+                    new FileChooser.ExtensionFilter("All", "*.*")
+            );
+            File hFile = fc.showSaveDialog(this.getScene().getWindow());
+            if (hFile != null) {
+                if (manager.saveLogToFile(hFile)) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Success");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Log saved successfully to " + hFile.getName());
+                    alert.showAndWait();
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Failed to save log.");
+                    alert.showAndWait();
+                }
+            }
+        });
 
         mnClearLog.setOnAction(e -> manager.clearLog());
     }

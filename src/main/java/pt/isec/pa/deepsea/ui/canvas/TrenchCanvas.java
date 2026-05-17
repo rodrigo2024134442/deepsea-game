@@ -9,6 +9,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import pt.isec.pa.deepsea.model.DeepSeaManager;
 
+import java.util.Random;
+
 /**
  * Canvas that shows the trench grid during descent/ascent and bottom phases.
  *
@@ -21,15 +23,24 @@ public class TrenchCanvas extends Canvas {
     DeepSeaManager manager;
     private int rows, cols;
     private double sizeCell, offsetX, offsetY;
+    private Random rand = new Random();
 
+    private static final Image IMG_DRONE = new Image(
+            TrenchCanvas.class.getResourceAsStream("/images/vehicles/underwater_drone_yellow.png"));
     private static final Image IMG_TRENCH_BG = new Image(
             TrenchCanvas.class.getResourceAsStream("/images/backgrounds/trench_grid_background.png"));
 
     private static final Image IMG_ROCK = new Image(
             TrenchCanvas.class.getResourceAsStream("/images/objects/obstacle_dark_trench_rock.png"));
 
-    private static final Image IMG_ANIMAL = new Image(
-            TrenchCanvas.class.getResourceAsStream("/images/creatures/monster1.png"));
+    private static final Image[] animalCollection = {
+            new Image(TrenchCanvas.class.getResourceAsStream("/images/creatures/trench_animal1.png")),
+            new Image(TrenchCanvas.class.getResourceAsStream("/images/creatures/trench_animal2.png")),
+            new Image(TrenchCanvas.class.getResourceAsStream("/images/creatures/trench_animal3.png")),
+            new Image(TrenchCanvas.class.getResourceAsStream("/images/creatures/trench_animal4.png")),
+            new Image(TrenchCanvas.class.getResourceAsStream("/images/creatures/trench_animal5.png")),
+            new Image(TrenchCanvas.class.getResourceAsStream("/images/creatures/trench_animal6.png"))
+    };
 
     private static final Image IMG_CURRENT = new Image(
             TrenchCanvas.class.getResourceAsStream("/images/objects/hazard_ocean_current_spiral.png"));
@@ -147,7 +158,7 @@ public class TrenchCanvas extends Canvas {
                         drawEntity(gc, IMG_ROCK, x, y);
                         break;
                     case "ANIMAL":
-                        drawEntity(gc, IMG_ANIMAL, x, y);
+                        drawEntity(gc, animalCollection[rand.nextInt(6)], x, y);
                         break;
                     case "CURRENT":
                         drawEntity(gc, IMG_CURRENT, x, y);
@@ -176,20 +187,19 @@ public class TrenchCanvas extends Canvas {
 
         double x = positionInX(droneCol);
         double y = positionInY(droneRow);
-        double margin = sizeCell * 0.15;
+        double margin = sizeCell * 0.1;
 
-        // Desenhar drone com border
-        gc.setFill(Color.GOLD);
-        gc.fillOval(x + margin, y + margin, sizeCell - 2 * margin, sizeCell - 2 * margin);
-
-        gc.setStroke(Color.YELLOW);
-        gc.setLineWidth(2);
-        gc.strokeOval(x + margin, y + margin, sizeCell - 2 * margin, sizeCell - 2 * margin);
-
-        // Desenhar ID do drone
-        gc.setFill(Color.BLACK);
-        gc.setFont(Font.font(Math.max(8, sizeCell / 5)));
-        gc.fillText("D", x + sizeCell / 2 - 3, y + sizeCell / 2 + 3);
+        // Desenhar imagem do drone
+        if (IMG_DRONE.getException() == null) {
+            gc.drawImage(IMG_DRONE, x + margin, y + margin, sizeCell - 2 * margin, sizeCell - 2 * margin);
+        } else {
+            // Fallback: desenhar circle se imagem falhar
+            gc.setFill(Color.GOLD);
+            gc.fillOval(x + margin, y + margin, sizeCell - 2 * margin, sizeCell - 2 * margin);
+            gc.setStroke(Color.YELLOW);
+            gc.setLineWidth(2);
+            gc.strokeOval(x + margin, y + margin, sizeCell - 2 * margin, sizeCell - 2 * margin);
+        }
     }
 
 }

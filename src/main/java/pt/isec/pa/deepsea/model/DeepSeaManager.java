@@ -1,15 +1,23 @@
 package pt.isec.pa.deepsea.model;
 
+import pt.isec.pa.deepsea.model.data.drone.Drone;
 import pt.isec.pa.deepsea.model.data.drone.DroneState;
+import pt.isec.pa.deepsea.model.data.entity.Entity;
 import pt.isec.pa.deepsea.model.state.GameContext;
 import pt.isec.pa.deepsea.model.state.GameState;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
@@ -31,6 +39,7 @@ public class DeepSeaManager {
 
     private GameContext context;
     private final DeepSeaLog log;
+    private static final String SAVES_DIRECTORY = "saves";
     public static final String PROP_GAME_STATE = "_state_";
     public static final String PROP_GRID       = "_grid_";
     public static final String PROP_SHIP       = "_ship_";
@@ -48,6 +57,7 @@ public class DeepSeaManager {
         this.context = new GameContext();
         this.log     = DeepSeaLog.getInstance();
         pcs = new PropertyChangeSupport(this);
+        ensureGameDirectoriesExist();
         log.log("Game started.");
     }
 
@@ -226,10 +236,20 @@ public class DeepSeaManager {
      * Transition to initial SURFACE state.
      */
     public void newGame() {
+        resetGameIds();
         context = new GameContext();
         log.clear();
         log.log("Game started.");
         fireAll();
+    }
+
+    /**
+     * Resets all entity ID counters for a new game.
+     * This ensures each new game starts with consistent IDs.
+     */
+    private void resetGameIds() {
+        Drone.resetId();
+        Entity.resetId();
     }
 
     // -- Ship --
@@ -615,20 +635,85 @@ public class DeepSeaManager {
     /**
      * Returns all log messages recorded in this session.
      *
-     * @return immutable list of log messages
+     * @return unmodifiable list of log messages
      */
     public List<String> getLog() {
         return log.getMessages();
     }
 
     /**
-     * Saves the log to the file defined in {@code GameConfig.LOG_FILE_NAME}.
+     * Saves all log messages to the given file.
      *
-     * @return {@code true} if saved successfully
+     * @param file destination file
+     * @return {@code true} if saved successfully, {@code false} otherwise
      */
-    public boolean saveLog() {
-        return log.saveToFile();
+    public boolean saveLogToFile(File file) {
+        if (file == null) return false;
+        try (FileWriter writer = new FileWriter(file)) {
+            for (String logMsg : log.getMessages()) {
+                writer.write(logMsg + "\n");
+            }
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
+
+    /**
+     * Returns the 5 most recently modified game files (.dat) from the current directory.
+     * Files are sorted by modification time, newest first.
+     *
+     * @return list of File objects (max 5), sorted by modification time descending
+     */
+    public List<File> getRecentGames() {
+        File savesDir = new File(SAVES_DIRECTORY);
+        File[] files = savesDir.listFiles((dir, name) -> name.endsWith(".dat"));
+
+        if (files == null || files.length == 0) {
+            return new ArrayList<>();
+        }
+
+        // Sort by modification time, newest first
+        Arrays.sort(files, (f1, f2) -> Long.compare(f2.lastModified(), f1.lastModified()));
+
+        // Return max 5 files
+        int limit = Math.min(5, files.length);
+        return new ArrayList<>(Arrays.asList(files).subList(0, limit));
+    }
+
+    /**
+     * Ensures the game directories (saves and logs) exist, creating them if necessary.
+     */
+    private void ensureGameDirectoriesExist() {
+        File savesDir = new File(SAVES_DIRECTORY);
+        if (!savesDir.exists()) {
+            savesDir.mkdirs();
+        }
+
+        File logsDir = new File(DeepSeaLog.getLogsDirectory());
+        if (!logsDir.exists()) {
+            logsDir.mkdirs();
+        }
+    }
+
+    /**
+     * Returns the logs directory path.
+     *
+     * @return path to logs directory
+     */
+    public static String getLogsDirectory() {
+        return DeepSeaLog.getLogsDirectory();
+    }
+
+    /**
+     * Returns the saves directory path.
+     *
+     * @return path to saves directory
+     */
+    public static String getSavesDirectory() {
+        return SAVES_DIRECTORY;
+    }
+
 
     /** Clears all log messages. */
     public void clearLog() {

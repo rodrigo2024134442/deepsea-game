@@ -2,6 +2,7 @@ package pt.isec.pa.deepsea.ui.log;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
@@ -48,11 +49,26 @@ public class LogStage extends Stage {
         btnSave.setOnAction(e -> {
             FileChooser fc = new FileChooser();
             fc.setTitle("Save logs as...");
-            fc.setInitialDirectory(new File("."));
-            fc.getExtensionFilters().add(
-                    new FileChooser.ExtensionFilter("Log files (*.txt)", "*.txt"));
+            fc.setInitialDirectory(new File(DeepSeaManager.getLogsDirectory()));
+            fc.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Text files (*.txt)", "*.txt"),
+                    new FileChooser.ExtensionFilter("All", "*.*"));
             File file = fc.showSaveDialog(this);
-            if (file != null) manager.saveLog();
+            if (file != null) {
+                if (manager.saveLogToFile(file)) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Success");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Log saved successfully to " + file.getName());
+                    alert.showAndWait();
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Failed to save log.");
+                    alert.showAndWait();
+                }
+            }
         });
 
         btnClear.setOnAction(e -> manager.clearLog());
