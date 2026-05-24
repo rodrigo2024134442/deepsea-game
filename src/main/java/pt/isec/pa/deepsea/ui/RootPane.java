@@ -101,6 +101,32 @@ public class RootPane extends BorderPane {
                 DeepSeaManager.PROP_GAME_STATE,
                 e -> update()
         );
+
+        setOnKeyPressed(e -> {
+            switch (e.getCode()) {
+                case W -> manager.move("w");
+                case A -> manager.move("a");
+                case S -> manager.move("s");
+                case D -> manager.move("d");
+
+                case E -> manager.enterShop();
+
+                //DRONE DESCENT
+                case DIGIT1 -> manager.descend(1);
+                case DIGIT2 -> manager.descend(2);
+                case DIGIT3 -> manager.descend(3);
+
+                //BOTTOM CONTROLS
+                case M -> manager.mining();
+                case N -> manager.retrieveArtifact();
+                case B -> manager.ascend();
+
+                default -> { }
+            }
+        });
+
+        setFocusTraversable(true);
+        requestFocus();
     }
 
     private void updateCanvasSizes() {

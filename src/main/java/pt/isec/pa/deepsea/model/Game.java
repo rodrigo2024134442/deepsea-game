@@ -352,14 +352,15 @@ public class Game implements GameConfig, Serializable {
         if (!seaFloor.isValidPosition(next))
             return false;
 
+        if (seaFloor.hasMonster(next)) {
+            activeDrone.takeDamage();
+            activeDrone.consumeFuel(1);
+            return true;
+        }
+
         activeDrone.setPosition(next);
         activeDrone.consumeFuel(1);
         seaFloor.revealCell(next);
-
-        if (seaFloor.hasMonster(next)) {
-            activeDrone.destroy();
-        }
-
         return true;
     }
 

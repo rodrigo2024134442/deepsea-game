@@ -13,6 +13,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import pt.isec.pa.deepsea.model.DeepSeaManager;
+import pt.isec.pa.deepsea.ui.res.ImageManager;
 
 /**
  * Modal Stage that shows the shop interface, opened when the FSM is in the SHOP state.
@@ -26,9 +27,6 @@ public class ShopPop extends Stage {
     VBox shipInfoBox;
     VBox dronesArea;
     Button btnClose;
-
-    private static final Image IMG_SHOP = new Image(
-            ShopPop.class.getResourceAsStream("/images/backgrounds/shop.png"));
 
     public ShopPop(DeepSeaManager manager, Window owner) {
         this.manager = manager;
@@ -98,9 +96,11 @@ public class ShopPop extends Stage {
         content.setPadding(new Insets(25));
         content.setStyle("-fx-background-color: transparent;");
 
-        ImageView bgView = new ImageView(IMG_SHOP);
+        ImageView bgView = new ImageView(ImageManager.getInstance().get(ImageManager.BG_SHOP));
+
         bgView.setFitWidth(560);
         bgView.setFitHeight(600);
+
 
         StackPane root = new StackPane(bgView, content);
         setScene(new Scene(root, 560, 600));

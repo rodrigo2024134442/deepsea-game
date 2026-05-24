@@ -88,7 +88,11 @@ public class DeepSeaManager {
         boolean ok = context.move(command);
         if (ok) {
             log.log("Move: " + command + " [state=" + getState() + "]");
-            fireAll();
+            fireState();
+            fireGrid();
+            fireShip();
+            fireDrones();
+            fireLog();
         }
         return ok;
     }
@@ -104,7 +108,10 @@ public class DeepSeaManager {
         boolean ok = context.descend(droneId);
         if (ok) {
             log.log("Drone " + droneId + " started descending.");
-            fireAll();
+            fireState();
+            fireGrid();
+            fireDrones();
+            fireLog();
         }
         return ok;
     }
@@ -119,7 +126,9 @@ public class DeepSeaManager {
         boolean ok = context.ascend();
         if (ok) {
             log.log("Active drone started ascending.");
-            fireAll();
+            fireState();
+            fireGrid();
+            fireLog();
         }
         return ok;
     }
@@ -134,7 +143,8 @@ public class DeepSeaManager {
         boolean ok = context.enterShop();
         if (ok) {
             log.log("Entered shop.");
-            fireAll();
+            fireState();
+            fireLog();
         }
         return ok;
     }
@@ -149,7 +159,8 @@ public class DeepSeaManager {
         boolean ok = context.leaveShop();
         if (ok) {
             log.log("Left shop.");
-            fireAll();
+            fireState();
+            fireLog();
         }
         return ok;
     }
@@ -165,7 +176,8 @@ public class DeepSeaManager {
         boolean ok = context.repair(droneId);
         if (ok) {
             log.log("Drone " + droneId + " repaired.");
-            fireAll();
+            fireDrones();
+            fireLog();
         }
         return ok;
     }
@@ -181,7 +193,9 @@ public class DeepSeaManager {
         boolean ok = context.refuel(droneId);
         if (ok){
             log.log("Drone " + droneId + " refuelled.");
-            fireAll();
+            fireShip();
+            fireDrones();
+            fireLog();
         }
         return ok;
     }
@@ -196,7 +210,11 @@ public class DeepSeaManager {
         boolean ok = context.mining();
         if (ok) {
             log.log("Mineral collected.");
-            fireAll();
+            fireState();
+            fireGrid();
+            fireMinigame();
+            fireDrones();
+            fireLog();
         }
         return ok;
     }
@@ -212,7 +230,10 @@ public class DeepSeaManager {
         boolean ok = context.retrieveArtifact();
         if (ok) {
             log.log("Artifact found — minigame started.");
-            fireAll();
+            fireState();
+            fireGrid();
+            fireMinigame();
+            fireLog();
         }
         return ok;
     }
@@ -229,7 +250,11 @@ public class DeepSeaManager {
         boolean ok = context.movePiece(row, col);
         if (ok) {
             log.log("Puzzle piece moved: (row:" + row + ", col:" + col + ")");
-            fireAll();
+            fireState();
+            fireGrid();
+            fireMinigame();
+            fireDrones();
+            fireLog();
         }
         return ok;
     }
@@ -726,7 +751,7 @@ public class DeepSeaManager {
     /** Clears all log messages. */
     public void clearLog() {
         log.clear();
-        fireAll();
+        fireLog();
     }
 
     // Property change support
@@ -762,4 +787,11 @@ public class DeepSeaManager {
         pcs.firePropertyChange(PROP_MINIGAME,   null, null);
         pcs.firePropertyChange(PROP_LOG,        null, null);
     }
+
+    private void fireState()    { pcs.firePropertyChange(PROP_GAME_STATE, null, null); }
+    private void fireGrid()     { pcs.firePropertyChange(PROP_GRID,       null, null); }
+    private void fireShip()     { pcs.firePropertyChange(PROP_SHIP,       null, null); }
+    private void fireDrones()   { pcs.firePropertyChange(PROP_DRONES,     null, null); }
+    private void fireMinigame() { pcs.firePropertyChange(PROP_MINIGAME,   null, null); }
+    private void fireLog()      { pcs.firePropertyChange(PROP_LOG,        null, null); }
 }

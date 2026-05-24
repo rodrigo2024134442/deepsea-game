@@ -6,36 +6,13 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import pt.isec.pa.deepsea.model.DeepSeaManager;
+import pt.isec.pa.deepsea.model.state.GameState;
+import pt.isec.pa.deepsea.ui.res.ImageManager;
 
 public class BottomCanvas extends Canvas {
     DeepSeaManager manager;
-
     private int cols,rows;
     private double sizeCell, offsetX, offsetY;
-
-    private static final Image IMG_DRONE= new Image(
-            BottomCanvas.class.getResourceAsStream("/images/vehicles/mining_drone_heavy_rov.png"));
-
-    private static final Image IMG_BACKGROUND= new Image(
-            BottomCanvas.class.getResourceAsStream("/images/backgrounds/sea_floor_grid_background.png"));
-
-    private static final Image IMG_CLOUD= new Image(
-            BottomCanvas.class.getResourceAsStream("/images/backgrounds/DarkUnderwaterCloud.png"));
-
-    private static final Image[] mineralColection = {
-            new Image(BottomCanvas.class.getResourceAsStream("/images/objects/mineral_gold_ore_cluster.png")),
-            new Image(BottomCanvas.class.getResourceAsStream("/images/objects/mineral_purple_crystal_cluster.png")),
-    };
-
-    private static final Image[] artifactColection = {
-            new Image(BottomCanvas.class.getResourceAsStream("/images/objects/artifact_ancient_stone_mask.png")),
-            new Image(BottomCanvas.class.getResourceAsStream("/images/objects/artifact_sunken_treasure_chest.png")),
-    };
-
-    private static final Image[] monsterColection = {
-            new Image(BottomCanvas.class.getResourceAsStream("/images/creatures/monster6.png")),
-            new Image(BottomCanvas.class.getResourceAsStream("/images/creatures/monster7.png")),
-    };
 
     public BottomCanvas (DeepSeaManager manager){
         super(500,500);
@@ -64,7 +41,8 @@ public class BottomCanvas extends Canvas {
     }
 
     private void setBackground(GraphicsContext gc) {
-        gc.drawImage(IMG_BACKGROUND, 0, 0, getWidth(), getHeight());
+        Image imgBgSeaFloor = ImageManager.getInstance().get(ImageManager.BG_SEAFLOOR);
+        gc.drawImage(imgBgSeaFloor, 0, 0, getWidth(), getHeight());
     }
 
     private void changeBoardGeometry(){
@@ -90,7 +68,8 @@ public class BottomCanvas extends Canvas {
                 if (manager.isBottomCellRevealed(r, c)) {
                     drawEntity(gc, r, c, x, y);
                 } else {
-                    gc.drawImage(IMG_CLOUD, x, y, sizeCell, sizeCell);
+                    Image imgBgCloud = ImageManager.getInstance().get(ImageManager.BG_CLOUD);
+                    gc.drawImage(imgBgCloud, x, y, sizeCell, sizeCell);
                 }
             }
         }
@@ -110,24 +89,36 @@ public class BottomCanvas extends Canvas {
 
     }
 
-    private void drawDrone(GraphicsContext gc){
+    /*private void drawDrone(GraphicsContext gc){
         int row = manager.getActiveDroneRow();
         int col = manager.getActiveDroneCol();
 
         double x = positionInX(col);
         double y = positionInY(row);
-        gc.drawImage(IMG_DRONE,x,y,sizeCell,sizeCell);
+        Image imgDrone = ImageManager.getInstance().get(ImageManager.DRONE);
+        gc.drawImage(imgDrone, x, y, sizeCell, sizeCell);
+    }*/
+
+    private void drawDrone(GraphicsContext gc) {
+        GameState state = manager.getState();
+        if (state != GameState.BOTTOM) return;
+
+        int row = manager.getActiveDroneRow();
+        int col = manager.getActiveDroneCol();
+        if (row == -1 || col == -1) return;
+
+        gc.drawImage(ImageManager.getInstance().get(ImageManager.DRONE),
+                positionInX(col), positionInY(row), sizeCell, sizeCell);
     }
 
     private void drawEntity(GraphicsContext gc, int r, int c, double x, double y) {
         String entity = manager.getBottomCellEntity(r, c);
-        Random rnd = new Random();
-        int randomNum = rnd.nextInt(2);
-        randomNum = 1;
+        ImageManager im = ImageManager.getInstance();
+
         switch (entity) {
-            case "MINERAL"  -> gc.drawImage(mineralColection[randomNum],  x, y, sizeCell, sizeCell);
-            case "ARTIFACT" -> gc.drawImage(artifactColection[randomNum], x, y, sizeCell, sizeCell);
-            case "MONSTER" -> gc.drawImage(monsterColection[randomNum], x, y, sizeCell, sizeCell);
+            case "MINERAL"  -> gc.drawImage(im.get(ImageManager.MINERAL_2),  x, y, sizeCell, sizeCell);
+            case "ARTIFACT" -> gc.drawImage(im.get(ImageManager.ARTIFACT_2), x, y, sizeCell, sizeCell);
+            case "MONSTER"  -> gc.drawImage(im.get(ImageManager.MONSTER_2),  x, y, sizeCell, sizeCell);
             default -> { }
         }
     }
