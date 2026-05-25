@@ -27,6 +27,7 @@ public class Ship implements Serializable {
     private static final long serialVersionUID = 1L;
     private int currentFuel;
     private Position position;
+    private int maxFuel;
     private final Set<Drone> drones;
     private List<Artifact> collectedArtifacts;
     private List<Mineral> collectedMinerals;
@@ -35,13 +36,16 @@ public class Ship implements Serializable {
     /** Creates a ship at (-1,-1) with full fuel and the configured number of drones. */
     public Ship() {
         this.currentFuel = GameConfig.SHIP_MAX_FUEL;
+        this.maxFuel = GameConfig.SHIP_MAX_FUEL;
         this.position = new Position(-1, -1);
         this.drones = new HashSet<>();
         this.collectedArtifacts = new ArrayList<>();
         this.collectedMinerals = new ArrayList<>();
         this.minerals = 0;
 
-        for (int i = 0; i < GameConfig.MAX_DRONES; i++) {
+        // start with configured initial number of drones
+        int start = Math.max(0, Math.min(GameConfig.START_DRONES, GameConfig.MAX_DRONES));
+        for (int i = 0; i < start; i++) {
             drones.add(new Drone());
         }
     }
@@ -86,8 +90,22 @@ public class Ship implements Serializable {
     /** @return current fuel */
     public int getCurrentFuel() { return currentFuel; }
 
-    /** @return max fuel */
-    public int getMaxFuel() { return GameConfig.SHIP_MAX_FUEL; }
+    /** @return max fuel (instance, upgradeable) */
+    public int getMaxFuel() { return maxFuel; }
+
+    /** Upgrade ship max fuel by given units. */
+    public void upgradeMaxFuel(int units) {
+        if (units <= 0) return;
+        this.maxFuel += units;
+        // if current fuel was at previous max, keep ship topped to new max
+        this.currentFuel = Math.min(this.currentFuel, this.maxFuel);
+    }
+
+    /** Adds a new drone if below MAX_DRONES. Returns true if added. */
+    public boolean addNewDrone() {
+        if (drones.size() >= GameConfig.MAX_DRONES) return false;
+        return drones.add(new Drone());
+    }
 
     /** @return current position (clone) */
     public Position getPosition() { return position.clone(); }
@@ -151,7 +169,7 @@ public class Ship implements Serializable {
 
     @Override
     public String toString() {
-        return "Ship{fuel=" + currentFuel + "/" + GameConfig.SHIP_MAX_FUEL +
+        return "Ship{fuel=" + currentFuel + "/" + maxFuel +
                 ", pos=" + position +
                 ", drones=" + drones.size() + "}";
     }

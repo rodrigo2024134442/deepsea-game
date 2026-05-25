@@ -200,6 +200,62 @@ public class DeepSeaManager {
         return ok;
     }
 
+    /** Buys ship fuel using minerals (SHOP state). */
+    public boolean buyShipFuel(int amount) {
+        boolean ok = context.buyShipFuel(amount);
+        if (ok) {
+            log.log("Bought " + amount + " ship fuel.");
+            fireShip();
+            fireLog();
+        }
+        return ok;
+    }
+
+    /** Buys a new drone (SHOP state). */
+    public boolean buyDrone() {
+        boolean ok = context.buyDrone();
+        if (ok) {
+            log.log("Bought new drone.");
+            fireDrones();
+            fireShip();
+            fireLog();
+        }
+        return ok;
+    }
+
+    /** Upgrade ship max fuel by units (SHOP state). */
+    public boolean upgradeShipMaxFuel(int units) {
+        boolean ok = context.upgradeShipMaxFuel(units);
+        if (ok) {
+            log.log("Upgraded ship max fuel by " + units + " units.");
+            fireShip();
+            fireLog();
+        }
+        return ok;
+    }
+
+    /** Upgrade drones max fuel by units (SHOP state). */
+    public boolean upgradeDronesMaxFuel(int units) {
+        boolean ok = context.upgradeDronesMaxFuel(units);
+        if (ok) {
+            log.log("Upgraded drones max fuel by " + units + " units.");
+            fireDrones();
+            fireLog();
+        }
+        return ok;
+    }
+
+    /** Upgrade drones max hull by points (SHOP state). */
+    public boolean upgradeDronesMaxHull(int points) {
+        boolean ok = context.upgradeDronesMaxHull(points);
+        if (ok) {
+            log.log("Upgraded drones max hull by " + points + " points.");
+            fireDrones();
+            fireLog();
+        }
+        return ok;
+    }
+
     /**
      * Collects the mineral at the drone's current position.
      * Only valid in the BOTTOM state.

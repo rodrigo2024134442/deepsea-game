@@ -98,7 +98,7 @@ public class ShopPop extends Stage {
 
         ImageView bgView = new ImageView(ImageManager.getInstance().get(ImageManager.BG_SHOP));
 
-        bgView.setFitWidth(560);
+        bgView.setFitWidth(660);
         bgView.setFitHeight(600);
 
 
@@ -137,7 +137,125 @@ public class ShopPop extends Stage {
         Label lblMinerals = new Label("💎  Minerals: " + manager.getShipMinerals());
         lblMinerals.setStyle("-fx-text-fill: white;");
 
-        shipInfoBox.getChildren().addAll(shipTitle, lblFuel, shipFuelBar, lblMinerals);
+        // Buttons: Buy Fuel / Buy Drone / Upgrades
+        HBox shopButtons = new HBox(8);
+        Button btnBuyFuel = new Button("⛽ Buy Fuel");
+        Button btnBuyDrone = new Button("➕ Buy Drone");
+        Button btnUpgradeShipFuel = new Button("⬆ Ship Fuel");
+        Button btnUpgradeDroneFuel = new Button("⬆ Drone Fuel");
+        Button btnUpgradeDroneHull = new Button("⬆ Drone Hull");
+
+        styleButton(btnBuyFuel, "#2e86de");
+        styleButton(btnBuyDrone, "#2e86de");
+        styleButton(btnUpgradeShipFuel, "#16a085");
+        styleButton(btnUpgradeDroneFuel, "#16a085");
+        styleButton(btnUpgradeDroneHull, "#16a085");
+
+        shopButtons.getChildren().addAll(btnBuyFuel, btnBuyDrone, btnUpgradeShipFuel, btnUpgradeDroneFuel, btnUpgradeDroneHull);
+
+        // Handlers for shop actions
+        btnBuyFuel.setOnAction(e -> {
+            TextInputDialog dialog = new TextInputDialog("100");
+            dialog.initOwner(this);
+            dialog.setTitle("Buy Ship Fuel");
+            dialog.setHeaderText("Buy ship fuel");
+            dialog.setContentText("Amount of fuel to buy:");
+            dialog.showAndWait().ifPresent(s -> {
+                try {
+                    int amt = Integer.parseInt(s.trim());
+                    boolean ok = manager.buyShipFuel(amt);
+                    if (!ok) {
+                        Alert a = new Alert(Alert.AlertType.WARNING, "Could not buy fuel (check minerals/limits).", ButtonType.OK);
+                        a.initOwner(this);
+                        a.showAndWait();
+                    }
+                } catch (NumberFormatException ex) {
+                    Alert a = new Alert(Alert.AlertType.ERROR, "Invalid number.", ButtonType.OK);
+                    a.initOwner(this);
+                    a.showAndWait();
+                }
+            });
+        });
+
+        btnBuyDrone.setOnAction(e -> {
+            boolean ok = manager.buyDrone();
+            if (!ok) {
+                Alert a = new Alert(Alert.AlertType.WARNING, "Could not buy drone (check minerals or max drones).", ButtonType.OK);
+                a.initOwner(this);
+                a.showAndWait();
+            }
+        });
+
+        btnUpgradeShipFuel.setOnAction(e -> {
+            TextInputDialog dialog = new TextInputDialog("100");
+            dialog.initOwner(this);
+            dialog.setTitle("Upgrade Ship Fuel");
+            dialog.setHeaderText("Increase ship max fuel");
+            dialog.setContentText("Units to add to max fuel:");
+            dialog.showAndWait().ifPresent(s -> {
+                try {
+                    int units = Integer.parseInt(s.trim());
+                    boolean ok = manager.upgradeShipMaxFuel(units);
+                    if (!ok) {
+                        Alert a = new Alert(Alert.AlertType.WARNING, "Could not upgrade ship fuel (check minerals).", ButtonType.OK);
+                        a.initOwner(this);
+                        a.showAndWait();
+                    }
+                } catch (NumberFormatException ex) {
+                    Alert a = new Alert(Alert.AlertType.ERROR, "Invalid number.", ButtonType.OK);
+                    a.initOwner(this);
+                    a.showAndWait();
+                }
+            });
+        });
+
+        btnUpgradeDroneFuel.setOnAction(e -> {
+            TextInputDialog dialog = new TextInputDialog("10");
+            dialog.initOwner(this);
+            dialog.setTitle("Upgrade Drone Fuel");
+            dialog.setHeaderText("Increase drones' max fuel");
+            dialog.setContentText("Units to add to each drone's max fuel:");
+            dialog.showAndWait().ifPresent(s -> {
+                try {
+                    int units = Integer.parseInt(s.trim());
+                    boolean ok = manager.upgradeDronesMaxFuel(units);
+                    if (!ok) {
+                        Alert a = new Alert(Alert.AlertType.WARNING, "Could not upgrade drone fuel (check minerals).", ButtonType.OK);
+                        a.initOwner(this);
+                        a.showAndWait();
+                    }
+                } catch (NumberFormatException ex) {
+                    Alert a = new Alert(Alert.AlertType.ERROR, "Invalid number.", ButtonType.OK);
+                    a.initOwner(this);
+                    a.showAndWait();
+                }
+            });
+        });
+
+        btnUpgradeDroneHull.setOnAction(e -> {
+            TextInputDialog dialog = new TextInputDialog("10");
+            dialog.initOwner(this);
+            dialog.setTitle("Upgrade Drone Hull");
+            dialog.setHeaderText("Increase drones' max hull integrity");
+            dialog.setContentText("Points to add to each drone's max hull:");
+            dialog.showAndWait().ifPresent(s -> {
+                try {
+                    int pts = Integer.parseInt(s.trim());
+                    boolean ok = manager.upgradeDronesMaxHull(pts);
+                    if (!ok) {
+                        Alert a = new Alert(Alert.AlertType.WARNING, "Could not upgrade drone hull (check minerals).", ButtonType.OK);
+                        a.initOwner(this);
+                        a.showAndWait();
+                    }
+                } catch (NumberFormatException ex) {
+                    Alert a = new Alert(Alert.AlertType.ERROR, "Invalid number.", ButtonType.OK);
+                    a.initOwner(this);
+                    a.showAndWait();
+                }
+            });
+        });
+
+        shipInfoBox.getChildren().addAll(shipTitle, lblFuel, shipFuelBar, lblMinerals, shopButtons);
 
         // --- DRONES ---
         dronesArea.getChildren().clear();

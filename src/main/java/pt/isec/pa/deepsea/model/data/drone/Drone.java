@@ -32,11 +32,11 @@ public class Drone implements GameConfig, Serializable {
 
     // FUEL MANAGEMENT
     private int currentFuel;
-    private final int maxFuel = DRONE_MAX_FUEL;
+    private int maxFuel = DRONE_MAX_FUEL;
 
     // HULL INTEGRITY
     private int hullIntegrity;
-    private final int maxHullIntegrity = DRONE_MAX_INTEGRITY;
+    private int maxHullIntegrity = DRONE_MAX_INTEGRITY;
 
     // PRIME SEQUENCE FOR DAMAGE
     private static final int[] PRIMES = {1, 2, 3, 5, 7, 11, 13, 17, 19, 23};
@@ -113,6 +113,20 @@ public class Drone implements GameConfig, Serializable {
     /** Fully restores hull integrity. */
     public void repair() {
         hullIntegrity = maxHullIntegrity;
+    }
+
+    /** Increases the drone's max fuel capacity. */
+    public void increaseMaxFuel(int units) {
+        if (units <= 0) return;
+        this.maxFuel += units;
+        this.currentFuel = Math.min(this.currentFuel, this.maxFuel);
+    }
+
+    /** Increases the drone's max hull integrity. */
+    public void increaseMaxHull(int points) {
+        if (points <= 0) return;
+        this.maxHullIntegrity += points;
+        this.hullIntegrity = Math.min(this.hullIntegrity, this.maxHullIntegrity);
     }
 
     /** Returns true if hull integrity reached zero. */

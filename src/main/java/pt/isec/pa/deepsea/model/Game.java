@@ -455,6 +455,17 @@ public class Game implements GameConfig, Serializable {
         if (!drone.needsRepair())
             return false;
 
+        // Calculate repair cost in minerals: proportional to missing integrity.
+        int missing = drone.getMaxHullIntegrity() - drone.getHullIntegrity();
+        if (missing <= 0)
+            return false;
+
+        // Cost: at least 1 mineral, and 1 mineral per 10 integrity points missing.
+        int cost = Math.max(1, (int) Math.ceil(missing / 10.0));
+        if (ship.getMinerals() < cost)
+            return false;
+
+        ship.setMinerals(ship.getMinerals() - cost);
         drone.repair();
         return true;
     }
@@ -477,6 +488,77 @@ public class Game implements GameConfig, Serializable {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Buys ship fuel using minerals as currency.
+     * @param amount units of fuel requested
+     * @return true if purchase succeeded
+     */
+    public boolean buyShipFuel(int amount) {
+        if (ship == null) return false;
+        if (amount <= 0) return false;
+
+        int current = ship.getCurrentFuel();
+        int max = ship.getMaxFuel();
+        if (current >= max) return false; // already full
+
+        int canBuy = Math.min(amount, max - current);
+        int cost = canBuy * FUEL_PRICE_PER_UNIT;
+        if (ship.getMinerals() < cost) return false;
+
+        ship.setMinerals(ship.getMinerals() - cost);
+        ship.setCurrentFuel(current + canBuy);
+        return true;
+    }
+
+    /** Buy a new drone using minerals. Returns true if purchase succeeded. */
+    public boolean buyDrone() {
+        if (ship == null) return false;
+        if (ship.getDrones().size() >= GameConfig.MAX_DRONES) return false;
+        int price = GameConfig.DRONE_PRICE;
+        if (ship.getMinerals() < price) return false;
+        boolean added = ship.addNewDrone();
+        if (!added) return false;
+        ship.setMinerals(ship.getMinerals() - price);
+        return true;
+    }
+
+    /** Upgrade ship max fuel by the given units (costs minerals). */
+    public boolean upgradeShipMaxFuel(int units) {
+        if (ship == null) return false;
+        if (units <= 0) return false;
+        int cost = units * GameConfig.SHIP_FUEL_UPGRADE_PRICE_PER_UNIT;
+        if (ship.getMinerals() < cost) return false;
+        ship.setMinerals(ship.getMinerals() - cost);
+        ship.upgradeMaxFuel(units);
+        return true;
+    }
+
+    /** Upgrade all drones max fuel by given units (applies to all existing drones). */
+    public boolean upgradeDronesMaxFuel(int units) {
+        if (ship == null) return false;
+        if (units <= 0) return false;
+        int cost = units * GameConfig.DRONE_FUEL_UPGRADE_PRICE_PER_UNIT * Math.max(1, ship.getDrones().size());
+        if (ship.getMinerals() < cost) return false;
+        ship.setMinerals(ship.getMinerals() - cost);
+        for (var d : ship.getDrones()) {
+            d.increaseMaxFuel(units);
+        }
+        return true;
+    }
+
+    /** Upgrade all drones hull integrity max by given points (applies to all existing drones). */
+    public boolean upgradeDronesMaxHull(int points) {
+        if (ship == null) return false;
+        if (points <= 0) return false;
+        int cost = points * GameConfig.DRONE_HULL_UPGRADE_PRICE_PER_POINT * Math.max(1, ship.getDrones().size());
+        if (ship.getMinerals() < cost) return false;
+        ship.setMinerals(ship.getMinerals() - cost);
+        for (var d : ship.getDrones()) {
+            d.increaseMaxHull(points);
+        }
+        return true;
     }
 
     public boolean returnDroneToShip() {
