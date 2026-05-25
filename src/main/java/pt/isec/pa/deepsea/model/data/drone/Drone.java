@@ -175,8 +175,7 @@ public class Drone implements GameConfig, Serializable {
     public void addMineral(Mineral mineral) {
         if (mineral != null) {
             collectedMinerals.add(mineral);
-            Random rand = new Random();
-            this.minerals += rand.nextInt(MAX_MINERAL_VALUE) + 1;
+            this.minerals += Math.max(1, mineral.getValue());
         }
     }
 

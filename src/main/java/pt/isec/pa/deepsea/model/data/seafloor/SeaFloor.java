@@ -62,9 +62,11 @@ public class SeaFloor implements Serializable {
         for (int r = 0; r < rows; r++)
             for (int c = 0; c < cols; c++)
                 grid[r][c].setRevealed(true);
-        placeMineral(new Position(1, 1));
-        placeMineral(new Position(rows - 2, cols - 2));
-        placeMonster(new Position(rows / 2, cols / 2));
+        // place two minerals: one with value 1 and one with maximum value
+        placeMineral(new Position(1, 1), 1);
+        placeMineral(new Position(rows - 2, cols - 2), pt.isec.pa.deepsea.model.data.GameConfig.MAX_MINERAL_VALUE);
+        // place a single monster using the generator (generator avoids center)
+        generateMonsters(1);
     }
 
     private void generateMinerals(int amount) {
@@ -74,7 +76,8 @@ public class SeaFloor implements Serializable {
             int r = rand.nextInt(rows);
             int c = rand.nextInt(cols);
             if (isCellEmpty(r, c)) {
-                grid[r][c].setEntity(new Mineral("Ouro"));
+                int value = rand.nextInt(pt.isec.pa.deepsea.model.data.GameConfig.MAX_MINERAL_VALUE) + 1;
+                grid[r][c].setEntity(new Mineral("Ouro", value));
                 placed++;
             }
         }
@@ -96,10 +99,13 @@ public class SeaFloor implements Serializable {
     private void generateMonsters(int amount) {
         Random rand = new Random();
         int placed = 0;
+        int centerR = rows / 2;
+        int centerC = cols / 2;
         while (placed < amount) {
             int r = rand.nextInt(rows);
             int c = rand.nextInt(cols);
-            if (isCellEmpty(r, c)) {
+            // avoid placing a monster exactly at the central cell
+            if (isCellEmpty(r, c) && !(r == centerR && c == centerC)) {
                 grid[r][c].setEntity(new Monster("Monster", 100));
                 placed++;
             }
@@ -109,6 +115,11 @@ public class SeaFloor implements Serializable {
     private void placeMineral(Position pos) {
         if (!isValidPosition(pos) || !isCellEmpty(pos)) return;
         grid[pos.getRow()][pos.getCol()].setEntity(new Mineral("Ouro"));
+    }
+
+    private void placeMineral(Position pos, int value) {
+        if (!isValidPosition(pos) || !isCellEmpty(pos)) return;
+        grid[pos.getRow()][pos.getCol()].setEntity(new Mineral("Ouro", value));
     }
 
     private void placeMonster(Position pos) {

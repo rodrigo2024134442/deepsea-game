@@ -40,7 +40,7 @@ public interface GameConfig {
     int MAX_MINERAL_VALUE = 20;
 
     // --- Modo Defesa ---
-    boolean DEFENSE_MODE = false;
+    boolean DEFENSE_MODE = true;
 
     String LOG_FILE_NAME = "deepsea_log.txt";
     String BIN_FILE_NAME = "deepsea_file.dat";
