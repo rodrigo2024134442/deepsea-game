@@ -35,22 +35,16 @@ public class SoundManager {
     // Keys
     public static final String MOVE              = "move";
     public static final String DRONE_DEPLOY      = "drone_deploy";
-    public static final String DRONE_DESTROYED   = "drone_destroyed";
     public static final String HIT        = "hit_animal";
     public static final String MINING            = "mining";
     public static final String RETRIEVE_ARTIFACT = "retrieve_artifact";
-    public static final String GAME_WON          = "game_won";
-    public static final String GAME_LOST         = "game_lost";
 
     private SoundManager() {
         load(MOVE,              "/sounds/move.wav");
         load(DRONE_DEPLOY,      "/sounds/drone_deploy.wav");
-        load(DRONE_DESTROYED,   "/sounds/drone_destroyed.wav");
         load(HIT,        "/sounds/hit.wav");
         load(MINING,            "/sounds/mining.wav");
         load(RETRIEVE_ARTIFACT, "/sounds/retrieve_artifact.wav");
-        load(GAME_WON,          "/sounds/game_won.wav");
-        load(GAME_LOST,         "/sounds/game_lost.wav");
     }
 
     /**

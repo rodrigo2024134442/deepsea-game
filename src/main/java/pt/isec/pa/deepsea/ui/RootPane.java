@@ -14,7 +14,6 @@ import pt.isec.pa.deepsea.ui.canvas.BottomCanvas;
 import pt.isec.pa.deepsea.ui.canvas.PuzzleCanvas;
 import pt.isec.pa.deepsea.ui.canvas.SurfaceCanvas;
 import pt.isec.pa.deepsea.ui.canvas.TrenchCanvas;
-import pt.isec.pa.deepsea.ui.log.LogStage;
 import pt.isec.pa.deepsea.ui.res.SoundManager;
 import pt.isec.pa.deepsea.ui.side.CommandsBox;
 import pt.isec.pa.deepsea.ui.side.DronesInfoBox;
@@ -98,42 +97,6 @@ public class RootPane extends BorderPane {
         areaPane.heightProperty().addListener(obs -> updateCanvasSizes());
 
         manager.addPropertyChangeListener(DeepSeaManager.PROP_DRONE_DEPLOY, e -> {
-            if (getScene() != null) {
-                VideoManager.getInstance().play(VideoManager.DRONE_DEPLOY, getScene().getWindow(), null);
-            }
-        });
-
-        manager.addPropertyChangeListener(DeepSeaManager.PROP_DRONE_DESTROYED, e -> {
-            if (getScene() != null) {
-                VideoManager.getInstance().play(VideoManager.DRONE_DESTROYED, getScene().getWindow(), null);
-            }
-        });
-
-        manager.addPropertyChangeListener(DeepSeaManager.PROP_GAME_LOST, e -> {
-            if (getScene() != null) {
-                VideoManager.getInstance().play(
-                        VideoManager.GAME_LOST,
-                        getScene().getWindow(),
-                        Platform::exit
-                );
-            } else {
-                Platform.exit();
-            }
-        });
-
-        manager.addPropertyChangeListener(DeepSeaManager.PROP_GAME_WON, e -> {
-            if (getScene() != null) {
-                VideoManager.getInstance().play(
-                        VideoManager.GAME_WON,
-                        getScene().getWindow(),
-                        Platform::exit
-                );
-            } else {
-                Platform.exit();
-            }
-        });
-
-        manager.addPropertyChangeListener(DeepSeaManager.PROP_DRONE_DEPLOY, e -> {
             SoundManager.getInstance().play(SoundManager.DRONE_DEPLOY);
             if (getScene() != null) {
                 VideoManager.getInstance().play(VideoManager.DRONE_DEPLOY, getScene().getWindow(), null);
@@ -141,26 +104,44 @@ public class RootPane extends BorderPane {
         });
 
         manager.addPropertyChangeListener(DeepSeaManager.PROP_DRONE_DESTROYED, e -> {
-            SoundManager.getInstance().play(SoundManager.DRONE_DESTROYED);
             if (getScene() != null) {
                 VideoManager.getInstance().play(VideoManager.DRONE_DESTROYED, getScene().getWindow(), null);
             }
         });
 
         manager.addPropertyChangeListener(DeepSeaManager.PROP_GAME_LOST, e -> {
-            SoundManager.getInstance().play(SoundManager.GAME_LOST);
-            // ... resto igual
+            if (getScene() != null) {
+                VideoManager.getInstance().play(VideoManager.GAME_LOST, getScene().getWindow(), Platform::exit);
+            } else {
+                Platform.exit();
+            }
         });
 
         manager.addPropertyChangeListener(DeepSeaManager.PROP_GAME_WON, e -> {
-            SoundManager.getInstance().play(SoundManager.GAME_WON);
-            // ... resto igual
+            if (getScene() != null) {
+                VideoManager.getInstance().play(VideoManager.GAME_WON, getScene().getWindow(), Platform::exit);
+            } else {
+                Platform.exit();
+            }
         });
 
-        manager.addPropertyChangeListener(
-                DeepSeaManager.PROP_GAME_STATE,
-                e -> update()
-        );
+        manager.addPropertyChangeListener(DeepSeaManager.PROP_MOVE_DONE, e -> {
+            SoundManager.getInstance().play(SoundManager.MOVE);
+        });
+
+        manager.addPropertyChangeListener(DeepSeaManager.PROP_HIT, e -> {
+            SoundManager.getInstance().playAfter(SoundManager.HIT);
+        });
+
+        manager.addPropertyChangeListener(DeepSeaManager.PROP_MINING_DONE, e -> {
+            SoundManager.getInstance().play(SoundManager.MINING);
+        });
+
+        manager.addPropertyChangeListener(DeepSeaManager.PROP_ARTIFACT_RETRIEVED, e -> {
+            SoundManager.getInstance().play(SoundManager.RETRIEVE_ARTIFACT);
+        });
+
+        manager.addPropertyChangeListener(DeepSeaManager.PROP_GAME_STATE, e -> update());
 
         setOnKeyPressed(e -> {
             switch (e.getCode()) {

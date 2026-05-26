@@ -51,6 +51,10 @@ public class DeepSeaManager {
     public static final String PROP_DRONE_DESTROYED = "_drone_destroyed_";
     public static final String PROP_GAME_LOST = "_game_lost_";
     public static final String PROP_GAME_WON = "_game_won_";
+    public static final String PROP_MOVE_DONE = "_move_done_";
+    public static final String PROP_HIT       = "_hit_";
+    public static final String PROP_MINING_DONE        = "_mining_done_";
+    public static final String PROP_ARTIFACT_RETRIEVED = "_artifact_retrieved_";
 
     private PropertyChangeSupport pcs;
 
@@ -98,6 +102,10 @@ public class DeepSeaManager {
             fireShip();
             fireDrones();
             fireLog();
+            fireMoveDone();
+            if (context.getGame().consumeHitFlag()) {
+                fireHit();
+            }
             if (context.getGame().consumeGameLostFlag()) {
                 fireGameLost();
             }else if (context.getGame().consumeDroneDestroyedByMonsterFlag()) {
@@ -285,6 +293,7 @@ public class DeepSeaManager {
             fireMinigame();
             fireDrones();
             fireLog();
+            fireMiningDone();
         }
         return ok;
     }
@@ -304,6 +313,7 @@ public class DeepSeaManager {
             fireGrid();
             fireMinigame();
             fireLog();
+            fireArtifactRetrieved();
         }
         return ok;
     }
@@ -869,4 +879,8 @@ public class DeepSeaManager {
     private void fireDroneDestroyed() { pcs.firePropertyChange(PROP_DRONE_DESTROYED, null, null); }
     private void fireGameLost() { pcs.firePropertyChange(PROP_GAME_LOST, null, null); }
     private void fireGameWon() { pcs.firePropertyChange(PROP_GAME_WON, null, null); }
+    private void fireMoveDone() { pcs.firePropertyChange(PROP_MOVE_DONE, null, null); }
+    private void fireHit()      { pcs.firePropertyChange(PROP_HIT,       null, null); }
+    private void fireMiningDone()        { pcs.firePropertyChange(PROP_MINING_DONE,        null, null); }
+    private void fireArtifactRetrieved() { pcs.firePropertyChange(PROP_ARTIFACT_RETRIEVED, null, null); }
 }

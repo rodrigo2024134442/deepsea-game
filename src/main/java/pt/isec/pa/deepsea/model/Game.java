@@ -49,6 +49,7 @@ public class Game implements GameConfig, Serializable {
     private boolean droneDestroyedByMonster;
     private boolean gameLostFired;
     private boolean gameWonFired;
+    private boolean hitFlag;
 
     private void initialize() {
         ship = new Ship();
@@ -60,6 +61,7 @@ public class Game implements GameConfig, Serializable {
         droneDestroyedByMonster = false;
         gameLostFired = false;
         gameWonFired = false;
+        hitFlag = false;
     }
 
     /** Starts the game. */
@@ -252,6 +254,7 @@ public class Game implements GameConfig, Serializable {
         if (entity instanceof Rock || entity instanceof Animal || entity instanceof Current) {
             activeDrone.takeDamage();
             activeDrone.consumeFuel(FUEL_COST_DRONE_MOVE);
+            hitFlag = true;
             return true;
         }
 
@@ -362,6 +365,7 @@ public class Game implements GameConfig, Serializable {
         if (seaFloor.hasMonster(next)) {
             activeDrone.takeDamage();
             activeDrone.consumeFuel(1);
+            hitFlag = true;
             if (activeDrone.isDestroyed()) {
                 droneDestroyedByMonster = true;
             }
@@ -977,6 +981,16 @@ public class Game implements GameConfig, Serializable {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Returns whether the drone hit something (non-fatal) since the last call,
+     * and resets the flag.
+     */
+    public boolean consumeHitFlag() {
+        boolean was = hitFlag;
+        hitFlag = false;
+        return was;
     }
 
     /**
