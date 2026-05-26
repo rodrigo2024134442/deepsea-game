@@ -47,6 +47,11 @@ public class DeepSeaManager {
     public static final String PROP_MINIGAME   = "_minigame_";
     public static final String PROP_LOG        = "_log_";
 
+    public static final String PROP_DRONE_DEPLOY = "_drone_deploy_";
+    public static final String PROP_DRONE_DESTROYED = "_drone_destroyed_";
+    public static final String PROP_GAME_LOST = "_game_lost_";
+    public static final String PROP_GAME_WON = "_game_won_";
+
     private PropertyChangeSupport pcs;
 
     /**
@@ -93,6 +98,14 @@ public class DeepSeaManager {
             fireShip();
             fireDrones();
             fireLog();
+            if (context.getGame().consumeGameLostFlag()) {
+                fireGameLost();
+            }else if (context.getGame().consumeDroneDestroyedByMonsterFlag()) {
+                fireDroneDestroyed();
+            }
+            if (context.getGame().consumeGameWonFlag()) {
+                fireGameWon();
+            }
         }
         return ok;
     }
@@ -112,6 +125,7 @@ public class DeepSeaManager {
             fireGrid();
             fireDrones();
             fireLog();
+            fireDroneDeploy();
         }
         return ok;
     }
@@ -850,4 +864,9 @@ public class DeepSeaManager {
     private void fireDrones()   { pcs.firePropertyChange(PROP_DRONES,     null, null); }
     private void fireMinigame() { pcs.firePropertyChange(PROP_MINIGAME,   null, null); }
     private void fireLog()      { pcs.firePropertyChange(PROP_LOG,        null, null); }
+
+    private void fireDroneDeploy() { pcs.firePropertyChange(PROP_DRONE_DEPLOY, null, null); }
+    private void fireDroneDestroyed() { pcs.firePropertyChange(PROP_DRONE_DESTROYED, null, null); }
+    private void fireGameLost() { pcs.firePropertyChange(PROP_GAME_LOST, null, null); }
+    private void fireGameWon() { pcs.firePropertyChange(PROP_GAME_WON, null, null); }
 }

@@ -46,6 +46,10 @@ public class Game implements GameConfig, Serializable {
     private SurfaceCell activeSurfaceCell;
     private MiniGame miniGame;
 
+    private boolean droneDestroyedByMonster;
+    private boolean gameLostFired;
+    private boolean gameWonFired;
+
     private void initialize() {
         ship = new Ship();
         seaSurface = new SeaSurface(GameConfig.DEFAULT_SEASURFACE_ROWS, GameConfig.DEFAULT_SEASURFACE_COLS, ship);
@@ -53,6 +57,9 @@ public class Game implements GameConfig, Serializable {
         activeDrone = null;
         activeSurfaceCell = null;
         miniGame = null;
+        droneDestroyedByMonster = false;
+        gameLostFired = false;
+        gameWonFired = false;
     }
 
     /** Starts the game. */
@@ -355,6 +362,9 @@ public class Game implements GameConfig, Serializable {
         if (seaFloor.hasMonster(next)) {
             activeDrone.takeDamage();
             activeDrone.consumeFuel(1);
+            if (activeDrone.isDestroyed()) {
+                droneDestroyedByMonster = true;
+            }
             return true;
         }
 
@@ -935,6 +945,39 @@ public class Game implements GameConfig, Serializable {
         activeSurfaceCell = null;
     }
 
+    /**
+     * Returns whether a drone was destroyed by a monster since the last call,
+     * and resets the flag.
+     */
+    public boolean consumeDroneDestroyedByMonsterFlag() {
+        boolean was = droneDestroyedByMonster;
+        droneDestroyedByMonster = false;
+        return was;
+    }
+
+    /**
+     * Returns whether the game has just been lost since the last call,
+     * and locks the flag (one-shot).
+     */
+    public boolean consumeGameLostFlag() {
+        if (!gameLostFired && isGameLost()) {
+            gameLostFired = true;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns whether the game has just been won since the last call,
+     * and locks the flag (one-shot).
+     */
+    public boolean consumeGameWonFlag() {
+        if (!gameWonFired && isGameWon()) {
+            gameWonFired = true;
+            return true;
+        }
+        return false;
+    }
 
     /**
      * @return true if all artifacts have been collected and brought to the ship

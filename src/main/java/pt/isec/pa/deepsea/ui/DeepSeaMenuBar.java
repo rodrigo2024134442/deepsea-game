@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import pt.isec.pa.deepsea.model.DeepSeaManager;
+import pt.isec.pa.deepsea.ui.res.SoundManager;
 
 import java.io.File;
 
@@ -21,6 +22,8 @@ public class DeepSeaMenuBar extends MenuBar {
     Menu mnGame, mnLog;
     MenuItem mnNew, mnOpen, mnLoadRecent, mnSaveAs, mnExit;
     MenuItem mnShowLog, mnSaveLog, mnClearLog;
+    Menu mnSound;
+    CheckMenuItem mnSoundEnabled;
 
     public DeepSeaMenuBar(DeepSeaManager manager) {
         this.manager = manager;
@@ -48,6 +51,12 @@ public class DeepSeaMenuBar extends MenuBar {
         mnClearLog = new MenuItem("_Clear logs");
         mnLog.getItems().addAll(mnShowLog, mnSaveLog,
                 new SeparatorMenuItem(), mnClearLog);
+
+        mnSound = new Menu("_Sound");
+        getMenus().add(mnSound);
+
+        mnSoundEnabled = new CheckMenuItem("_Enabled");
+        mnSound.getItems().add(mnSoundEnabled);
     }
 
     private void registerHandlers() {
@@ -81,6 +90,10 @@ public class DeepSeaMenuBar extends MenuBar {
             File hFile = fc.showSaveDialog(this.getScene().getWindow());
             if (hFile != null) manager.saveGame(hFile);
         });
+
+        mnSoundEnabled.selectedProperty().bindBidirectional(
+                SoundManager.getInstance().enabledProperty()
+        );
 
         mnShowLog.setOnAction(e -> {
             new pt.isec.pa.deepsea.ui.log.LogStage(manager, getScene().getWindow()).show();

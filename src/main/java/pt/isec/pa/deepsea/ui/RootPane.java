@@ -15,11 +15,12 @@ import pt.isec.pa.deepsea.ui.canvas.PuzzleCanvas;
 import pt.isec.pa.deepsea.ui.canvas.SurfaceCanvas;
 import pt.isec.pa.deepsea.ui.canvas.TrenchCanvas;
 import pt.isec.pa.deepsea.ui.log.LogStage;
+import pt.isec.pa.deepsea.ui.res.SoundManager;
 import pt.isec.pa.deepsea.ui.side.CommandsBox;
 import pt.isec.pa.deepsea.ui.side.DronesInfoBox;
 import pt.isec.pa.deepsea.ui.side.ShipInfoBox;
 import pt.isec.pa.deepsea.ui.shop.ShopPop;
-import javafx.scene.control.Alert;
+import pt.isec.pa.deepsea.ui.res.VideoManager;
 
 public class RootPane extends BorderPane {
     private final DeepSeaManager manager;
@@ -37,7 +38,6 @@ public class RootPane extends BorderPane {
     private ShopPop shopPop;
 
     private Pane areaPane;
-    private boolean gameOverShown = false;
 
     public RootPane(DeepSeaManager manager) {
         this.manager = manager;
@@ -96,6 +96,66 @@ public class RootPane extends BorderPane {
     private void registerHandlers() {
         areaPane.widthProperty().addListener(obs -> updateCanvasSizes());
         areaPane.heightProperty().addListener(obs -> updateCanvasSizes());
+
+        manager.addPropertyChangeListener(DeepSeaManager.PROP_DRONE_DEPLOY, e -> {
+            if (getScene() != null) {
+                VideoManager.getInstance().play(VideoManager.DRONE_DEPLOY, getScene().getWindow(), null);
+            }
+        });
+
+        manager.addPropertyChangeListener(DeepSeaManager.PROP_DRONE_DESTROYED, e -> {
+            if (getScene() != null) {
+                VideoManager.getInstance().play(VideoManager.DRONE_DESTROYED, getScene().getWindow(), null);
+            }
+        });
+
+        manager.addPropertyChangeListener(DeepSeaManager.PROP_GAME_LOST, e -> {
+            if (getScene() != null) {
+                VideoManager.getInstance().play(
+                        VideoManager.GAME_LOST,
+                        getScene().getWindow(),
+                        Platform::exit
+                );
+            } else {
+                Platform.exit();
+            }
+        });
+
+        manager.addPropertyChangeListener(DeepSeaManager.PROP_GAME_WON, e -> {
+            if (getScene() != null) {
+                VideoManager.getInstance().play(
+                        VideoManager.GAME_WON,
+                        getScene().getWindow(),
+                        Platform::exit
+                );
+            } else {
+                Platform.exit();
+            }
+        });
+
+        manager.addPropertyChangeListener(DeepSeaManager.PROP_DRONE_DEPLOY, e -> {
+            SoundManager.getInstance().play(SoundManager.DRONE_DEPLOY);
+            if (getScene() != null) {
+                VideoManager.getInstance().play(VideoManager.DRONE_DEPLOY, getScene().getWindow(), null);
+            }
+        });
+
+        manager.addPropertyChangeListener(DeepSeaManager.PROP_DRONE_DESTROYED, e -> {
+            SoundManager.getInstance().play(SoundManager.DRONE_DESTROYED);
+            if (getScene() != null) {
+                VideoManager.getInstance().play(VideoManager.DRONE_DESTROYED, getScene().getWindow(), null);
+            }
+        });
+
+        manager.addPropertyChangeListener(DeepSeaManager.PROP_GAME_LOST, e -> {
+            SoundManager.getInstance().play(SoundManager.GAME_LOST);
+            // ... resto igual
+        });
+
+        manager.addPropertyChangeListener(DeepSeaManager.PROP_GAME_WON, e -> {
+            SoundManager.getInstance().play(SoundManager.GAME_WON);
+            // ... resto igual
+        });
 
         manager.addPropertyChangeListener(
                 DeepSeaManager.PROP_GAME_STATE,
@@ -168,31 +228,5 @@ public class RootPane extends BorderPane {
                 shopPop.close();
             }
         }
-        checkGameOver();
-    }
-
-    private void checkGameOver() {
-        if (gameOverShown) return;
-
-        if (manager.isGameWon()) {
-            gameOverShown = true;
-            showAlert("Victory!",
-                    "You collected all the artifacts and brought them home.",
-                    Alert.AlertType.INFORMATION);
-        } else if (manager.isGameLost()) {
-            gameOverShown = true;
-            showAlert("Game Over",
-                    "All drones destroyed. The expedition is over.",
-                    Alert.AlertType.WARNING);
-        }
-    }
-
-    private void showAlert(String title, String content, Alert.AlertType type) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-        Platform.exit();
     }
 }

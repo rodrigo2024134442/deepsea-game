@@ -64,7 +64,7 @@ public class ImageManager {
         load(WAVE_1,          "/images/backgrounds/wave1.png");
         load(WAVE_2,          "/images/backgrounds/wave2.png");
         load(ARTIFACT_MARKER, "/images/backgrounds/artifactMarker.png");
-        load(TRENCH_BG,       "/images/backgrounds/trench_grid_background.png");
+        load(TRENCH_BG,       "/images/backgrounds/SeaTrench.png");
         load(ROCK_TRENCH,     "/images/objects/rocha1.png");
         load(CURRENT_TRENCH,  "/images/objects/TrenchCurrent.png");
         load(ANIMAL_1,        "/images/creatures/trench_animal1.png");
