@@ -19,14 +19,8 @@ public class ImageManager {
     // Keys
     public static final String SHIP            = "ship";
     public static final String DRONE           = "drone";
-    public static final String ROCK            = "rock";
-    public static final String ANIMAL          = "animal";
-    public static final String CURRENT         = "current";
-    public static final String MINERAL_1       = "mineral_1";
     public static final String MINERAL_2       = "mineral_2";
-    public static final String ARTIFACT_1      = "artifact_1";
     public static final String ARTIFACT_2      = "artifact_2";
-    public static final String MONSTER_1       = "monster_1";
     public static final String MONSTER_2       = "monster_2";
     public static final String BG_SURFACE      = "bg_surface";
     public static final String BG_SEAFLOOR     = "bg_seafloor";
@@ -39,23 +33,12 @@ public class ImageManager {
     public static final String ROCK_TRENCH     = "rock";
     public static final String CURRENT_TRENCH  = "current";
     public static final String ANIMAL_1        = "animal_1";
-    public static final String ANIMAL_2        = "animal_2";
-    public static final String ANIMAL_3        = "animal_3";
-    public static final String ANIMAL_4        = "animal_4";
-    public static final String ANIMAL_5        = "animal_5";
-    public static final String ANIMAL_6        = "animal_6";
 
     private ImageManager() {
         load(SHIP,            "/images/vehicles/research_ship_heavy_support.png");
         load(DRONE,           "/images/vehicles/mining_drone_heavy_rov.png");
-        load(ROCK,            "/images/objects/rock.png");
-        load(ANIMAL,          "/images/creatures/animal.png");
-        load(CURRENT,         "/images/objects/current.png");
-        load(MINERAL_1,       "/images/objects/mineral_purple_crystal_cluster.png");
         load(MINERAL_2,       "/images/objects/mineral_gold_ore_cluster.png");
-        load(ARTIFACT_1,      "/images/objects/artifact_ancient_stone_mask.png");
         load(ARTIFACT_2,      "/images/objects/artifact_sunken_treasure_chest.png");
-        load(MONSTER_1,       "/images/creatures/monster6.png");
         load(MONSTER_2,       "/images/creatures/monster7.png");
         load(BG_SURFACE,      "/images/backgrounds/SeaSurface.png");
         load(BG_SEAFLOOR,     "/images/backgrounds/sea_floor_grid_background.png");
@@ -63,16 +46,11 @@ public class ImageManager {
         load(BG_SHOP,         "/images/backgrounds/shop.png");
         load(WAVE_1,          "/images/backgrounds/wave1.png");
         load(WAVE_2,          "/images/backgrounds/wave2.png");
-        load(ARTIFACT_MARKER, "/images/backgrounds/artifactMarker.png");
+        load(ARTIFACT_MARKER, "/images/backgrounds/artifactMarker1.png");
         load(TRENCH_BG,       "/images/backgrounds/SeaTrench.png");
         load(ROCK_TRENCH,     "/images/objects/rocha1.png");
         load(CURRENT_TRENCH,  "/images/objects/TrenchCurrent.png");
         load(ANIMAL_1,        "/images/creatures/trench_animal1.png");
-        load(ANIMAL_2,        "/images/creatures/trench_animal2.png");
-        load(ANIMAL_3,        "/images/creatures/trench_animal3.png");
-        load(ANIMAL_4,        "/images/creatures/trench_animal4.png");
-        load(ANIMAL_5,        "/images/creatures/trench_animal5.png");
-        load(ANIMAL_6,        "/images/creatures/trench_animal6.png");
     }
 
     /**
