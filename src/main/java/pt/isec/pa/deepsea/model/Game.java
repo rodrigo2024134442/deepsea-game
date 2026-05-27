@@ -681,6 +681,48 @@ public class Game implements GameConfig, Serializable {
     }
 
     /**
+     * Upgrades a single drone's max fuel by given units.
+     * Drones that are destroyed cannot be upgraded.
+     *
+     * @param droneId id of the drone to upgrade
+     * @param units number of fuel units to add
+     * @return {@code true} if the upgrade succeeded
+     */
+    public boolean upgradeDroneMaxFuel(int droneId, int units) {
+        if (ship == null) return false;
+        if (units <= 0) return false;
+        Drone drone = ship.getDroneById(droneId);
+        if (drone == null) return false;
+        if (drone.isDestroyed()) return false;
+        int cost = units * GameConfig.DRONE_FUEL_UPGRADE_PRICE_PER_UNIT;
+        if (ship.getMinerals() < cost) return false;
+        ship.setMinerals(ship.getMinerals() - cost);
+        drone.increaseMaxFuel(units);
+        return true;
+    }
+
+    /**
+     * Upgrades a single drone's max hull integrity by given points.
+     * Drones that are destroyed cannot be upgraded.
+     *
+     * @param droneId id of the drone to upgrade
+     * @param points number of hull points to add
+     * @return {@code true} if the upgrade succeeded
+     */
+    public boolean upgradeDroneMaxHull(int droneId, int points) {
+        if (ship == null) return false;
+        if (points <= 0) return false;
+        Drone drone = ship.getDroneById(droneId);
+        if (drone == null) return false;
+        if (drone.isDestroyed()) return false;
+        int cost = points * GameConfig.DRONE_HULL_UPGRADE_PRICE_PER_POINT;
+        if (ship.getMinerals() < cost) return false;
+        ship.setMinerals(ship.getMinerals() - cost);
+        drone.increaseMaxHull(points);
+        return true;
+    }
+
+    /**
      * Returns the active drone to the ship without transferring resources.
      *
      * @return {@code true} if the drone was returned

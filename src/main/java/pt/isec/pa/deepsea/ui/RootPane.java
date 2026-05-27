@@ -167,6 +167,8 @@ public class RootPane extends BorderPane {
                 case DIGIT1 -> manager.descend(1);
                 case DIGIT2 -> manager.descend(2);
                 case DIGIT3 -> manager.descend(3);
+                case DIGIT4 -> manager.descend(4);
+                case DIGIT5 -> manager.descend(5);
 
                 //BOTTOM CONTROLS
                 case M -> manager.mining();

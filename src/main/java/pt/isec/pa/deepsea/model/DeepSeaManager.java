@@ -267,11 +267,33 @@ public class DeepSeaManager {
         return ok;
     }
 
+    /** Upgrade a single drone's max fuel (SHOP state). */
+    public boolean upgradeDroneMaxFuel(int droneId, int units) {
+        boolean ok = context.upgradeDroneMaxFuel(droneId, units);
+        if (ok) {
+            log.log("Upgraded drone " + droneId + " max fuel by " + units + " units.");
+            fireDrones();
+            fireLog();
+        }
+        return ok;
+    }
+
     /** Upgrade drones max hull by points (SHOP state). */
     public boolean upgradeDronesMaxHull(int points) {
         boolean ok = context.upgradeDronesMaxHull(points);
         if (ok) {
             log.log("Upgraded drones max hull by " + points + " points.");
+            fireDrones();
+            fireLog();
+        }
+        return ok;
+    }
+
+    /** Upgrade a single drone's max hull (SHOP state). */
+    public boolean upgradeDroneMaxHull(int droneId, int points) {
+        boolean ok = context.upgradeDroneMaxHull(droneId, points);
+        if (ok) {
+            log.log("Upgraded drone " + droneId + " max hull by " + points + " points.");
             fireDrones();
             fireLog();
         }

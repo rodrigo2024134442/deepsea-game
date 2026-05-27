@@ -128,10 +128,22 @@ public class GameContext implements Serializable, GameConfig {
         return game.upgradeDronesMaxFuel(units);
     }
 
+    /** Upgrade a single drone's max fuel. Only allowed in SHOP state. */
+    public boolean upgradeDroneMaxFuel(int droneId, int units) {
+        if (state.getState() != GameState.SHOP) return false;
+        return game.upgradeDroneMaxFuel(droneId, units);
+    }
+
     /** Upgrade drones max hull. Only allowed in SHOP state. */
     public boolean upgradeDronesMaxHull(int points) {
         if (state.getState() != GameState.SHOP) return false;
         return game.upgradeDronesMaxHull(points);
+    }
+
+    /** Upgrade a single drone's max hull. Only allowed in SHOP state. */
+    public boolean upgradeDroneMaxHull(int droneId, int points) {
+        if (state.getState() != GameState.SHOP) return false;
+        return game.upgradeDroneMaxHull(droneId, points);
     }
 
     /**
