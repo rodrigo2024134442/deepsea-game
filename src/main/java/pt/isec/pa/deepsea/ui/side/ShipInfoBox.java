@@ -10,6 +10,12 @@ import pt.isec.pa.deepsea.model.DeepSeaManager;
  * Side panel displaying the ship's current status.
  * Shows fuel level, minerals and collected artifacts.
  *
+ * <p>Responsibilities:</p>
+ * <ul>
+ *   <li>Render ship fuel and resource totals.</li>
+ *   <li>Update on ship changes signaled by {@link DeepSeaManager}.</li>
+ * </ul>
+ *
  * @author Leonardo Matos Ferreira - 2024113113
  * @version v1.0.0 (Stage 3)
  */

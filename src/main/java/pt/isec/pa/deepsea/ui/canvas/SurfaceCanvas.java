@@ -12,10 +12,16 @@ import java.util.Random;
 /**
  * Canvas that shows the sea surface (ship grid).
  *
- * <p>Follows the MVC@PA pattern from the DrawingApp lecture:
- * the constructor registers handlers and triggers the first draw,
- * and subsequent redraws are triggered by PropertyChange events
- * coming from the {@link DeepSeaManager}.</p>
+ * <p>Responsibilities:</p>
+ * <ul>
+ *   <li>Render the surface grid with waves and artifact markers.</li>
+ *   <li>Draw the ship in its current position.</li>
+ *   <li>Redraw on grid/ship changes signaled by {@link DeepSeaManager}.</li>
+ * </ul>
+ *
+ * <p>Follows the MVC@PA pattern from the DrawingApp lecture: the constructor
+ * registers handlers and triggers the first draw, and subsequent redraws are
+ * triggered by PropertyChange events from the model.</p>
  */
 
 public class SurfaceCanvas extends Canvas {

@@ -1,5 +1,7 @@
 package pt.isec.pa.deepsea.model.data;
-
+/**
+ * Centralized configuration constants for game balance and dimensions.
+ */
 public interface GameConfig {
     // SeaSurface Grid
     int DEFAULT_SEASURFACE_ROWS = 10;

@@ -14,6 +14,13 @@ import pt.isec.pa.deepsea.model.state.GameState;
  * Side panel with command buttons.
  * Buttons enable/disable themselves based on the current FSM state.
  *
+ * <p>Responsibilities:</p>
+ * <ul>
+ *   <li>Present movement and action controls to the user.</li>
+ *   <li>Reflect allowed actions by enabling/disabling buttons.</li>
+ *   <li>Stay synchronized with the model via {@link DeepSeaManager} events.</li>
+ * </ul>
+ *
  * @author Leonardo Matos Ferreira - 2024113113
  * @version v1.0.0 (Stage 3)
  */

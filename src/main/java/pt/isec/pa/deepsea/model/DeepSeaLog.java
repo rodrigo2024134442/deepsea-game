@@ -1,6 +1,10 @@
 package pt.isec.pa.deepsea.model;
 
+import pt.isec.pa.deepsea.model.data.GameConfig;
+
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -86,6 +90,28 @@ public class DeepSeaLog {
      */
     public int size() {
         return messages.size();
+    }
+
+    /**
+     * Saves the current log messages to a file in the logs directory.
+     *
+     * @return {@code true} if the file was written successfully
+     */
+    public boolean saveToFile() {
+        File dir = new File(LOGS_DIRECTORY);
+        if (!dir.exists() && !dir.mkdirs()) {
+            return false;
+        }
+
+        File file = new File(dir, GameConfig.LOG_FILE_NAME);
+        try (FileWriter writer = new FileWriter(file)) {
+            for (String message : messages) {
+                writer.write(message + System.lineSeparator());
+            }
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     @Override

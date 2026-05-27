@@ -13,6 +13,14 @@ import pt.isec.pa.deepsea.model.DeepSeaManager;
  * Canvas responsible for rendering the 15-puzzle minigame.
  * The player clicks on a piece adjacent to the empty space to slide it.
  *
+ * <p>Responsibilities:</p>
+ * <ul>
+ *   <li>Draw the puzzle grid and numbered tiles.</li>
+ *   <li>Show current move count and limit.</li>
+ *   <li>Translate mouse clicks into {@link DeepSeaManager#movePiece(int, int)}.</li>
+ *   <li>Redraw when the minigame state changes.</li>
+ * </ul>
+ *
  * @author Leonardo Matos Ferreira - 2024113113
  * @version v1.0.0 (Stage 3)
  */

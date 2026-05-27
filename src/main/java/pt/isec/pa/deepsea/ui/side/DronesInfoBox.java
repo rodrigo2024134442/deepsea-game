@@ -11,6 +11,13 @@ import pt.isec.pa.deepsea.model.data.drone.DroneState;
  * Side panel displaying the status of all drones.
  * Shows fuel, hull integrity, state and carried resources for each drone.
  *
+ * <p>Responsibilities:</p>
+ * <ul>
+ *   <li>Render a compact status card for each drone.</li>
+ *   <li>Highlight the active drone.</li>
+ *   <li>Redraw whenever drone data changes.</li>
+ * </ul>
+ *
  * @author Leonardo Matos Ferreira - 2024113113
  * @version v1.0.0 (Stage 3)
  */

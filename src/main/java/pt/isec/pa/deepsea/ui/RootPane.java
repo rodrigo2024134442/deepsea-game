@@ -21,6 +21,17 @@ import pt.isec.pa.deepsea.ui.side.ShipInfoBox;
 import pt.isec.pa.deepsea.ui.shop.ShopPop;
 import pt.isec.pa.deepsea.ui.res.VideoManager;
 
+/**
+ * Main JavaFX container that wires the game UI and canvas views.
+ *
+ * <p>Responsibilities:</p>
+ * <ul>
+ *   <li>Create and place all UI regions (menu, canvases, side panels).</li>
+ *   <li>Listen to {@link DeepSeaManager} events and update the visible view.</li>
+ *   <li>Route keyboard input to game actions.</li>
+ *   <li>Trigger media feedback (sound and video) for key events.</li>
+ * </ul>
+ */
 public class RootPane extends BorderPane {
     private final DeepSeaManager manager;
 

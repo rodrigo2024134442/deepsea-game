@@ -14,12 +14,18 @@ import pt.isec.pa.deepsea.ui.res.ImageManager;
 import java.util.Random;
 
 /**
- * Canvas that shows the trench grid during descent/ascent and bottom phases.
+ * Canvas that shows the trench grid during descent and ascent.
  *
- * <p>Follows the MVC@PA pattern from the DrawingApp lecture:
- * the constructor registers handlers and triggers the first draw,
- * and subsequent redraws are triggered by PropertyChange events
- * coming from the {@link DeepSeaManager}.</p>
+ * <p>Responsibilities:</p>
+ * <ul>
+ *   <li>Render trench obstacles and currents.</li>
+ *   <li>Draw the active drone only when in trench states.</li>
+ *   <li>Redraw on grid/drone/state changes signaled by {@link DeepSeaManager}.</li>
+ * </ul>
+ *
+ * <p>Follows the MVC@PA pattern from the DrawingApp lecture: the constructor
+ * registers handlers and triggers the first draw, and subsequent redraws are
+ * triggered by PropertyChange events from the model.</p>
  */
 public class TrenchCanvas extends Canvas {
     DeepSeaManager manager;

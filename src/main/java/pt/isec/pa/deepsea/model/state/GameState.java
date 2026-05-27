@@ -4,6 +4,9 @@ package pt.isec.pa.deepsea.model.state;
 import pt.isec.pa.deepsea.model.Game;
 import pt.isec.pa.deepsea.model.state.states.*;
 
+/**
+ * Finite state machine states for the game flow.
+ */
 public enum GameState {
     SURFACE, SHOP, TRENCH_DESCENT, TRENCH_ASCENT, BOTTOM, MINIGAME;
 

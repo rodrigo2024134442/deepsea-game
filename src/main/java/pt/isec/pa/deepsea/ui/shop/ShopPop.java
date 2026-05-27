@@ -18,6 +18,14 @@ import pt.isec.pa.deepsea.ui.res.ImageManager;
 /**
  * Modal Stage that shows the shop interface, opened when the FSM is in the SHOP state.
  *
+ * <p>Responsibilities:</p>
+ * <ul>
+ *   <li>Display ship status and available upgrades.</li>
+ *   <li>List drones and allow purchases/upgrades.</li>
+ *   <li>Sync view with model changes through {@link DeepSeaManager} events.</li>
+ *   <li>Ensure closing the window returns the FSM to the surface state.</li>
+ * </ul>
+ *
  * @author João Carvalho - 2024126292
  * @version v2.0.0 (Stage 3)
  */

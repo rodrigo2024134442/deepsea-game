@@ -154,6 +154,12 @@ public class Game implements GameConfig, Serializable {
         return ship.getMinerals();
     }
 
+    /**
+     * Moves the ship on the surface grid using a WASD command.
+     *
+     * @param command one of "w", "a", "s", "d"
+     * @return {@code true} if the ship moved
+     */
     public boolean moveShip(String command) {
         if (ship == null || seaSurface == null || ship.isOutOfFuel() || !ship.hasEnoughFuelForMovement())
             return false;
@@ -180,6 +186,12 @@ public class Game implements GameConfig, Serializable {
         return true;
     }
 
+    /**
+     * Deploys a drone to the trench under the ship.
+     *
+     * @param droneId ID of the drone to deploy
+     * @return {@code true} if the drone started descending
+     */
     public boolean descend(int droneId) {
         if (ship == null || seaSurface == null)
             return false;
@@ -208,6 +220,11 @@ public class Game implements GameConfig, Serializable {
         return true;
     }
 
+    /**
+     * Begins the ascent of the active drone in the current trench.
+     *
+     * @return {@code true} if ascent was initiated
+     */
     public boolean ascend() {
         if (activeDrone == null)
             return false;
@@ -220,6 +237,12 @@ public class Game implements GameConfig, Serializable {
         return true;
     }
 
+    /**
+     * Moves the active drone within the trench grid.
+     *
+     * @param command one of "w", "a", "s", "d"
+     * @return {@code true} if the move was accepted
+     */
     public boolean moveDroneInTrench(String command) {
         if (activeDrone == null || activeSurfaceCell == null || activeDrone.isOutOfFuel() || !activeDrone.hasEnoughFuelForMovement())
             return false;
@@ -263,6 +286,11 @@ public class Game implements GameConfig, Serializable {
         return true;
     }
 
+    /**
+     * Checks if the active drone is at the top row of the trench.
+     *
+     * @return {@code true} if the drone is at the trench top
+     */
     public boolean hasDroneReachedTop() {
         if (activeDrone == null || activeSurfaceCell == null)
             return false;
@@ -278,6 +306,11 @@ public class Game implements GameConfig, Serializable {
         return pos.getRow() == 0;
     }
 
+    /**
+     * Checks if the active drone is at the bottom row of the trench.
+     *
+     * @return {@code true} if the drone is at the trench bottom
+     */
     public boolean hasDroneReachedBottom() {
         if (activeDrone == null || activeSurfaceCell == null)
             return false;
@@ -293,6 +326,11 @@ public class Game implements GameConfig, Serializable {
         return pos.getRow() == trench.getRows() - 1;
     }
 
+    /**
+     * Returns the active drone to the ship and unloads its resources.
+     *
+     * @return {@code true} if the drone was returned to the ship
+     */
     public boolean enterSurface() {
         if (activeDrone == null || activeSurfaceCell == null)
             return false;
@@ -311,6 +349,11 @@ public class Game implements GameConfig, Serializable {
         return true;
     }
 
+    /**
+     * Moves the active drone to the sea floor of the current surface cell.
+     *
+     * @return {@code true} if the drone entered the sea floor
+     */
     public boolean enterSeaFloor() {
         if (activeDrone == null || activeSurfaceCell == null)
             return false;
@@ -336,6 +379,12 @@ public class Game implements GameConfig, Serializable {
         return ship.getPosition();
     }
 
+    /**
+     * Moves the active drone on the sea floor grid.
+     *
+     * @param command one of "w", "a", "s", "d"
+     * @return {@code true} if the move was accepted
+     */
     public boolean moveDroneInBottom(String command) {
         if (activeDrone == null || activeSurfaceCell == null || activeDrone.isOutOfFuel() || !activeDrone.hasEnoughFuelForMovement())
             return false;
@@ -378,6 +427,11 @@ public class Game implements GameConfig, Serializable {
         return true;
     }
 
+    /**
+     * Checks if the active drone is on a cell with an artifact.
+     *
+     * @return {@code true} if an artifact is present at the drone position
+     */
     public boolean foundArtifact() {
         if (activeDrone == null || activeSurfaceCell == null)
             return false;
@@ -393,6 +447,11 @@ public class Game implements GameConfig, Serializable {
         return seaFloor.hasArtifact(pos);
     }
 
+    /**
+     * Checks if the active drone is on a cell with a mineral.
+     *
+     * @return {@code true} if a mineral is present at the drone position
+     */
     public boolean foundMineral() {
         if (activeDrone == null || activeSurfaceCell == null)
             return false;
@@ -408,6 +467,11 @@ public class Game implements GameConfig, Serializable {
         return seaFloor.hasMineral(pos);
     }
 
+    /**
+     * Checks if the active drone is on a cell with a monster.
+     *
+     * @return {@code true} if a monster is present at the drone position
+     */
     public boolean foundMonster() {
         if (activeDrone == null || activeSurfaceCell == null)
             return false;
@@ -423,6 +487,11 @@ public class Game implements GameConfig, Serializable {
         return seaFloor.hasMonster(pos);
     }
 
+    /**
+     * Retrieves an artifact from the current sea floor cell and starts a minigame.
+     *
+     * @return {@code true} if the artifact was collected and the minigame started
+     */
     public boolean retrieveArtifact() {
         if (activeDrone == null || activeSurfaceCell == null) return false;
 
@@ -440,6 +509,11 @@ public class Game implements GameConfig, Serializable {
         return true;
     }
 
+    /**
+     * Mines a mineral at the current sea floor cell.
+     *
+     * @return {@code true} if a mineral was collected
+     */
     public boolean mining() {
         if (activeDrone == null || activeSurfaceCell == null) return false;
 
@@ -458,6 +532,12 @@ public class Game implements GameConfig, Serializable {
         return true;
     }
 
+    /**
+     * Repairs a drone using ship minerals.
+     *
+     * @param droneId ID of the drone to repair
+     * @return {@code true} if the repair succeeded
+     */
     public boolean repair(int droneId) {
         if (ship == null)
             return false;
@@ -484,6 +564,12 @@ public class Game implements GameConfig, Serializable {
         return true;
     }
 
+    /**
+     * Refuels a drone using the ship's fuel reserve.
+     *
+     * @param droneId ID of the drone to refuel
+     * @return {@code true} if the refuel succeeded
+     */
     public boolean refuel(int droneId) {
         if (ship == null)
             return false;
@@ -526,7 +612,11 @@ public class Game implements GameConfig, Serializable {
         return true;
     }
 
-    /** Buy a new drone using minerals. Returns true if purchase succeeded. */
+    /**
+     * Buys a new drone using minerals.
+     *
+     * @return {@code true} if purchase succeeded
+     */
     public boolean buyDrone() {
         if (ship == null) return false;
         if (ship.getDrones().size() >= GameConfig.MAX_DRONES) return false;
@@ -538,7 +628,12 @@ public class Game implements GameConfig, Serializable {
         return true;
     }
 
-    /** Upgrade ship max fuel by the given units (costs minerals). */
+    /**
+     * Upgrades ship max fuel by the given units (costs minerals).
+     *
+     * @param units number of fuel units to add
+     * @return {@code true} if the upgrade succeeded
+     */
     public boolean upgradeShipMaxFuel(int units) {
         if (ship == null) return false;
         if (units <= 0) return false;
@@ -549,7 +644,12 @@ public class Game implements GameConfig, Serializable {
         return true;
     }
 
-    /** Upgrade all drones max fuel by given units (applies to all existing drones). */
+    /**
+     * Upgrades all drones max fuel by given units.
+     *
+     * @param units number of fuel units to add
+     * @return {@code true} if the upgrade succeeded
+     */
     public boolean upgradeDronesMaxFuel(int units) {
         if (ship == null) return false;
         if (units <= 0) return false;
@@ -562,7 +662,12 @@ public class Game implements GameConfig, Serializable {
         return true;
     }
 
-    /** Upgrade all drones hull integrity max by given points (applies to all existing drones). */
+    /**
+     * Upgrades all drones max hull integrity by given points.
+     *
+     * @param points number of hull points to add
+     * @return {@code true} if the upgrade succeeded
+     */
     public boolean upgradeDronesMaxHull(int points) {
         if (ship == null) return false;
         if (points <= 0) return false;
@@ -575,6 +680,11 @@ public class Game implements GameConfig, Serializable {
         return true;
     }
 
+    /**
+     * Returns the active drone to the ship without transferring resources.
+     *
+     * @return {@code true} if the drone was returned
+     */
     public boolean returnDroneToShip() {
         if (activeDrone == null)
             return false;

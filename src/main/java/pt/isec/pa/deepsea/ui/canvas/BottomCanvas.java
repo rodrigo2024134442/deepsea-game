@@ -9,6 +9,17 @@ import pt.isec.pa.deepsea.model.DeepSeaManager;
 import pt.isec.pa.deepsea.model.state.GameState;
 import pt.isec.pa.deepsea.ui.res.ImageManager;
 
+/**
+ * Canvas renderer for the sea floor grid and active drone position.
+ *
+ * <p>Responsibilities:</p>
+ * <ul>
+ *   <li>Render revealed cells and hide unrevealed cells with clouds.</li>
+ *   <li>Draw minerals, artifacts, and monsters on revealed cells.</li>
+ *   <li>Draw the active drone only in the bottom state.</li>
+ *   <li>Redraw on grid/drone changes signaled by {@link DeepSeaManager}.</li>
+ * </ul>
+ */
 public class BottomCanvas extends Canvas {
     DeepSeaManager manager;
     private int cols,rows;

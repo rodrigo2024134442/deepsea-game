@@ -5,6 +5,9 @@ import pt.isec.pa.deepsea.model.state.GameContext;
 import pt.isec.pa.deepsea.model.state.GameState;
 import pt.isec.pa.deepsea.model.state.GameStateAdapter;
 
+/**
+ * Bottom state: the drone is on the sea floor, handling mining and artifacts.
+ */
 public class Bottom extends GameStateAdapter {
     private static final long serialVersionUID = 1L;
 
