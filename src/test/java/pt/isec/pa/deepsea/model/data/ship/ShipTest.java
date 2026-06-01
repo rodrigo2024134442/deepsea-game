@@ -44,7 +44,7 @@ class ShipTest {
     @Test
     void testInitialState() {
         assertEquals(GameConfig.SHIP_MAX_FUEL, ship.getCurrentFuel());
-        assertEquals(GameConfig.MAX_DRONES, ship.getDrones().size());
+        assertEquals(GameConfig.START_DRONES, ship.getDrones().size());
 
         assertEquals(-1, ship.getPosition().getRow());
         assertEquals(-1, ship.getPosition().getCol());

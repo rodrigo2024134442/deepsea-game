@@ -104,6 +104,48 @@ public class GameContext implements Serializable, GameConfig {
         return state.leaveShop();
     }
 
+    /** Buys ship fuel using minerals. Only allowed in SHOP state. */
+    public boolean buyShipFuel(int amount) {
+        if (state.getState() != GameState.SHOP) return false;
+        return game.buyShipFuel(amount);
+    }
+
+    /** Buys a new drone using minerals. Only allowed in SHOP state. */
+    public boolean buyDrone() {
+        if (state.getState() != GameState.SHOP) return false;
+        return game.buyDrone();
+    }
+
+    /** Upgrade ship max fuel. Only allowed in SHOP state. */
+    public boolean upgradeShipMaxFuel(int units) {
+        if (state.getState() != GameState.SHOP) return false;
+        return game.upgradeShipMaxFuel(units);
+    }
+
+    /** Upgrade drones max fuel. Only allowed in SHOP state. */
+    public boolean upgradeDronesMaxFuel(int units) {
+        if (state.getState() != GameState.SHOP) return false;
+        return game.upgradeDronesMaxFuel(units);
+    }
+
+    /** Upgrade a single drone's max fuel. Only allowed in SHOP state. */
+    public boolean upgradeDroneMaxFuel(int droneId, int units) {
+        if (state.getState() != GameState.SHOP) return false;
+        return game.upgradeDroneMaxFuel(droneId, units);
+    }
+
+    /** Upgrade drones max hull. Only allowed in SHOP state. */
+    public boolean upgradeDronesMaxHull(int points) {
+        if (state.getState() != GameState.SHOP) return false;
+        return game.upgradeDronesMaxHull(points);
+    }
+
+    /** Upgrade a single drone's max hull. Only allowed in SHOP state. */
+    public boolean upgradeDroneMaxHull(int droneId, int points) {
+        if (state.getState() != GameState.SHOP) return false;
+        return game.upgradeDroneMaxHull(droneId, points);
+    }
+
     /**
      * Redirects a drone repair action to the current state.
      *

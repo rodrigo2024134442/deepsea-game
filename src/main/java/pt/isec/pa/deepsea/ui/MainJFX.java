@@ -28,32 +28,18 @@ public class MainJFX extends Application {
         RootPane root = new RootPane(manager);
         Scene scene = new Scene(root, 1500, 1000);
 
-        scene.setOnKeyPressed(e -> {
-            switch (e.getCode()) {
-                case W -> manager.move("w");
-                case A -> manager.move("a");
-                case S -> manager.move("s");
-                case D -> manager.move("d");
-
-                case E -> manager.enterShop();
-
-                //DRONE DESCENT
-                case DIGIT1 -> manager.descend(1);
-                case DIGIT2 -> manager.descend(2);
-                case DIGIT3 -> manager.descend(3);
-
-                //BOTTOM CONTROLS
-                case M -> manager.mining();
-                case N -> manager.retrieveArtifact();
-                case B -> manager.ascend();
-
-                default -> { }
-            }
-        });
-
         stage.setScene(scene);
         stage.setTitle("Deep Sea Mining");
         stage.show();
+
+        // Second window
+        Stage secondStage = new Stage();
+        RootPane root2 = new RootPane(manager);
+        Scene scene2 = new Scene(root2, 1500, 1000);
+
+        secondStage.setScene(scene2);
+        secondStage.setTitle("Deep Sea Mining — Window 2");
+        secondStage.show();
     }
 
 }

@@ -21,7 +21,7 @@ public class UnderwaterCell implements Serializable {
      * By default, the cell is not revealed.
      */
     public UnderwaterCell() {
-        revealed = true ;
+        revealed = false ;
     }
 
     /**

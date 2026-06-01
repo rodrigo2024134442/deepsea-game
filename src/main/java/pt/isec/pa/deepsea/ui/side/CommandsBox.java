@@ -14,6 +14,13 @@ import pt.isec.pa.deepsea.model.state.GameState;
  * Side panel with command buttons.
  * Buttons enable/disable themselves based on the current FSM state.
  *
+ * <p>Responsibilities:</p>
+ * <ul>
+ *   <li>Present movement and action controls to the user.</li>
+ *   <li>Reflect allowed actions by enabling/disabling buttons.</li>
+ *   <li>Stay synchronized with the model via {@link DeepSeaManager} events.</li>
+ * </ul>
+ *
  * @author Leonardo Matos Ferreira - 2024113113
  * @version v1.0.0 (Stage 3)
  */
@@ -21,7 +28,7 @@ public class CommandsBox extends VBox {
     DeepSeaManager manager;
 
     Button btnW, btnA, btnS, btnD;
-    Button btnDeploy1, btnDeploy2, btnDeploy3, btnShop;
+    Button btnDeploy1, btnDeploy2, btnDeploy3, btnDeploy4, btnDeploy5, btnShop;
     Button btnMining, btnRetrieve, btnAscend;
 
     public CommandsBox(DeepSeaManager manager) {
@@ -67,8 +74,10 @@ public class CommandsBox extends VBox {
         btnDeploy1 = actionButton("1 — Deploy Drone 1");
         btnDeploy2 = actionButton("2 — Deploy Drone 2");
         btnDeploy3 = actionButton("3 — Deploy Drone 3");
+        btnDeploy4 = actionButton("4 — Deploy Drone 4");
+        btnDeploy5 = actionButton("5 — Deploy Drone 5");
         btnShop    = actionButton("E — Enter Shop");
-        getChildren().addAll(btnDeploy1, btnDeploy2, btnDeploy3, btnShop);
+        getChildren().addAll(btnDeploy1, btnDeploy2, btnDeploy3, btnDeploy4, btnDeploy5, btnShop);
 
         getChildren().add(styledSeparator());
 
@@ -124,7 +133,7 @@ public class CommandsBox extends VBox {
         manager.addPropertyChangeListener(DeepSeaManager.PROP_GAME_STATE, e -> update());
 
         Button[] all = {btnW, btnA, btnS, btnD,
-                btnDeploy1, btnDeploy2, btnDeploy3, btnShop,
+                btnDeploy1, btnDeploy2, btnDeploy3, btnDeploy4, btnDeploy5, btnShop,
                 btnMining, btnRetrieve, btnAscend};
         for (Button b : all) {
             b.setOnAction(e -> { });
@@ -144,9 +153,12 @@ public class CommandsBox extends VBox {
         btnD.setDisable(!canMove);
 
         boolean canSurface = (state == GameState.SURFACE);
-        btnDeploy1.setDisable(!canSurface);
-        btnDeploy2.setDisable(!canSurface);
-        btnDeploy3.setDisable(!canSurface);
+        int owned = manager.getDroneIds().size();
+        updateDeployButton(btnDeploy1, 1, owned, canSurface);
+        updateDeployButton(btnDeploy2, 2, owned, canSurface);
+        updateDeployButton(btnDeploy3, 3, owned, canSurface);
+        updateDeployButton(btnDeploy4, 4, owned, canSurface);
+        updateDeployButton(btnDeploy5, 5, owned, canSurface);
         btnShop   .setDisable(!canSurface);
 
         boolean canBottom = (state == GameState.BOTTOM);
@@ -156,7 +168,7 @@ public class CommandsBox extends VBox {
 
         // Estilo dos botões desativados
         Button[] all = {btnW, btnA, btnS, btnD,
-                btnDeploy1, btnDeploy2, btnDeploy3, btnShop,
+                btnDeploy1, btnDeploy2, btnDeploy3, btnDeploy4, btnDeploy5, btnShop,
                 btnMining, btnRetrieve, btnAscend};
         for (Button b : all) {
             if (b.isDisabled()) {
@@ -165,5 +177,11 @@ public class CommandsBox extends VBox {
                 b.setStyle(b.getStyle().replace("-fx-opacity: 0.4;", ""));
             }
         }
+    }
+
+    private void updateDeployButton(Button btn, int id, int owned, boolean canSurface) {
+        boolean hasDrone = id <= owned;
+        btn.setText(hasDrone ? id + " — Deploy Drone " + id : id + " — Drone " + id + " (not owned)");
+        btn.setDisable(!canSurface || !hasDrone);
     }
 }

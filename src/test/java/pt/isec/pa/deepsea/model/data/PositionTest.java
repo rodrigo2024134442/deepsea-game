@@ -31,13 +31,13 @@ class PositionTest {
     void validatePosition() {
         Position p = new Position(3, 5);
 
-        assertFalse(p.validatePosition(10, 10));
+        assertTrue(p.validatePosition(10, 10));
 
-        assertTrue(p.validatePosition(2, 10));
+        assertFalse(p.validatePosition(2, 10));
 
-        assertTrue(p.validatePosition(10, 4));
+        assertFalse(p.validatePosition(10, 4));
 
         Position negativa = new Position(-1, 5);
-        assertTrue(negativa.validatePosition(10, 10));
+        assertFalse(negativa.validatePosition(10, 10));
     }
 }

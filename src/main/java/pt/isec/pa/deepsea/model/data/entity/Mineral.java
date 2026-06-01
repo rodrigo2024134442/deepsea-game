@@ -9,21 +9,32 @@ package pt.isec.pa.deepsea.model.data.entity;
  */
 public class Mineral extends Entity {
     private static final long serialVersionUID = 1L;
+    private final int value;
 
-    /** Creates a mineral with id and position. */
+    /** Creates a mineral with default value 1. */
     public Mineral(String name) {
         super(name);
+        this.value = 1;
+    }
 
+    /** Creates a mineral with explicit value. */
+    public Mineral(String name, int value) {
+        super(name);
+        this.value = Math.max(1, value);
     }
 
     public Mineral(Mineral other) {
         super(other.getName());
+        this.value = other.value;
     }
 
     @Override
     public Mineral clone() {
         return new Mineral(this);
     }
+
+    /** Returns mineral's value. */
+    public int getValue() { return value; }
 
 
    /* @Override

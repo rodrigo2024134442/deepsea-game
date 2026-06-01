@@ -14,13 +14,24 @@ import pt.isec.pa.deepsea.ui.canvas.BottomCanvas;
 import pt.isec.pa.deepsea.ui.canvas.PuzzleCanvas;
 import pt.isec.pa.deepsea.ui.canvas.SurfaceCanvas;
 import pt.isec.pa.deepsea.ui.canvas.TrenchCanvas;
-import pt.isec.pa.deepsea.ui.log.LogStage;
+import pt.isec.pa.deepsea.ui.res.SoundManager;
 import pt.isec.pa.deepsea.ui.side.CommandsBox;
 import pt.isec.pa.deepsea.ui.side.DronesInfoBox;
 import pt.isec.pa.deepsea.ui.side.ShipInfoBox;
 import pt.isec.pa.deepsea.ui.shop.ShopPop;
-import javafx.scene.control.Alert;
+import pt.isec.pa.deepsea.ui.res.VideoManager;
 
+/**
+ * Main JavaFX container that wires the game UI and canvas views.
+ *
+ * <p>Responsibilities:</p>
+ * <ul>
+ *   <li>Create and place all UI regions (menu, canvases, side panels).</li>
+ *   <li>Listen to {@link DeepSeaManager} events and update the visible view.</li>
+ *   <li>Route keyboard input to game actions.</li>
+ *   <li>Trigger media feedback (sound and video) for key events.</li>
+ * </ul>
+ */
 public class RootPane extends BorderPane {
     private final DeepSeaManager manager;
 
@@ -37,7 +48,6 @@ public class RootPane extends BorderPane {
     private ShopPop shopPop;
 
     private Pane areaPane;
-    private boolean gameOverShown = false;
 
     public RootPane(DeepSeaManager manager) {
         this.manager = manager;
@@ -97,10 +107,80 @@ public class RootPane extends BorderPane {
         areaPane.widthProperty().addListener(obs -> updateCanvasSizes());
         areaPane.heightProperty().addListener(obs -> updateCanvasSizes());
 
-        manager.addPropertyChangeListener(
-                DeepSeaManager.PROP_GAME_STATE,
-                e -> update()
-        );
+        manager.addPropertyChangeListener(DeepSeaManager.PROP_DRONE_DEPLOY, e -> {
+            SoundManager.getInstance().play(SoundManager.DRONE_DEPLOY);
+            if (getScene() != null) {
+                VideoManager.getInstance().play(VideoManager.DRONE_DEPLOY, getScene().getWindow(), null);
+            }
+        });
+
+        manager.addPropertyChangeListener(DeepSeaManager.PROP_DRONE_DESTROYED, e -> {
+            if (getScene() != null) {
+                VideoManager.getInstance().play(VideoManager.DRONE_DESTROYED, getScene().getWindow(), null);
+            }
+        });
+
+        manager.addPropertyChangeListener(DeepSeaManager.PROP_GAME_LOST, e -> {
+            if (getScene() != null) {
+                VideoManager.getInstance().play(VideoManager.GAME_LOST, getScene().getWindow(), Platform::exit);
+            } else {
+                Platform.exit();
+            }
+        });
+
+        manager.addPropertyChangeListener(DeepSeaManager.PROP_GAME_WON, e -> {
+            if (getScene() != null) {
+                VideoManager.getInstance().play(VideoManager.GAME_WON, getScene().getWindow(), Platform::exit);
+            } else {
+                Platform.exit();
+            }
+        });
+
+        manager.addPropertyChangeListener(DeepSeaManager.PROP_MOVE_DONE, e -> {
+            SoundManager.getInstance().play(SoundManager.MOVE);
+        });
+
+        manager.addPropertyChangeListener(DeepSeaManager.PROP_HIT, e -> {
+            SoundManager.getInstance().playAfter(SoundManager.HIT);
+        });
+
+        manager.addPropertyChangeListener(DeepSeaManager.PROP_MINING_DONE, e -> {
+            SoundManager.getInstance().play(SoundManager.MINING);
+        });
+
+        manager.addPropertyChangeListener(DeepSeaManager.PROP_ARTIFACT_RETRIEVED, e -> {
+            SoundManager.getInstance().play(SoundManager.RETRIEVE_ARTIFACT);
+        });
+
+        manager.addPropertyChangeListener(DeepSeaManager.PROP_GAME_STATE, e -> update());
+
+        setOnKeyPressed(e -> {
+            switch (e.getCode()) {
+                case W -> manager.move("w");
+                case A -> manager.move("a");
+                case S -> manager.move("s");
+                case D -> manager.move("d");
+
+                case E -> manager.enterShop();
+
+                //DRONE DESCENT
+                case DIGIT1 -> manager.descend(1);
+                case DIGIT2 -> manager.descend(2);
+                case DIGIT3 -> manager.descend(3);
+                case DIGIT4 -> manager.descend(4);
+                case DIGIT5 -> manager.descend(5);
+
+                //BOTTOM CONTROLS
+                case M -> manager.mining();
+                case N -> manager.retrieveArtifact();
+                case B -> manager.ascend();
+
+                default -> { }
+            }
+        });
+
+        setFocusTraversable(true);
+        requestFocus();
     }
 
     private void updateCanvasSizes() {
@@ -142,31 +222,5 @@ public class RootPane extends BorderPane {
                 shopPop.close();
             }
         }
-        checkGameOver();
-    }
-
-    private void checkGameOver() {
-        if (gameOverShown) return;
-
-        if (manager.isGameWon()) {
-            gameOverShown = true;
-            showAlert("Victory!",
-                    "You collected all the artifacts and brought them home.",
-                    Alert.AlertType.INFORMATION);
-        } else if (manager.isGameLost()) {
-            gameOverShown = true;
-            showAlert("Game Over",
-                    "All drones destroyed. The expedition is over.",
-                    Alert.AlertType.WARNING);
-        }
-    }
-
-    private void showAlert(String title, String content, Alert.AlertType type) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-        Platform.exit();
     }
 }

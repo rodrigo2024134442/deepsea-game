@@ -47,6 +47,15 @@ public class DeepSeaManager {
     public static final String PROP_MINIGAME   = "_minigame_";
     public static final String PROP_LOG        = "_log_";
 
+    public static final String PROP_DRONE_DEPLOY = "_drone_deploy_";
+    public static final String PROP_DRONE_DESTROYED = "_drone_destroyed_";
+    public static final String PROP_GAME_LOST = "_game_lost_";
+    public static final String PROP_GAME_WON = "_game_won_";
+    public static final String PROP_MOVE_DONE = "_move_done_";
+    public static final String PROP_HIT       = "_hit_";
+    public static final String PROP_MINING_DONE        = "_mining_done_";
+    public static final String PROP_ARTIFACT_RETRIEVED = "_artifact_retrieved_";
+
     private PropertyChangeSupport pcs;
 
     /**
@@ -88,7 +97,23 @@ public class DeepSeaManager {
         boolean ok = context.move(command);
         if (ok) {
             log.log("Move: " + command + " [state=" + getState() + "]");
-            fireAll();
+            fireState();
+            fireGrid();
+            fireShip();
+            fireDrones();
+            fireLog();
+            fireMoveDone();
+            if (context.getGame().consumeHitFlag()) {
+                fireHit();
+            }
+            if (context.getGame().consumeGameLostFlag()) {
+                fireGameLost();
+            }else if (context.getGame().consumeDroneDestroyedByMonsterFlag()) {
+                fireDroneDestroyed();
+            }
+            if (context.getGame().consumeGameWonFlag()) {
+                fireGameWon();
+            }
         }
         return ok;
     }
@@ -104,7 +129,11 @@ public class DeepSeaManager {
         boolean ok = context.descend(droneId);
         if (ok) {
             log.log("Drone " + droneId + " started descending.");
-            fireAll();
+            fireState();
+            fireGrid();
+            fireDrones();
+            fireLog();
+            fireDroneDeploy();
         }
         return ok;
     }
@@ -119,7 +148,9 @@ public class DeepSeaManager {
         boolean ok = context.ascend();
         if (ok) {
             log.log("Active drone started ascending.");
-            fireAll();
+            fireState();
+            fireGrid();
+            fireLog();
         }
         return ok;
     }
@@ -134,7 +165,8 @@ public class DeepSeaManager {
         boolean ok = context.enterShop();
         if (ok) {
             log.log("Entered shop.");
-            fireAll();
+            fireState();
+            fireLog();
         }
         return ok;
     }
@@ -149,7 +181,8 @@ public class DeepSeaManager {
         boolean ok = context.leaveShop();
         if (ok) {
             log.log("Left shop.");
-            fireAll();
+            fireState();
+            fireLog();
         }
         return ok;
     }
@@ -165,7 +198,8 @@ public class DeepSeaManager {
         boolean ok = context.repair(droneId);
         if (ok) {
             log.log("Drone " + droneId + " repaired.");
-            fireAll();
+            fireDrones();
+            fireLog();
         }
         return ok;
     }
@@ -181,7 +215,87 @@ public class DeepSeaManager {
         boolean ok = context.refuel(droneId);
         if (ok){
             log.log("Drone " + droneId + " refuelled.");
-            fireAll();
+            fireShip();
+            fireDrones();
+            fireLog();
+        }
+        return ok;
+    }
+
+    /** Buys ship fuel using minerals (SHOP state). */
+    public boolean buyShipFuel(int amount) {
+        boolean ok = context.buyShipFuel(amount);
+        if (ok) {
+            log.log("Bought " + amount + " ship fuel.");
+            fireShip();
+            fireLog();
+        }
+        return ok;
+    }
+
+    /** Buys a new drone (SHOP state). */
+    public boolean buyDrone() {
+        boolean ok = context.buyDrone();
+        if (ok) {
+            log.log("Bought new drone.");
+            fireDrones();
+            fireShip();
+            fireLog();
+        }
+        return ok;
+    }
+
+    /** Upgrade ship max fuel by units (SHOP state). */
+    public boolean upgradeShipMaxFuel(int units) {
+        boolean ok = context.upgradeShipMaxFuel(units);
+        if (ok) {
+            log.log("Upgraded ship max fuel by " + units + " units.");
+            fireShip();
+            fireLog();
+        }
+        return ok;
+    }
+
+    /** Upgrade drones max fuel by units (SHOP state). */
+    public boolean upgradeDronesMaxFuel(int units) {
+        boolean ok = context.upgradeDronesMaxFuel(units);
+        if (ok) {
+            log.log("Upgraded drones max fuel by " + units + " units.");
+            fireDrones();
+            fireLog();
+        }
+        return ok;
+    }
+
+    /** Upgrade a single drone's max fuel (SHOP state). */
+    public boolean upgradeDroneMaxFuel(int droneId, int units) {
+        boolean ok = context.upgradeDroneMaxFuel(droneId, units);
+        if (ok) {
+            log.log("Upgraded drone " + droneId + " max fuel by " + units + " units.");
+            fireDrones();
+            fireLog();
+        }
+        return ok;
+    }
+
+    /** Upgrade drones max hull by points (SHOP state). */
+    public boolean upgradeDronesMaxHull(int points) {
+        boolean ok = context.upgradeDronesMaxHull(points);
+        if (ok) {
+            log.log("Upgraded drones max hull by " + points + " points.");
+            fireDrones();
+            fireLog();
+        }
+        return ok;
+    }
+
+    /** Upgrade a single drone's max hull (SHOP state). */
+    public boolean upgradeDroneMaxHull(int droneId, int points) {
+        boolean ok = context.upgradeDroneMaxHull(droneId, points);
+        if (ok) {
+            log.log("Upgraded drone " + droneId + " max hull by " + points + " points.");
+            fireDrones();
+            fireLog();
         }
         return ok;
     }
@@ -196,7 +310,12 @@ public class DeepSeaManager {
         boolean ok = context.mining();
         if (ok) {
             log.log("Mineral collected.");
-            fireAll();
+            fireState();
+            fireGrid();
+            fireMinigame();
+            fireDrones();
+            fireLog();
+            fireMiningDone();
         }
         return ok;
     }
@@ -212,7 +331,11 @@ public class DeepSeaManager {
         boolean ok = context.retrieveArtifact();
         if (ok) {
             log.log("Artifact found — minigame started.");
-            fireAll();
+            fireState();
+            fireGrid();
+            fireMinigame();
+            fireLog();
+            fireArtifactRetrieved();
         }
         return ok;
     }
@@ -229,7 +352,11 @@ public class DeepSeaManager {
         boolean ok = context.movePiece(row, col);
         if (ok) {
             log.log("Puzzle piece moved: (row:" + row + ", col:" + col + ")");
-            fireAll();
+            fireState();
+            fireGrid();
+            fireMinigame();
+            fireDrones();
+            fireLog();
         }
         return ok;
     }
@@ -726,7 +853,7 @@ public class DeepSeaManager {
     /** Clears all log messages. */
     public void clearLog() {
         log.clear();
-        fireAll();
+        fireLog();
     }
 
     // Property change support
@@ -762,4 +889,20 @@ public class DeepSeaManager {
         pcs.firePropertyChange(PROP_MINIGAME,   null, null);
         pcs.firePropertyChange(PROP_LOG,        null, null);
     }
+
+    private void fireState()    { pcs.firePropertyChange(PROP_GAME_STATE, null, null); }
+    private void fireGrid()     { pcs.firePropertyChange(PROP_GRID,       null, null); }
+    private void fireShip()     { pcs.firePropertyChange(PROP_SHIP,       null, null); }
+    private void fireDrones()   { pcs.firePropertyChange(PROP_DRONES,     null, null); }
+    private void fireMinigame() { pcs.firePropertyChange(PROP_MINIGAME,   null, null); }
+    private void fireLog()      { pcs.firePropertyChange(PROP_LOG,        null, null); }
+
+    private void fireDroneDeploy() { pcs.firePropertyChange(PROP_DRONE_DEPLOY, null, null); }
+    private void fireDroneDestroyed() { pcs.firePropertyChange(PROP_DRONE_DESTROYED, null, null); }
+    private void fireGameLost() { pcs.firePropertyChange(PROP_GAME_LOST, null, null); }
+    private void fireGameWon() { pcs.firePropertyChange(PROP_GAME_WON, null, null); }
+    private void fireMoveDone() { pcs.firePropertyChange(PROP_MOVE_DONE, null, null); }
+    private void fireHit()      { pcs.firePropertyChange(PROP_HIT,       null, null); }
+    private void fireMiningDone()        { pcs.firePropertyChange(PROP_MINING_DONE,        null, null); }
+    private void fireArtifactRetrieved() { pcs.firePropertyChange(PROP_ARTIFACT_RETRIEVED, null, null); }
 }
